@@ -30,21 +30,13 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_GROQ_API_KEY: ${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
 
-      - name: Create deployment package
-        run: |
-          mkdir -p deploy
-          cp -r .next deploy/
-          cp -r public deploy/
-          cp package.json deploy/
-          cp package-lock.json deploy/
-          cp next.config.mjs deploy/
-          cp -r scripts deploy/
-          cd deploy && npm ci --legacy-peer-deps --omit=dev
+      - name: Prune dev dependencies
+        run: npm prune --omit=dev --legacy-peer-deps
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'DShipIt'
           slot-name: 'Production'
-          package: deploy
+          package: .
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
