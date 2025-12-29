@@ -1,0 +1,126 @@
+/* Content Editable Placeholder Styles */
+[contenteditable]:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  font-style: italic;
+  pointer-events: none;
+}
+
+[contenteditable]:focus::before {
+  display: none;
+}
+
+/* CKEditor-like styling */
+.editor-content {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.editor-content h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content h4 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content h5 {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content h6 {
+  font-size: 0.9em;
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+}
+
+.editor-content p {
+  margin: 0.5em 0;
+}
+
+.editor-content ul, .editor-content ol {
+  padding-left: 2em;
+  margin: 0.5em 0;
+}
+
+.editor-content blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.editor-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.editor-content table td, .editor-content table th {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.editor-content table th {
+  background-color: #f9fafb;
+  font-weight: bold;
+}
+
+.editor-content a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.editor-content a:hover {
+  color: #1d4ed8;
+}
+
+.editor-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+.editor-content hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 2em 0;
+}
+
+/* Toolbar button states */
+.toolbar-button-active {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+/* Focus states */
+[contenteditable]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Selection styling */
+::selection {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}

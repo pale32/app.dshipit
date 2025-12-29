@@ -1,0 +1,2488 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { useCurrency } from "@/contexts/CurrencyContext";
+import { useUnsavedChanges } from "@/contexts/UnsavedChangesContext";
+import { Settings, Bell, Grid3X3, Package, DollarSign, GitBranch, ClipboardList, Truck, FileText, Search, Plus, Eye, Copy, ChevronLeft, User, MapPin, MessageSquare, Edit, Trash2, Check, Clipboard } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { IncrementButton } from "@/components/ui/increment-button";
+import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DateRangePicker } from "@/components/DateRangePicker";
+import { DateRange } from "react-day-picker";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { UpgradePlanDialog } from "@/components/UpgradePlanDialog";
+
+const SettingsIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 512 512" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M413.967 276.8c1.06-6.235 1.06-13.518 1.06-20.8s-1.06-13.518-1.06-20.8l44.667-34.318c4.26-3.118 5.319-8.317 2.13-13.518L418.215 115.6c-2.129-4.164-8.507-6.235-12.767-4.164l-53.186 20.801c-10.638-8.318-23.394-15.601-36.16-20.801l-7.448-55.117c-1.06-4.154-5.319-8.318-10.638-8.318h-85.098c-5.318 0-9.577 4.164-10.637 8.318l-8.508 55.117c-12.767 5.2-24.464 12.482-36.171 20.801l-53.186-20.801c-5.319-2.071-10.638 0-12.767 4.164L49.1 187.365c-2.119 4.153-1.061 10.399 2.129 13.518L96.97 235.2c0 7.282-1.06 13.518-1.06 20.8s1.06 13.518 1.06 20.8l-44.668 34.318c-4.26 3.118-5.318 8.317-2.13 13.518L92.721 396.4c2.13 4.164 8.508 6.235 12.767 4.164l53.187-20.801c10.637 8.318 23.394 15.601 36.16 20.801l8.508 55.117c1.069 5.2 5.318 8.318 10.637 8.318h85.098c5.319 0 9.578-4.164 10.638-8.318l8.518-55.117c12.757-5.2 24.464-12.482 36.16-20.801l53.187 20.801c5.318 2.071 10.637 0 12.767-4.164l42.549-71.765c2.129-4.153 1.06-10.399-2.13-13.518l-46.8-34.317zm-158.499 52c-41.489 0-74.46-32.235-74.46-72.8s32.971-72.8 74.46-72.8 74.461 32.235 74.461 72.8-32.972 72.8-74.461 72.8z"></path>
+  </svg>
+);
+
+const NotificationIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 16 16" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"></path>
+  </svg>
+);
+
+const ProductIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 18H9V20H2V18ZM2 11H11V13H2V11ZM2 4H22V6H2V4ZM20.674 13.0251L21.8301 12.634L22.8301 14.366L21.914 15.1711C21.9704 15.4386 22 15.7158 22 16C22 16.2842 21.9704 16.5614 21.914 16.8289L22.8301 17.634L21.8301 19.366L20.674 18.9749C20.2635 19.3441 19.7763 19.6295 19.2391 19.8044L19 21H17L16.7609 19.8044C16.2237 19.6295 15.7365 19.3441 15.326 18.9749L14.1699 19.366L13.1699 17.634L14.086 16.8289C14.0296 16.5614 14 16.2842 14 16C14 15.7158 14.0296 15.4386 14.086 15.1711L13.1699 14.366L14.1699 12.634L15.326 13.0251C15.7365 12.6559 16.2237 12.3705 16.7609 12.1956L17 11H19L19.2391 12.1956C19.7763 12.3705 20.2635 12.6559 20.674 13.0251ZM18 17C18.5523 17 19 16.5523 19 16C19 15.4477 18.5523 15 18 15C17.4477 15 17 15.4477 17 16C17 16.5523 17.4477 17 18 17Z"></path>
+  </svg>
+);
+
+const ApplicationIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 11h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1zm10 0h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1zM4 21h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1zm13 0c2.206 0 4-1.794 4-4s-1.794-4-4-4-4 1.794-4 4 1.794 4 4 4z"></path>
+  </svg>
+);
+
+const MappingIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 256 256" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M152,96V80h-8a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h8V160a16,16,0,0,1,16-16h48a16,16,0,0,1,16,16v48a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V192h-8a32,32,0,0,1-32-32V136H80v8a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V112A16,16,0,0,1,32,96H64a16,16,0,0,1,16,16v8h32V96a32,32,0,0,1,32-32h8V48a16,16,0,0,1,16-16h48a16,16,0,0,1,16,16V96a16,16,0,0,1-16,16H168A16,16,0,0,1,152,96Z"></path>
+  </svg>
+);
+
+const OrderIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path fill="none" d="M0 0h24v24H0z"></path>
+    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path>
+  </svg>
+);
+
+const PricingIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 24 24" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.00488 3.00293H21.0049C21.5572 3.00293 22.0049 3.45064 22.0049 4.00293V20.0029C22.0049 20.5552 21.5572 21.0029 21.0049 21.0029H3.00488C2.4526 21.0029 2.00488 20.5552 2.00488 20.0029V4.00293C2.00488 3.45064 2.4526 3.00293 3.00488 3.00293ZM8.50488 14.0029V16.0029H11.0049V18.0029H13.0049V16.0029H14.0049C15.3856 16.0029 16.5049 14.8836 16.5049 13.5029C16.5049 12.1222 15.3856 11.0029 14.0049 11.0029H10.0049C9.72874 11.0029 9.50488 10.7791 9.50488 10.5029C9.50488 10.2268 9.72874 10.0029 10.0049 10.0029H15.5049V8.00293H13.0049V6.00293H11.0049V8.00293H10.0049C8.62417 8.00293 7.50488 9.12222 7.50488 10.5029C7.50488 11.8836 8.62417 13.0029 10.0049 13.0029H14.0049C14.281 13.0029 14.5049 13.2268 14.5049 13.5029C14.5049 13.7791 14.281 14.0029 14.0049 14.0029H8.50488Z"></path>
+  </svg>
+);
+
+const ShippingIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 640 512" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M112 0C85.5 0 64 21.5 64 48V96H16c-8.8 0-16 7.2-16 16s7.2 16 16 16H64 272c8.8 0 16 7.2 16 16s-7.2 16-16 16H64 48c-8.8 0-16 7.2-16 16s7.2 16 16 16H64 240c8.8 0 16 7.2 16 16s-7.2 16-16 16H64 16c-8.8 0-16 7.2-16 16s7.2 16 16 16H64 208c8.8 0 16 7.2 16 16s-7.2 16-16 16H64V416c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H112zM544 237.3V256H416V160h50.7L544 237.3zM160 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96zm272 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0z"></path>
+  </svg>
+);
+
+const FulfillmentIcon = ({ className }: { className?: string }) => (
+  <svg stroke="#6b7280" fill="#6b7280" strokeWidth="0" viewBox="0 0 512 512" style={{ width: '24px', height: '24px' }} className="mr-2" xmlns="http://www.w3.org/2000/svg">
+    <path d="M124 80v322c0 7.7-6.3 14-14 14s-14-6.3-14-14V112H80c-17.7 0-32 14.3-32 32v288c0 17.7 14.3 32 32 32h353.1c17 0 30.9-13.8 30.9-30.9V80c0-17.7-14.3-32-32-32l-278 2c-17.7 0-30 12.3-30 30zm66 32h84c7.7 0 14 6.3 14 14s-6.3 14-14 14h-84c-7.7 0-14-6.3-14-14s6.3-14 14-14zm0 160h148c7.7 0 14 6.3 14 14s-6.3 14-14 14H190c-7.7 0-14-6.3-14-14s6.3-14 14-14zm196 108H190c-7.7 0-14-6.3-14-14s6.3-14 14-14h196c7.7 0 14 6.3 14 14s-6.3 14-14 14zm0-160H190c-7.7 0-14-6.3-14-14s6.3-14 14-14h196c7.7 0 14 6.3 14 14s-6.3 14-14 14z"></path>
+  </svg>
+);
+
+const settingsData = [
+  { id: "general", label: "User Management", icon: SettingsIcon },
+  { id: "notification", label: "Alerts", icon: NotificationIcon },
+  { id: "application", label: "Stores & Suppliers", icon: ApplicationIcon },
+  { id: "product", label: "Product Settings", icon: ProductIcon },
+  { id: "pricing", label: "Pricing & Currencies", icon: PricingIcon },
+  { id: "mapping", label: "Automated Mapping", icon: MappingIcon },
+  { id: "order", label: "Order Settings", icon: OrderIcon },
+  { id: "shipping", label: "Shipping Settings", icon: ShippingIcon },
+  { id: "fulfillment", label: "Fulfillment Settings", icon: FulfillmentIcon }
+];
+
+export default function SettingsPage() {
+  // Currency context for global currency management
+  const {
+    currency,
+    currencyInfo,
+    detectedCurrency,
+    isManualOverride,
+    locationData,
+    isLoading: isCurrencyLoading,
+    setCurrency: updateCurrency,
+    error: currencyError
+  } = useCurrency();
+
+  // Debug currency detection
+  useEffect(() => {
+    console.log('🌍 Currency Debug Info:');
+    console.log('Currency:', currency);
+    console.log('Detected Currency:', detectedCurrency);
+    console.log('Location Data:', locationData);
+    console.log('Is Manual Override:', isManualOverride);
+    console.log('Is Loading:', isCurrencyLoading);
+    console.log('Error:', currencyError);
+  }, [currency, detectedCurrency, locationData, isManualOverride, isCurrencyLoading, currencyError]);
+
+  const [activeTab, setActiveTab] = useState("notification");
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [showPricingRuleDialog, setShowPricingRuleDialog] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [searchValue, setSearchValue] = useState("");
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(1);
+  const [exchangeRateManual, setExchangeRateManual] = useState(false);
+  const [pricingRuleEnabled, setPricingRuleEnabled] = useState(false);
+  const [pricingRuleType, setPricingRuleType] = useState("PricingRankBasic");
+  const [basicPricingCost, setBasicPricingCost] = useState("Product Cost");
+  const [basicPricingPattern, setBasicPricingPattern] = useState("+");
+  const [basicPricingValue, setBasicPricingValue] = useState(0);
+  const [comparedPricingEnabled, setComparedPricingEnabled] = useState(false);
+  const [comparedPricingCost, setComparedPricingCost] = useState("Product Cost");
+  const [comparedPricingPattern, setComparedPricingPattern] = useState("+");
+  const [comparedPricingValue, setComparedPricingValue] = useState(0);
+  const [priceChangesEnabled, setPriceChangesEnabled] = useState(false);
+
+  // Standard Pricing Rule ranges state
+  const [standardRange1Start, setStandardRange1Start] = useState(0.00);
+  const [standardRange1End, setStandardRange1End] = useState(10.00);
+  const [standardRange2Start, setStandardRange2Start] = useState(10.01);
+  const [standardRange2End, setStandardRange2End] = useState("");
+  const [range1Visible, setRange1Visible] = useState(true);
+  const [range2Visible, setRange2Visible] = useState(true);
+  const [range2Deletable, setRange2Deletable] = useState(false);
+
+  // Dynamic rows management
+  const [dynamicRows, setDynamicRows] = useState<any[]>([]);
+
+  // Shipping methods management for Global accordion
+  const [globalShippingRows, setGlobalShippingRows] = useState<any[]>([]);
+
+  // Shipping methods list - centralized data
+  const SHIPPING_METHODS = [
+    { value: "cainiao-standard-delivery", label: "(Cainiao) Standard Delivery" },
+    { value: "139express", label: "139EXPRESS" },
+    { value: "360lion-standard-packet", label: "360Lion Standard Packet" },
+    { value: "3pl-br-local", label: "3PL_BR_LOCAL" },
+    { value: "4px-correos-paq24", label: "4PX CORREOS PAQ24" },
+    { value: "4px-cz-dhl-european-first-zone", label: "4PX CZ DHL European First Zone Delivery" },
+    { value: "4px-cz-dhl-european-second-zone", label: "4PX CZ DHL European Second Zone Delivery" },
+    { value: "4px-de-dhl-inland-delivery", label: "4PX DE DHL Inland Delivery" },
+    { value: "4px-de-dhl-inland-delivery-cz", label: "4PX DE DHL Inland Delivery-CZ" },
+    { value: "4px-de-dhl-european-first-zone", label: "4PX DE DHL European First Zone Delivery" },
+    { value: "4px-rm", label: "4PX RM" },
+    { value: "4px-royal-mail-tracked48", label: "4PX Royal Mail Tracked48" },
+    { value: "4px-seur-24-hours", label: "4PX SEUR 24 Hours Delivery" },
+    { value: "4px-singapore-post-om-pro", label: "4PX Singapore Post OM Pro" },
+    { value: "4px-tr72-packet", label: "4PX TR72-Packet" },
+    { value: "4px-tr72-packet-packet", label: "4PX TR72-Packet - Packet" },
+    { value: "4px-tr72-packet-by-zone", label: "4PX TR72-Packet By Zone" },
+    { value: "4px-us-expedited-big-packet", label: "4PX US Expedited Big Packet" },
+    { value: "4px-us-expedited-smart-packet", label: "4PX US Expedited Smart Packet" },
+    { value: "4px-us-fedex-inland-post", label: "4PX US FedEx Inland Post Office Delivery" },
+    { value: "4px-us-ground-smart-packet", label: "4PX US Ground Smart Packet" },
+    { value: "4px-us-ground-big-packet", label: "4PX US Ground Big Packet" },
+    { value: "4px-usps-small-package", label: "4PX USPS Small Package Inland Delivery" },
+    { value: "4pxes-espost-eu", label: "4PXES_ESPOST_EU" },
+    { value: "4pxes-espost-eu-es", label: "4PXES_ESPOST_EU - ES" },
+    { value: "4pxes-glseu-large", label: "4PXES_GLSEU_LARGE" },
+    { value: "4pxes-glseu-small", label: "4PXES_GLSEU_SMALL" },
+    { value: "4pxes-glseu-small-es", label: "4PXES_GLSEU_SMALL - ES" },
+    { value: "4pxes-postpy-es", label: "4PXES_POSTPY_ES" },
+    { value: "aliexpress-standard-oversized", label: "AliExpress Standard Shipping For Oversized Goods" },
+    { value: "aliexpress-standard-mx", label: "AliExpress Standard Shipping MX" },
+    { value: "aliexpress-standard-aebigsto", label: "AliExpress Standard Shipping_AEBIGSTO" },
+    { value: "aliexpress-standard-htb2", label: "AliExpress Standard Shipping_HTB2" },
+    { value: "aliexpress-standard-be", label: "AliExpress Standard-BE" },
+    { value: "aliexpress-standard", label: "AliExpress Standard Shipping" },
+    { value: "aliexpress-post-office", label: "AliExpress: To Post Office" },
+    { value: "aliexpress-courier", label: "AliExpress: By Courier" },
+    { value: "aliexpress-saver", label: "AliExpress Saver Shipping" },
+    { value: "aliexpress-direct-ae", label: "AliExpress Direct_AE" },
+    { value: "aliexpress-direct-bh", label: "AliExpress Direct_BH" },
+    { value: "aliexpress-direct-br", label: "AliExpress Direct_BR" },
+    { value: "aliexpress-direct-om", label: "AliExpress Direct_OM" },
+    { value: "aliexpress-direct-qa", label: "AliExpress Direct_QA" },
+    { value: "aliexpress-direct-sa", label: "AliExpress Direct_SA" },
+    { value: "aliexpress-selection-economy-special", label: "Aliexpress Selection Economy For Special Goods" },
+    { value: "aliexpress-selection-economy-es", label: "Aliexpress Selection Economy-ES" },
+    { value: "aliexpress-selection-premium", label: "Aliexpress Selection Premium Shipping" },
+    { value: "aliexpress-selection-saver", label: "Aliexpress Selection Saver" },
+    { value: "aliexpress-selection-saver-special", label: "Aliexpress Selection Saver For Special Goods" },
+    { value: "aliexpress-selection-standard-special", label: "Aliexpress Selection Standard For Special Goods" },
+    { value: "aliexpress-selection-super-economy", label: "Aliexpress Selection Super Economy" },
+    { value: "aliexpress-selection-super-economy-global", label: "Aliexpress Selection Super Economy Global" },
+    { value: "aramex", label: "Aramex" },
+    { value: "aramex-fastway-au", label: "Aramex (Fastway AU)" },
+    { value: "asendia", label: "Asendia" },
+    { value: "asendia-us", label: "Asendia_US" },
+    { value: "be-post-be", label: "BE_POST_BE" },
+    { value: "big", label: "BIG" },
+    { value: "blue-cl", label: "BLUE_CL" },
+    { value: "br-correios-by-state", label: "BR Correios by STATE" },
+    { value: "br-jt-by-state", label: "BR JT by STATE" },
+    { value: "br-jadlog-by-state", label: "BR Jadlog by STATE" },
+    { value: "br-sedex-by-state", label: "BR Sedex by STATE" },
+    { value: "br-local-3pl-jt-commercial", label: "BR local 3PL Standard Delivery (J&T-Commercial)" },
+    { value: "br-local-3pl-sislogica-commercial", label: "BR local 3PL Standard Delivery (Sislogica-Commercial)" },
+    { value: "br-local-3pl-sislogica-correios", label: "BR local 3PL Standard Delivery (Sislogica-Correios)" },
+    { value: "br-local-3pl-imile-commercial", label: "BR local 3PL Standard Delivery (iMile-Commercial)" },
+    { value: "brt-dpd", label: "BRT (DPD)" },
+    { value: "bsc-special-economy", label: "BSC Special Economy" },
+    { value: "bsc-special-standard", label: "BSC Special Standard" },
+    { value: "battery-standard-delivery", label: "Battery Standard Delivery" },
+    { value: "bpost-international", label: "Bpost International" },
+    { value: "cainiao-consolidation-sa", label: "CAINIAO Consolidation_SA" },
+    { value: "cainiao-fulfillment-seco-sg", label: "CAINIAO Fulfillment SECO_SG" },
+    { value: "cainiao-fulfillment-e-eco", label: "CAINIAO Fulfillment E_ECO" },
+    { value: "cainiao-g2g-directship-standard", label: "CAINIAO G2G Directship Standard" },
+    { value: "cainiao-home-delivery", label: "CAINIAO Home Delivery" },
+    { value: "cainiao-large-parcel", label: "CAINIAO Large Parcel" },
+    { value: "cainiao-overseas-warehouse-return-eu", label: "CAINIAO Overseas Warehouse Return - EU" },
+    { value: "cainiao-small-parcel", label: "CAINIAO Small Parcel" },
+    { value: "cainiao-to-shop-il-pd", label: "CAINIAO To Shop_IL_PD" },
+    { value: "cainiao-to-shop-uae-pd", label: "CAINIAO To Shop_UAE_PD" },
+    { value: "cainiao-ts90-standard", label: "CAINIAO TS90 Standard Shipping" },
+    { value: "cainiao-warehouse-express-be", label: "CAINIAO Warehouse Express Shipping_BE" },
+    { value: "cainiao-warehouse-express-choice-cn-pl", label: "CAINIAO Warehouse Express Shipping_Choice_CN_PL" },
+    { value: "cainiao-warehouse-express-es", label: "CAINIAO Warehouse Express Shipping_ES" },
+    { value: "cainiao-warehouse-express-es-cn-eu", label: "CAINIAO Warehouse Express Shipping_ES/CN_EU" },
+    { value: "cainiao-warehouse-express-es-es", label: "CAINIAO Warehouse Express Shipping_ES_ES" },
+    { value: "cainiao-warehouse-express-express-es", label: "CAINIAO Warehouse Express Shipping_Express_ES" },
+    { value: "cainiao-warehouse-express-fr", label: "CAINIAO Warehouse Express Shipping_FR" },
+    { value: "cainiao-warehouse-express-it", label: "CAINIAO Warehouse Express Shipping_IT" },
+    { value: "cainiao-warehouse-express-pl", label: "CAINIAO Warehouse Express Shipping_PL" },
+    { value: "cainiao-warehouse-oversize-es", label: "CAINIAO Warehouse Oversize Shipping_ES" },
+    { value: "cainiao-warehouse-oversize-es-cn-eu", label: "CAINIAO Warehouse Oversize Shipping_ES/CN_EU" },
+    { value: "cainiao-warehouse-oversize-fr", label: "CAINIAO Warehouse Oversize Shipping_FR" },
+    { value: "cainiao-warehouse-oversize-uk", label: "CAINIAO Warehouse Oversize Shipping_UK" },
+    { value: "cainiao-warehouse-srm-shipping", label: "CAINIAO Warehouse SRM Shipping" },
+    { value: "cainiao-warehouse-srm-shipping-srmeu", label: "CAINIAO Warehouse SRM Shipping - SRMEU" },
+    { value: "cainiao-warehouse-srm-shipping-cn-mx", label: "CAINIAO Warehouse SRM Shipping_CN/MX" },
+    { value: "cainiao-warehouse-srm-shipping-es", label: "CAINIAO Warehouse SRM Shipping_ES" },
+    { value: "cainiao-warehouse-srm-shipping-es-cn-eu", label: "CAINIAO Warehouse SRM Shipping_ES/CN_EU" },
+    { value: "cainiao-warehouse-srm-shipping-fr", label: "CAINIAO Warehouse SRM Shipping_FR" },
+    { value: "cainiao-warehouse-standard-shipping", label: "CAINIAO Warehouse Standard Shipping" },
+    { value: "cainiao-overseas-wh-srmfr", label: "CAINIAO_OVERSEAS_WH_SRMFR" },
+    { value: "cniao-mex-estafeta-express", label: "CNIAO_MEX_ESTAFETA_EXPRESS" },
+    { value: "cainiao-overseas-wh-stdbe", label: "CAINIAO_OVERSEAS_WH_STDBE" },
+    { value: "cainiao-warehouse-standard-shipping-be", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_BE" },
+    { value: "cainiao-warehouse-standard-shipping-choice-cn-pl", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_CHOICE_CN_PL" },
+    { value: "cainiao-warehouse-standard-shipping-cz", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_CZ" },
+    { value: "cainiao-warehouse-standard-shipping-de", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_DE" },
+    { value: "cainiao-warehouse-standard-shipping-es", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_ES" },
+    { value: "cainiao-warehouse-standard-shipping-es-cn-es-new", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_ES/CN_ES_NEW" },
+    { value: "cainiao-warehouse-standard-shipping-es-cn-eu", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_ES/CN_EU" },
+    { value: "cainiao-warehouse-standard-shipping-es-es", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_ES_ES" },
+    { value: "cainiao-warehouse-standard-shipping-fr", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_FR" },
+    { value: "cainiao-warehouse-standard-shipping-fr-cn-eu", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_FR/CN_EU" },
+    { value: "cainiao-warehouse-standard-shipping-fr-cn-fr", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_FR/CN_FR" },
+    { value: "cainiao-warehouse-standard-shipping-pl", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_PL" },
+    { value: "cainiao-warehouse-standard-shipping-uae", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_UAE" },
+    { value: "cainiao-warehouse-standard-shipping-uk", label: "CAINIAO WAREHOUSE STANDARD SHIPPING_UK" },
+    { value: "cainiao-fulfillment-std-large", label: "CAINIAO_FULFILLMENT_STD_LARGE" },
+    { value: "cainiao-seleopen-pre-ae", label: "CAINIAO_SELEOPEN_PRE_AE" },
+    { value: "cainiao-seleopen-std-ae", label: "CAINIAO_SELEOPEN_STD_AE" },
+    { value: "cainiao-wh-es-std", label: "CAINIAO_WH_ES_STD" },
+    { value: "cainiao-wh-fr-std", label: "CAINIAO_WH_FR_STD" },
+    { value: "capost", label: "CAPOST" },
+    { value: "cdek", label: "CDEK" },
+    { value: "cdek-ru", label: "CDEK_RU" },
+    { value: "ceva-truck-delivery", label: "CEVA Truck Delivery" },
+    { value: "choice", label: "CHOICE" },
+    { value: "chronopost-domestic", label: "CHRONOPOST-Domestic" },
+    { value: "citirans-saudi-last-mile", label: "CITIRANS Saudi last mile" },
+    { value: "cititrans-ae", label: "CITITRANS_AE" },
+    { value: "cj-express", label: "CJ EXPRESS" },
+    { value: "cj-oversea", label: "CJ Oversea" },
+    { value: "cj-logistics", label: "CJ_LOGISTICS" },
+    { value: "clpost", label: "CLPOST" },
+    { value: "cne-express", label: "CNE Express" },
+    { value: "cnos-expes", label: "CNOS_EXPES" },
+    { value: "cnos-expfr-local", label: "CNOS_EXPFR_LOCAL" },
+    { value: "cnos-exppl", label: "CNOS_EXPPL" },
+    { value: "cnos-stdde", label: "CNOS_STDDE" },
+    { value: "cnos-stdfr-local", label: "CNOS_STDFR_LOCAL" },
+    { value: "cn-eu-standard", label: "CN_EU_STANDARD" },
+    { value: "cn-iml-express-ru", label: "CN_IML_EXPRESS_RU" },
+    { value: "cn-jnet-express-ru", label: "CN_JNET_EXPRESS_RU" },
+    { value: "cn-overseas-wh-stdes-new", label: "CN_OVERSEAS_WH_STDES_NEW" },
+    { value: "cn-oversea-gd-ru", label: "CN_OVERSEA_GD_RU" },
+    { value: "cn-oversea-gd-ru-prov", label: "CN_OVERSEA_GD_RU_PROV" },
+    { value: "cn-oversea-od", label: "CN_OVERSEA_OD" },
+    { value: "cn-oversea-od-ru-prov", label: "CN_OVERSEA_OD_RU_PROV" },
+    { value: "cn-rue-express-ru", label: "CN_RUE_EXPRESS_RU" },
+    { value: "colissimo-domestic", label: "COLISSIMO-Domestic" },
+    { value: "colissimo-be", label: "COLISSIMO_BE" },
+    { value: "correos-paq-72", label: "CORREOS PAQ 72" },
+    { value: "correosexpress-es-islands", label: "CORREOSEXPRESS_ES_ISLANDS" },
+    { value: "cse", label: "CSE" },
+    { value: "cttexpress", label: "CTTEXPRESS" },
+    { value: "cainiao-us-standard", label: "CaiNiao US Standard" },
+    { value: "cainiao-expedited-economy", label: "Cainiao Expedited Economy" },
+    { value: "cainiao-expedited-standard", label: "Cainiao Expedited Standard" },
+    { value: "cainiao-heavy-parcel-line", label: "Cainiao Heavy Parcel Line" },
+    { value: "cainiao-saver-shipping-special", label: "Cainiao Saver Shipping For Special Goods" },
+    { value: "cainiao-standard", label: "Cainiao Standard" },
+    { value: "cainiao-standard-sg-air", label: "Cainiao Standard - SG Air" },
+    { value: "cainiao-standard-special", label: "Cainiao Standard For Special Goods" },
+    { value: "cainiao-super-economy", label: "Cainiao Super Economy" },
+    { value: "cainiao-super-economy-global", label: "Cainiao Super Economy Global" },
+    { value: "cainiao-super-economy-special", label: "Cainiao Super Economy for Special Goods" },
+    { value: "chile-express", label: "Chile Express" },
+    { value: "china-post-air-parcel", label: "China Post Air Parcel" },
+    { value: "china-post-ordinary-small-packet", label: "China Post Ordinary Small Packet Plus" },
+    { value: "china-post-registered-air-mail", label: "China Post Registered Air Mail" },
+    { value: "china-post-epacket", label: "China Post ePacket" },
+    { value: "choice-special-cargo-standard-pre", label: "Choice Special Cargo Standard PRE" },
+    { value: "choice-wig-premium", label: "Choice Wig PREMIUM" },
+    { value: "choice-wig-standard", label: "Choice Wig Standard" },
+    { value: "chronopost-fr", label: "Chronopost_FR" },
+    { value: "chronopost-local-fr", label: "Chronopost_LOCAL_FR" },
+    { value: "chukouyi-premium-shipping", label: "ChuKouYi Premium Shipping" },
+    { value: "chukouyi-standard-special", label: "ChuKouYi Standard For Special Goods" },
+    { value: "chukouyi-standard-shipping", label: "ChuKouYi Standard Shipping" },
+    { value: "chukou1", label: "Chukou1" },
+    { value: "chukou1-de-depost", label: "Chukou1 DE Depost" },
+    { value: "chukou1-eu-dhl", label: "Chukou1 EU DHL" },
+    { value: "chukou1-us-ams", label: "Chukou1 US AMS" },
+    { value: "chukou1-us-fedex-ground", label: "Chukou1 US FedEx Ground" },
+    { value: "chukou1-us-fulfillment-economy", label: "Chukou1 US Fulfillment Economy" },
+    { value: "chukou1-us-fulfillment-express", label: "Chukou1 US Fulfillment Express" },
+    { value: "chukou1-us-fulfillment-standard", label: "Chukou1 US Fulfillment Standard" },
+    { value: "chukou1-us-ontrac", label: "Chukou1 US Ontrac" },
+    { value: "chukou1-us-ups-ground", label: "Chukou1 US UPS Ground" },
+    { value: "chukou1-us-ups-mi", label: "Chukou1 US UPS MI" },
+    { value: "chukou1-us-ups-surepost", label: "Chukou1 US UPS Surepost" },
+    { value: "chukou1-us-usps-ground-advantage", label: "Chukou1 US USPS Ground Advantage" },
+    { value: "chukou1-us-usps-priority-mail", label: "Chukou1 US USPS Priority Mail" },
+    { value: "colis-prive", label: "Colis_Prive" },
+    { value: "colis-prive-local", label: "Colis_Prive_LOCAL" },
+    { value: "colissimo-fr", label: "Colissimo_FR" },
+    { value: "colissimo-local-fr", label: "Colissimo_LOCAL_FR" },
+    { value: "colissimo-old", label: "Colissimo_old" },
+    { value: "correios-brazil", label: "Correios Brazil" },
+    { value: "correios-bra", label: "Correios_BRA" },
+    { value: "correios-l-br", label: "Correios_L_BR" },
+    { value: "correos", label: "Correos" },
+    { value: "correos-europe", label: "Correos Europe" },
+    { value: "correos-express-spain-local", label: "Correos EXPRESS_SPAIN_LOCAL" },
+    { value: "correos-economy", label: "Correos Economy" },
+    { value: "correos-express", label: "Correos Express" },
+    { value: "correos-express-72h", label: "Correos Express 72H" },
+    { value: "correos-ordinario-buzon", label: "Correos Ordinario Buzon" },
+    { value: "correos-express-alt", label: "Correos_Express" },
+    { value: "deutsche-post-pan-european", label: "DEUTSCHE POST Pan-European" },
+    { value: "de-cn-overseas-wh-stdeu", label: "DE_CN_OVERSEAS_WH_STDEU" },
+    { value: "de-post-be", label: "DE_POST_BE" },
+    { value: "de-post-cz", label: "DE_POST_CZ" },
+    { value: "dgm-smartmail-expedited", label: "DGM Smartmail Expedited" },
+    { value: "dgm-smartmail-expedited-plus", label: "DGM Smartmail Expedited Plus" },
+    { value: "dgm-smartmail-ground", label: "DGM Smartmail Ground" },
+    { value: "dgm-smartmail-ground-plus", label: "DGM Smartmail Ground Plus" },
+    { value: "dgm-us-small", label: "DGM_US_SMALL" },
+    { value: "dhl", label: "DHL" },
+    { value: "dhl-de", label: "DHL DE" },
+    { value: "dhl-de-domestic", label: "DHL DE Domestic" },
+    { value: "dhl-de-domestic-germany", label: "DHL DE Domestic_GERMANY" },
+    { value: "dhl-de-pan-european", label: "DHL DE Pan-European" },
+    { value: "dhl-de-pan-european-germany", label: "DHL DE Pan-European_GERMANY" },
+    { value: "dhl-domestic-service", label: "DHL DOMESTIC SERVICE" },
+    { value: "dhl-domestic-service-local", label: "DHL DOMESTIC SERVICE LOCAL" },
+    { value: "dhl-express", label: "DHL EXPRESS" },
+    { value: "dhl-europe", label: "DHL Europe" },
+    { value: "dhl-local-shipping", label: "DHL Local Shipping" },
+    { value: "dhl-pl", label: "DHL PL" },
+    { value: "dhl-pl-domestic", label: "DHL PL Domestic" },
+    { value: "dhl-pl-domestic-poland", label: "DHL PL Domestic_POLAND" },
+    { value: "dhl-pl-pan-european", label: "DHL PL Pan-European" },
+    { value: "dhl-pl-pan-european-international", label: "DHL PL Pan-European_PL_INTERNATIONAL" },
+    { value: "dhl-pl-to-de", label: "DHL PL TO DE" },
+    { value: "dhl-pan-eu", label: "DHL Pan-EU" },
+    { value: "dhl-ecommerce", label: "DHL e-commerce" },
+    { value: "dhl-be", label: "DHL_BE" },
+    { value: "dhl-cz", label: "DHL_CZ" },
+    { value: "dhl-es", label: "DHL_ES" },
+    { value: "dhl-fr", label: "DHL_FR" },
+    { value: "dhl-it", label: "DHL_IT" },
+    { value: "dhl-pi-es", label: "DHL_PI_ES" },
+    { value: "dhl-p-czde", label: "DHL_P_CZDE" },
+    { value: "dhl-p-czdeeu", label: "DHL_P_CZDEEU" },
+    { value: "dhl-p-czdev", label: "DHL_P_CZDEV" },
+    { value: "dhl-p-pl", label: "DHL_P_PL" },
+    { value: "dhl-spain-local", label: "DHL_SPAIN_LOCAL" },
+    { value: "dpd-de", label: "DPD DE" },
+    { value: "dpd-de-domestic", label: "DPD DE Domestic" },
+    { value: "dpd-de-pan-european", label: "DPD DE Pan-European" },
+    { value: "dpd-de-pan-european-de", label: "DPD DE Pan-European_DE" },
+    { value: "dpd-delivery", label: "DPD DELIVERY" },
+    { value: "dpd-domestic-service", label: "DPD DOMESTIC SERVICE" },
+    { value: "dpd-domestic-service-local", label: "DPD DOMESTIC SERVICE LOCAL" },
+    { value: "dpd-express", label: "DPD EXPRESS" },
+    { value: "dpd-pl", label: "DPD PL" },
+    { value: "dpd-pl-domestic", label: "DPD PL Domestic" },
+    { value: "dpd-pl-domestic-poland", label: "DPD PL Domestic_POLAND" },
+    { value: "dpd-pl-pan-european", label: "DPD PL Pan-European" },
+    { value: "dpd-pl-pan-european-international", label: "DPD PL Pan-European_PL_INTERNATIONAL" },
+    { value: "dpd-pl-oversize", label: "DPD-PL-OVERSIZE" },
+    { value: "dpd-pl-oversize-international", label: "DPD-PL-OVERSIZE-INTERNATIONAL" },
+    { value: "dpd-es", label: "DPD_ES" },
+    { value: "dpd-es-oversize-international", label: "DPD_ES_OVERSIZE INTERNATIONAL" },
+    { value: "dpd-fr-exp", label: "DPD_FR_EXP" },
+    { value: "dpd-fr-local", label: "DPD_FR_LOCAL" },
+    { value: "dpd-p-czint", label: "DPD_P_CZINT" },
+    { value: "dpex", label: "DPEX" },
+    { value: "dpex-za", label: "DPEX_ZA" },
+    { value: "dx-express", label: "DX EXPRESS" },
+    { value: "dx-local-shipping", label: "DX Local Shipping" },
+    { value: "delivery-by-seller", label: "Delivery by seller" },
+    { value: "deutsche-post", label: "Deutsche Post" },
+    { value: "echo-us", label: "ECHO_us" },
+    { value: "ekc", label: "EKC" },
+    { value: "ems", label: "EMS" },
+    { value: "ems-ae", label: "EMS_AE" },
+    { value: "envialia", label: "ENVIALIA" },
+    { value: "eqt-special-standard-oversized", label: "EQT Special Standard Shipping For Oversized Goods" },
+    { value: "esnad", label: "ESNAD" },
+    { value: "es-cttexpress", label: "ES_CTTEXPRESS" },
+    { value: "es-sending", label: "ES_SENDING" },
+    { value: "ewe-express", label: "EWE EXPRESS" },
+    { value: "ebest-fast-shipping", label: "Ebest Fast Shipping" },
+    { value: "ecoscooting", label: "Ecoscooting" },
+    { value: "ecoscooting-local", label: "Ecoscooting_LOCAL" },
+    { value: "entrega-expressa-pegaki", label: "Entrega Expressa (Pegaki Envios)" },
+    { value: "entrega-local", label: "Entrega Local" },
+    { value: "entrega-local-province", label: "Entrega Local - PROVINCE" },
+    { value: "entrega-padrao-infracommerce", label: "Entrega Padrão (InfraCommerce)" },
+    { value: "fedex-mx-local", label: "FEDEX_MX_LOCAL" },
+    { value: "fedex-us", label: "FEDEX_US" },
+    { value: "fedex-us-l2l-exp", label: "FEDEX_US_L2L_EXP" },
+    { value: "fetchr", label: "FETCHR" },
+    { value: "fr-cn-overseas-wh-expeu", label: "FR_CN_OVERSEAS_WH_EXPEU" },
+    { value: "fr-cn-overseas-wh-oseu", label: "FR_CN_OVERSEAS_WH_OSEU" },
+    { value: "fr-local-asendia", label: "FR_LOCAL_ASENDIA" },
+    { value: "fr-local-dhl", label: "FR_LOCAL_DHL" },
+    { value: "fr-local-dhl-eu", label: "FR_LOCAL_DHL_EU" },
+    { value: "fr-local-dpd", label: "FR_LOCAL_DPD" },
+    { value: "fr-local-europe-fr", label: "FR_LOCAL_Europe_FR" },
+    { value: "fr-local-fedex", label: "FR_LOCAL_FEDEX" },
+    { value: "fr-local-tnt", label: "FR_LOCAL_TNT" },
+    { value: "fedex-ground", label: "FedEx Ground" },
+    { value: "fedex-smartpost", label: "FedEx Smartpost" },
+    { value: "fedex-ca", label: "FedEx_CA" },
+    { value: "fedex-mx-exp", label: "FedEx_MX_EXP" },
+    { value: "fedex-de-pan-european", label: "Fedex DE Pan-European" },
+    { value: "fedex-de-pan-european-local", label: "Fedex DE Pan-European_LOCAL" },
+    { value: "fedex-ie", label: "Fedex IE" },
+    { value: "fedex-ip", label: "Fedex IP" },
+    { value: "fedex-pl-pan-european", label: "Fedex PL Pan-European" },
+    { value: "fedex-pl-pan-european-local", label: "Fedex PL Pan-European_LOCAL" },
+    { value: "fedex-es", label: "Fedex_ES" },
+    { value: "fedex-es-local", label: "Fedex_ES_LOCAL" },
+    { value: "fedex-fr", label: "Fedex_FR" },
+    { value: "fedex-fr-local", label: "Fedex_FR_LOCAL" },
+    { value: "flyt-express", label: "Flyt Express" },
+    { value: "flyt-special-economy", label: "Flyt Special Economy" },
+    { value: "france-express", label: "France Express" },
+    { value: "gati", label: "GATI" },
+    { value: "gc-de-eu-dhl", label: "GC_DE_EU_DHL" },
+    { value: "gc-dhl-eu-1", label: "GC_DHL_EU_1" },
+    { value: "gc-dhl-eu-2", label: "GC_DHL_EU_2" },
+    { value: "gc-dhl-noneu", label: "GC_DHL_NonEU" },
+    { value: "gc-fedex-ground", label: "GC_FEDEX_GROUND" },
+    { value: "gc-fedex-largeparcel", label: "GC_FEDEX_LARGEPARCEL" },
+    { value: "gc-fedex-smallparcel", label: "GC_FEDEX_SMALLPARCEL" },
+    { value: "gc-fedex-us", label: "GC_FEDEX_us" },
+    { value: "gc-fr-gls-fds", label: "GC_FR_GLS_FDS" },
+    { value: "gc-fr-gls-local", label: "GC_FR_GLS_LOCAL" },
+    { value: "gc-fr-post-local-ns", label: "GC_FR_POST_LOCAL_NS" },
+    { value: "gc-fr-post-local-s", label: "GC_FR_POST_LOCAL_S" },
+    { value: "gc-rm-tracked-48h-ns", label: "GC_RM_TRACKED_48h_NS" },
+    { value: "gc-ups-ground", label: "GC_UPS_Ground" },
+    { value: "gc-ups-us", label: "GC_UPS_us" },
+    { value: "gc-usps-largeparcel", label: "GC_USPS_LARGEPARCEL" },
+    { value: "gc-usps-smallparcel", label: "GC_USPS_SMALLPARCEL" },
+    { value: "gc-usps-us", label: "GC_USPS_us" },
+    { value: "gc-yodel-48h-small-p", label: "GC_YODEL_48h_SMALL_P" },
+    { value: "gc-yun-us", label: "GC_YUN_us" },
+    { value: "geodis", label: "GEODIS" },
+    { value: "geodismt-h-freu", label: "GEODISMT_H_FREU" },
+    { value: "geodis-fr", label: "GEODIS_FR" },
+    { value: "geodis-fr-os-domestic", label: "GEODIS_FR_OS_DOMESTIC" },
+    { value: "ges-express", label: "GES Express" },
+    { value: "gfs-express", label: "GFS Express" },
+    { value: "gls", label: "GLS" },
+    { value: "gls-europe", label: "GLS Europe" },
+    { value: "gls-gls", label: "GLS - GLS" },
+    { value: "gls-de-domestic", label: "GLS DE Domestic" },
+    { value: "gls-de-domestic-exp", label: "GLS DE Domestic_EXP" },
+    { value: "gls-de-pan-european", label: "GLS DE Pan-European" },
+    { value: "gls-de-pan-european-germany", label: "GLS DE Pan-European_GERMANY" },
+    { value: "gls-express", label: "GLS EXPRESS" },
+    { value: "gls-pl-pan-european", label: "GLS PL Pan-European" },
+    { value: "gls-pl-pan-european-poland", label: "GLS PL Pan-European_POLAND" },
+    { value: "gls-business-parcel-domestic", label: "GLS-Business Parcel Domestic" },
+    { value: "gls-be", label: "GLS_BE" },
+    { value: "gls-es-5days", label: "GLS_ES_5days" },
+    { value: "gls-es-asm", label: "GLS_ES_ASM" },
+    { value: "gls-fr", label: "GLS_FR" },
+    { value: "gls-fr-5days", label: "GLS_FR_5days" },
+    { value: "gls-fr-eu", label: "GLS_FR_EU" },
+    { value: "gls-fr-local", label: "GLS_FR_LOCAL" },
+    { value: "gls-it", label: "GLS_IT" },
+    { value: "gls-p-czde", label: "GLS_P_CZDE" },
+    { value: "gls-p-czdeint", label: "GLS_P_CZDEINT" },
+    { value: "gls-es-business-parcel-international", label: "GLS—ES—Business Parcel_International" },
+    { value: "gls-es-small-parcel-international", label: "GLS—ES—Small Parcel_International" },
+    { value: "gofast-premium-shipping", label: "GOFAST Premium Shipping" },
+    { value: "gofast-standard-shipping", label: "GOFAST Standard Shipping" },
+    { value: "gofo-express", label: "GOFO Express" },
+    { value: "grupoampm", label: "GRUPOAMPM" },
+    { value: "geodis-oversi", label: "Geodis-Oversi" },
+    { value: "hjyt-ssg-large-standard", label: "HJYT_SSG_LARGE_STANDARD" },
+    { value: "hupost", label: "HUPOST" },
+    { value: "huapt", label: "HUAPT" },
+    { value: "hermes-de-domestic", label: "Hermes DE Domestic" },
+    { value: "hermes-de-domestic-local", label: "Hermes DE Domestic_LOCAL" },
+    { value: "hermes-evri-local-shipping", label: "Hermes/Evri Local Shipping" },
+    { value: "hongkong-post-air-mail", label: "HongKong Post Air Mail" },
+    { value: "huahan-special-standard", label: "Huahan Special Standard" },
+    { value: "hungary-post", label: "Hungary Post" },
+    { value: "icp-local", label: "ICP LOCAL" },
+    { value: "imile", label: "IMILE" },
+    { value: "imile-express", label: "IMILE_Express" },
+    { value: "iml-express", label: "IML Express" },
+    { value: "inpost-domestic-service", label: "INPOST DOMESTIC SERVICE" },
+    { value: "inpost-domestic-service-local", label: "INPOST DOMESTIC SERVICE LOCAL" },
+    { value: "inpost-pl-pan-european", label: "InPost PL Pan-European" },
+    { value: "inpost-pl-pan-european-poland", label: "InPost PL Pan-European_POLAND" },
+    { value: "j-net", label: "J-NET" },
+    { value: "jadlog-p-br", label: "JADLOG_P_BR" },
+    { value: "jcex-express", label: "JCEX Express" },
+    { value: "jne", label: "JNE" },
+    { value: "jnet-il", label: "JNET_IL" },
+    { value: "jt-delivery", label: "JT Delivery" },
+    { value: "jt-mx-exp", label: "JT_MX_EXP" },
+    { value: "jt-mx-l2l-std", label: "JT_MX_L2L_STD" },
+    { value: "jt-br-exp", label: "JT_BR_EXP" },
+    { value: "jt-delivery-mx", label: "JT Delivery MX" },
+    { value: "jt-express", label: "JT EXPress" },
+    { value: "jadlog", label: "Jadlog" },
+    { value: "jamef", label: "Jamef" },
+    { value: "krpost-global-ems", label: "KRpost Global EMS" },
+    { value: "krpost-global-kpacket", label: "KRpost Global Kpacket" },
+    { value: "kyoungdong-standard", label: "KYOUNGDONG STANDARD" },
+    { value: "kyuubin-jp", label: "KYUUBIN_JP" },
+    { value: "korea-local-seller-fulfillment", label: "Korea Local Seller Fulfillment" },
+    { value: "korea-post", label: "Korea Post" },
+    { value: "laposte", label: "LAPOSTE" },
+    { value: "laposte-domestic", label: "LAPOSTE-Domestic" },
+    { value: "laposte-eu", label: "LAPOSTE_EU" },
+    { value: "la-poste", label: "La Poste" },
+    { value: "logen-logistics", label: "Logen Logistics" },
+    { value: "lotte-global-logistics", label: "Lotte Global Logistics" },
+    { value: "magalu", label: "MAGALU" },
+    { value: "mini-envio", label: "MINI_ENVIO" },
+    { value: "mrw", label: "MRW" },
+    { value: "mrw-spain-local", label: "MRW_SPAIN_LOCAL" },
+    { value: "mx-cn-overseas-wh-stdus", label: "MX_CN_OVERSEAS_WH_STDUS" },
+    { value: "mia-delivery", label: "Mia Delivery" },
+    { value: "middle-east-direct-mail-israel-door", label: "Middle East direct mail to Israel (door-to-door)" },
+    { value: "middle-east-direct-mail-israel-pickup", label: "Middle East direct mail to Israel (self-pickup)" },
+    { value: "miravia-standard-shipping", label: "Miravia Standard Shipping" },
+    { value: "miravia-warehouse-standard-shipping", label: "Miravia warehouse standard shipping" },
+    { value: "mondial-relay", label: "Mondial Relay" },
+    { value: "mondial-relay-local", label: "Mondial Relay_LOCAL" },
+    { value: "nacex", label: "NACEX" },
+    { value: "naqel", label: "NAQEL" },
+    { value: "ontrac", label: "ONTRAC" },
+    { value: "otground", label: "OTGround" },
+    { value: "other-pl", label: "OTHER PL" },
+    { value: "other-za", label: "OTHER ZA" },
+    { value: "owh-bfy-slp", label: "OWH_BFY_SLP" },
+    { value: "owh-oversize", label: "OWH_OVERSIZE" },
+    { value: "owh-ss-cdek-city", label: "OWH_SS_CDEK_City" },
+    { value: "own-logistics-to-europe", label: "OWN LOGISTICS_TO EUROPE" },
+    { value: "one-world-express", label: "One World Express" },
+    { value: "ontrac-us", label: "Ontrac_us" },
+    { value: "other-sellers-shipping-method-tr", label: "Other Seller's Shipping Method_TR" },
+    { value: "other-shipping-method-europe", label: "Other Shipping Method Europe" },
+    { value: "pac-pb", label: "PAC_PB" },
+    { value: "paq-express", label: "PAQ Express" },
+    { value: "pet-standard-delivery", label: "PET Standard Delivery" },
+    { value: "pl-cn-overseas-wh-expeu", label: "PL_CN_OVERSEAS_WH_EXPEU" },
+    { value: "pl-cn-overseas-wh-exppl", label: "PL_CN_OVERSEAS_WH_EXPPL" },
+    { value: "pl-cn-overseas-wh-stdeu", label: "PL_CN_OVERSEAS_WH_STDEU" },
+    { value: "pl-cn-overseas-wh-stdpl", label: "PL_CN_OVERSEAS_WH_STDPL" },
+    { value: "poczta-pl-domestic", label: "POCZTA PL Domestic" },
+    { value: "poland-dhl-p-pldeeu-exp", label: "POLAND_DHL_P_PLDEEU_EXP" },
+    { value: "pony", label: "PONY" },
+    { value: "pony-ru", label: "PONY_RU" },
+    { value: "pos-malaysia", label: "POS Malaysia" },
+    { value: "post-kr-oversea", label: "POST KR Oversea" },
+    { value: "po", label: "PO" },
+    { value: "raben-de-pan-european", label: "Raben DE Pan-European" },
+    { value: "royal-mail", label: "Royal Mail" },
+    { value: "royal-mail-economy", label: "Royal Mail Economy" },
+    { value: "russia-express-spsr", label: "Russia Express-SPSR" },
+    { value: "russian-air", label: "Russian Air" },
+    { value: "russian-post", label: "Russian Post" },
+    { value: "sagawa-jp-exp", label: "SAGAWA_JP_EXP" },
+    { value: "sedex", label: "SEDEX" },
+    { value: "seko-us", label: "SEKO_us" },
+    { value: "seur", label: "SEUR" },
+    { value: "seur-europe", label: "SEUR Europe" },
+    { value: "seur-spain-local", label: "SEUR_SPAIN_LOCAL" },
+    { value: "sf-economic-air-mail", label: "SF Economic Air Mail" },
+    { value: "sf-express", label: "SF Express" },
+    { value: "sf-eparcel", label: "SF eParcel" },
+    { value: "sfcservice", label: "SFCService" },
+    { value: "shipentegra-tr", label: "SHIPENTEGRA_TR" },
+    { value: "shunyou-standard-sg", label: "SHUNYOU_STANDARD_SG" },
+    { value: "smsa-express", label: "SMSA Express" },
+    { value: "smsa-sa", label: "SMSA_SA" },
+    { value: "spain-dpd-os-international", label: "SPAIN_DPD_OS_INTERNATIONAL" },
+    { value: "spsr-ru", label: "SPSR_RU" },
+    { value: "standard-naep-mx-coco", label: "STANDARD_NAEP_MX_COCO" },
+    { value: "starken-chile", label: "STARKEN Chile" },
+    { value: "seller-shipping", label: "Seller Shipping" },
+    { value: "seller-shipping-au", label: "Seller Shipping AU" },
+    { value: "seller-shipping-cz", label: "Seller Shipping CZ" },
+    { value: "seller-shipping-cz-coun", label: "Seller Shipping CZ Coun" },
+    { value: "seller-shipping-de", label: "Seller Shipping DE" },
+    { value: "seller-shipping-de-coun", label: "Seller Shipping DE Coun" },
+    { value: "seller-shipping-de-coun-local", label: "Seller Shipping DE Coun Local" },
+    { value: "seller-shipping-de-local", label: "Seller Shipping DE Local" },
+    { value: "seller-shipping-es", label: "Seller Shipping ES" },
+    { value: "seller-shipping-es-coun", label: "Seller Shipping ES Coun" },
+    { value: "seller-shipping-es-coun-local", label: "Seller Shipping ES Coun Local" },
+    { value: "seller-shipping-es-local", label: "Seller Shipping ES Local" },
+    { value: "seller-shipping-fr", label: "Seller Shipping FR" },
+    { value: "seller-shipping-fr-coun", label: "Seller Shipping FR Coun" },
+    { value: "seller-shipping-fr-coun-local", label: "Seller Shipping FR Coun Local" },
+    { value: "seller-shipping-fr-local", label: "Seller Shipping FR Local" },
+    { value: "seller-shipping-it", label: "Seller Shipping IT" },
+    { value: "seller-shipping-it-coun", label: "Seller Shipping IT Coun" },
+    { value: "seller-shipping-it-coun-local", label: "Seller Shipping IT Coun Local" },
+    { value: "seller-shipping-it-local", label: "Seller Shipping IT Local" },
+    { value: "seller-shipping-jp", label: "Seller Shipping JP" },
+    { value: "seller-shipping-large", label: "Seller Shipping Large" },
+    { value: "seller-shipping-large-local", label: "Seller Shipping Large Local" },
+    { value: "seller-shipping-mx", label: "Seller Shipping MX" },
+    { value: "seller-shipping-pl", label: "Seller Shipping PL" },
+    { value: "seller-shipping-pl-coun", label: "Seller Shipping PL Coun" },
+    { value: "seller-shipping-pl-coun-local", label: "Seller Shipping PL Coun Local" },
+    { value: "seller-shipping-pl-local", label: "Seller Shipping PL Local" },
+    { value: "seller-shipping-uk", label: "Seller Shipping UK" },
+    { value: "seller-shipping-uk-local", label: "Seller Shipping UK Local" },
+    { value: "seller-shipping-local", label: "Seller Shipping local" },
+    { value: "sellers-shipping-method", label: "Seller's Shipping Method" },
+    { value: "sellers-shipping-method-au", label: "Seller's Shipping Method - AU" },
+    { value: "sellers-shipping-method-br", label: "Seller's Shipping Method - BR" },
+    { value: "sellers-shipping-method-cz", label: "Seller's Shipping Method - CZ" },
+    { value: "sellers-shipping-method-de", label: "Seller's Shipping Method - DE" },
+    { value: "sellers-shipping-method-de-eur", label: "Seller's Shipping Method - DE(EUR)" },
+    { value: "turkey-post", label: "TURKEY_POST" },
+    { value: "team-global-express", label: "Team Global Express" },
+    { value: "tmall-marketplace-cn-shipping-city", label: "Tmall Marketplace CN Shipping CITY" },
+    { value: "tmall-marketplace-cn-shipping-region", label: "Tmall Marketplace CN Shipping REGION" },
+    { value: "turkey-post-regular", label: "Turkey Post" },
+    { value: "turkey-post-registered-parcel", label: "Turkey Post Registered Parcel" },
+    { value: "u-speed-il-to-door", label: "U Speed_IL_To Door" },
+    { value: "ubi", label: "UBI" },
+    { value: "udel-express", label: "UDEL EXPRESS" },
+    { value: "udel-local-shipping", label: "UDEL Local Shipping" },
+    { value: "uk-min-1-hour-local", label: "UK MIN 1 HOUR LOCAL" },
+    { value: "ups-2nd-day", label: "UPS 2nd Day" },
+    { value: "ups-de-pan-european", label: "UPS DE Pan-European" },
+    { value: "ups-de-pan-european-germany", label: "UPS DE Pan-European_GERMANY" },
+    { value: "ups-expedited", label: "UPS Expedited" },
+    { value: "ups-express-saver", label: "UPS Express Saver" },
+    { value: "ups-ground", label: "UPS Ground" },
+    { value: "ups-mail-innovations", label: "UPS Mail Innovations" },
+    { value: "ups-pl", label: "UPS PL" },
+    { value: "ups-pl-domestic", label: "UPS PL Domestic" },
+    { value: "ups-pl-pan-european", label: "UPS PL Pan-European" },
+    { value: "ups-pl-pan-european-poland", label: "UPS PL Pan-European_POLAND" },
+    { value: "ups-pan-eu", label: "UPS Pan-EU" },
+    { value: "ups-small-parcel", label: "UPS Small Parcel" },
+    { value: "ups-surepost", label: "UPS Surepost" },
+    { value: "ups-business-parcel-domestic", label: "UPS-Business Parcel_Domestic" },
+    { value: "ups-oversize-domestic", label: "UPS-Oversize_Domestic" },
+    { value: "ups-oversize-international", label: "UPS-Oversize_International" },
+    { value: "ups-be", label: "UPS_BE" },
+    { value: "ups-ca", label: "UPS_CA" },
+    { value: "ups-cz-eu", label: "UPS_CZ_EU" },
+    { value: "ups-es", label: "UPS_ES" },
+    { value: "ups-fr", label: "UPS_FR" },
+    { value: "ups-fr-international", label: "UPS_FR_INTERNATIONAL" },
+    { value: "ups-p-czint", label: "UPS_P_CZINT" },
+    { value: "ups-spain-local", label: "UPS_SPAIN_LOCAL" },
+    { value: "ups-us", label: "UPS_US" },
+    { value: "ups-us-l2l-exp", label: "UPS_US_L2L_EXP" },
+    { value: "uspeed-ae-gcc", label: "USPEED_AE_GCC" },
+    { value: "usps", label: "USPS" },
+    { value: "usps-first-class", label: "USPS First Class" },
+    { value: "usps-first-class-us", label: "USPS First Class_US" },
+    { value: "usps-large-letter", label: "USPS Large Letter" },
+    { value: "usps-parcel", label: "USPS Parcel" },
+    { value: "usps-priority-mail", label: "USPS Priority Mail" },
+    { value: "usps-us-l2l-std", label: "USPS_US_L2L_STD" },
+    { value: "us-cn-overseas-wh-expus", label: "US_CN_OVERSEAS_WH_EXPUS" },
+    { value: "us-cn-overseas-wh-stdus", label: "US_CN_OVERSEAS_WH_STDUS" },
+    { value: "uspeed-il-toshop", label: "USpeed_IL_ToShop" },
+    { value: "uz-bonded-warehouse-direct", label: "UZ Bonded Warehouse Direct" },
+    { value: "ukrposhta", label: "Ukrposhta" },
+    { value: "umall-fast-shipping", label: "Umall Fast Shipping" },
+    { value: "urvaam", label: "Urvaam" },
+    { value: "valin-ae", label: "VALIN_AE" },
+    { value: "vnlin-p-aeil-door", label: "VNLIN_P_AEIL_DOOR" },
+    { value: "vnlin-sa", label: "VNLIN_SA" },
+    { value: "winitdepost-warenpost", label: "WINITDEPOST_WARENPOST" },
+    { value: "winitdhl-de", label: "WINITDHL_DE" },
+    { value: "winitdhl-international", label: "WINITDHL_INTERNATIONAL" },
+    { value: "winitdpd-de", label: "WINITDPD_DE" },
+    { value: "winitups-ground", label: "WINITUPS_GROUND" },
+    { value: "winitups-ground-sign", label: "WINITUPS_GROUND_SIGN" },
+    { value: "winitups-surepost", label: "WINITUPS_SUREPOST" },
+    { value: "winitusps-firstclass", label: "WINITUSPS_FIRSTCLASS" },
+    { value: "winit-yodel-home48", label: "WINIT_YODEL_HOME48" },
+    { value: "wwe-standard", label: "WWE_STANDARD" },
+    { value: "western-post-fedex-smartpost", label: "Western Post FEDEX Smartpost" },
+    { value: "western-post-ups-ground-hd", label: "Western Post UPS Ground & HD Quotation" },
+    { value: "western-post-us-uniuni", label: "Western Post US Uniuni" },
+    { value: "western-post-usps-ground-advantage", label: "Western Post USPS Ground Advantage" },
+    { value: "winit-amazon", label: "Winit Amazon" },
+    { value: "winit-de-post-warenpost", label: "Winit DE Post - Warenpost" },
+    { value: "winit-dhl-domestic-paket", label: "Winit DHL - Domestic Paket" },
+    { value: "winit-evri-uk-standard-24", label: "Winit EVRi - UK Standard 24" },
+    { value: "winit-evri-uk-standard-48", label: "Winit EVRi - UK Standard 48" },
+    { value: "winit-fedex-ground-economy", label: "Winit FedEx Ground Economy" },
+    { value: "winit-fedex-ground-standard", label: "Winit FedEx Ground Standard" },
+    { value: "winit-fulfillment-amazon", label: "Winit Fulfillment Amazon" },
+    { value: "winit-fulfillment-economy", label: "Winit Fulfillment Economy" },
+    { value: "winit-fulfillment-plus-economy", label: "Winit Fulfillment Plus Economy" },
+    { value: "winit-fulfillment-plus-express", label: "Winit Fulfillment Plus Express" },
+    { value: "winit-fulfillment-plus-standard", label: "Winit Fulfillment Plus Standard" },
+    { value: "winit-fulfillment-standard", label: "Winit Fulfillment Standard" },
+    { value: "winit-fulfillment-ups-ground", label: "Winit Fulfillment UPS Ground" },
+    { value: "winit-fulfillment-ups-mail-innovations", label: "Winit Fulfillment UPS Mail Innovations" },
+    { value: "winit-fulfillment-economy-de", label: "Winit Fulfillment-Economy-DE" },
+    { value: "winit-fulfillment-standard-de", label: "Winit Fulfillment-Standard-DE" },
+    { value: "winit-fulfillment-standard-uk", label: "Winit Fulfillment-Standard-UK" },
+    { value: "winit-ontrac-ground", label: "Winit OnTrac Ground" },
+    { value: "winit-royal-mail-tracked-24", label: "Winit Royal Mail - Tracked 24 Parcel" },
+    { value: "winit-royal-mail-tracked-48", label: "Winit Royal Mail - Tracked 48 Parcel" },
+    { value: "winit-ups-3-day-select", label: "Winit UPS 3 Day Select Residential" },
+    { value: "winit-ups-ground-standard", label: "Winit UPS Ground Standard" },
+    { value: "winit-ups-mail-innovations", label: "Winit UPS Mail Innovations" },
+    { value: "winit-ups-next-day-air-saver", label: "Winit UPS Next Day Air Saver" },
+    { value: "winit-ups-surepost", label: "Winit UPS Surepost" },
+    { value: "winit-usps-ground-advantage", label: "Winit USPS Ground Advantage" },
+    { value: "winit-usps-priority-mail", label: "Winit USPS Priority Mail" },
+    { value: "xdp-express", label: "XDP EXPRESS" },
+    { value: "xdp-local-shipping", label: "XDP Local Shipping" },
+    { value: "yanwen-special-economy", label: "YANWEN Special Economy" },
+    { value: "yanwen-special-standard", label: "YANWEN Special Standard" },
+    { value: "ydh-uk-dpd-lgb", label: "YDH UK DPD LGB" },
+    { value: "ydh-uk-evri-lgb", label: "YDH UK EVRI LGB" },
+    { value: "ydh-uk-royalmail-lgb", label: "YDH UK ROYALMAIL LGB" },
+    { value: "yfh-special-standard", label: "YFH Special Standard" },
+    { value: "yfh-standard-special-goods", label: "YFH Standard For Special Goods" },
+    { value: "yfh-standard-shipping", label: "YFH Standard Shipping" },
+    { value: "ym-de-pan-european", label: "YM DE Pan-European" },
+    { value: "ym-local-shipping", label: "YM Local Shipping" },
+    { value: "ym-es", label: "YM_ES" },
+    { value: "ym-fr", label: "YM_FR" },
+    { value: "ym-it", label: "YM_IT" },
+    { value: "ym-mx", label: "YM_MX" },
+    { value: "ym-uk", label: "YM_UK" },
+    { value: "ym-us", label: "YM_US" },
+    { value: "yode", label: "YODE" },
+    { value: "yodel", label: "YODEL" },
+    { value: "yodel-local-shipping", label: "YODEL Local Shipping" },
+    { value: "yanwen-standard-shipping", label: "YanWen Standard Shipping" },
+    { value: "yanwen-economic-air-mail", label: "Yanwen Economic Air Mail" },
+    { value: "yunexpress-premium-shipping", label: "YunExpress Premium Shipping" },
+    { value: "yunexpress-standard-heavy-parcel", label: "YunExpress Standard For Heavy Parcel" },
+    { value: "yunexpress-standard-special-goods", label: "YunExpress Standard For Special Goods" },
+    { value: "yunexpress-standard-shipping", label: "YunExpress Standard Shipping" },
+    { value: "zeleris", label: "ZELERIS" },
+    { value: "acommerce", label: "aCommerce" },
+    { value: "e-ems", label: "e-EMS" },
+    { value: "epacket", label: "ePacket" },
+    { value: "etotal", label: "eTotal" },
+    { value: "imile-delivery", label: "iMile Delivery" },
+    { value: "imile-sa", label: "iMile_SA" },
+    { value: "local-shipping-large", label: "Local Shipping Large" },
+    { value: "other-shipping-companies", label: "Other Shipping Companies" },
+    { value: "delivery-from-seller-to-regions", label: "Delivery From Seller to Regions" },
+    { value: "russian-post-courier-online", label: "Russian Post - Courier Online" },
+    { value: "russian-post-to-regions", label: "Russian Post to Regions" },
+    { value: "cdek-to-cities", label: "CDEK to Cities" },
+    { value: "pickup-from-collection-point", label: "Pickup From Collection Point" },
+    { value: "standard-delivery-cainiao-warehouse-courier", label: "Standard Delivery From Official Cainiao Warehouse by Courier" },
+    { value: "cainiao-courier-delivery-cn-gd-ru", label: "Cainiao Courier Delivery_CN_GD/RU" }
+  ];
+
+  // Function to add new shipping method row
+  const addGlobalShippingRow = (selectedMethod: string) => {
+    if (selectedMethod) {
+      const newRow = {
+        id: Date.now(),
+        selectedMethod: selectedMethod
+      };
+      setGlobalShippingRows(prev => [...prev, newRow]);
+    }
+  };
+  const [operationValue1, setOperationValue1] = useState(1.00);
+  const [operationValue2, setOperationValue2] = useState(2.00);
+  const [operationValue3, setOperationValue3] = useState(3.00);
+  const [operationValue4, setOperationValue4] = useState(4.00);
+  const [operationValue5, setOperationValue5] = useState(5.00);
+  const [operationValue6, setOperationValue6] = useState(6.00);
+
+  // Checkbox states
+  const [mainComparedPriceChecked, setMainComparedPriceChecked] = useState(false);
+  const [row2Checked, setRow2Checked] = useState(false);
+  const [row3Checked, setRow3Checked] = useState(false);
+  const [row4Checked, setRow4Checked] = useState(false);
+
+  // Range validation states
+  const [range1Error, setRange1Error] = useState(false);
+  const [range2Error, setRange2Error] = useState(false);
+  const [rangeOverlapError, setRangeOverlapError] = useState(false);
+  const [dynamicRowError, setDynamicRowError] = useState(false);
+
+  // Validation functions
+  const validateRange1 = () => {
+    // Convert to numbers to ensure proper comparison
+    const startValue = Number(standardRange1Start);
+    const endValue = Number(standardRange1End);
+    const hasError = startValue >= endValue;
+    setRange1Error(hasError);
+    return !hasError;
+  };
+
+  const validateRange2 = () => {
+    // Only validate if ending value is actually filled (not empty)
+    if (standardRange2End === "" || standardRange2End === null || standardRange2End === undefined) {
+      setRange2Error(false);
+      return true;
+    }
+    // Convert to numbers to ensure proper comparison
+    const startValue = Number(standardRange2Start);
+    const endValue = Number(standardRange2End);
+    const hasError = startValue >= endValue;
+    setRange2Error(hasError);
+    return !hasError;
+  };
+
+  const validateRangeOverlap = () => {
+    let hasOverlap = false;
+
+    // Check Range 1 and Range 2 overlap
+    if (range1Visible && range2Visible) {
+      const range1EndValue = Number(standardRange1End);
+      const range2StartValue = Number(standardRange2Start);
+      if (range1EndValue >= range2StartValue) {
+        hasOverlap = true;
+      }
+    }
+
+    // Check Range 2 and dynamic rows overlap
+    if (range2Visible && dynamicRows.length > 0) {
+      const range2EndValue = Number(standardRange2End);
+      const dynamicRowStartValue = Number(dynamicRows[0].rangeStart);
+      if (range2EndValue >= dynamicRowStartValue) {
+        hasOverlap = true;
+      }
+    }
+
+    setRangeOverlapError(hasOverlap);
+    return !hasOverlap;
+  };
+
+  const validateDynamicRows = () => {
+    // Check if any dynamic row has starting price >= ending price
+    let hasError = false;
+    for (const row of dynamicRows) {
+      if (row.rangeEnd !== "" && row.rangeEnd !== null && row.rangeEnd !== undefined) {
+        const startValue = Number(row.rangeStart);
+        const endValue = Number(row.rangeEnd);
+        if (startValue >= endValue) {
+          hasError = true;
+          break;
+        }
+      }
+    }
+    setDynamicRowError(hasError);
+    return !hasError;
+  };
+
+  // Real-time validation with useEffect
+  useEffect(() => {
+    if (range1Visible) {
+      validateRange1();
+    } else {
+      setRange1Error(false);
+    }
+  }, [standardRange1Start, standardRange1End, range1Visible]);
+
+  useEffect(() => {
+    if (range2Visible) {
+      validateRange2();
+    } else {
+      setRange2Error(false);
+    }
+  }, [standardRange2Start, standardRange2End, range2Visible]);
+
+  useEffect(() => {
+    if ((range1Visible && range2Visible) || (range2Visible && dynamicRows.length > 0)) {
+      validateRangeOverlap();
+    } else {
+      setRangeOverlapError(false);
+    }
+  }, [standardRange1End, standardRange2Start, standardRange2End, range1Visible, range2Visible, dynamicRows]);
+
+  // Automatic range adjustment: when range 1 end changes, set range 2 start to range 1 end + 0.01 (only if both ranges are visible)
+  useEffect(() => {
+    if (range1Visible && range2Visible) {
+      const newRange2Start = Number(standardRange1End) + 0.01;
+      if (Number(standardRange2Start) !== newRange2Start) {
+        setStandardRange2Start(newRange2Start);
+      }
+    }
+  }, [standardRange1End, range1Visible, range2Visible]);
+
+  // Function to handle dynamic row creation when user finishes editing
+  const handleRange2Complete = () => {
+    // Only generate if Range 2 is visible and ending is filled
+    if (range2Visible && standardRange2End !== "" && standardRange2End !== null) {
+      const range2EndNum = Number(standardRange2End);
+
+      if (range2EndNum > 0) {
+        // Only create ONE additional row if none exists yet
+        if (dynamicRows.length === 0) {
+          const newRowStart = range2EndNum + 0.01;
+
+          const newRow = {
+            id: `row_${Date.now()}`,
+            rangeStart: newRowStart,
+            rangeEnd: "", // This will be the final "All remaining price ranges" row
+            operationValue1: 1.00,
+            operationValue2: 2.00,
+            checkboxChecked: false,
+            hasInheritedCheckbox: false
+          };
+
+          setDynamicRows([newRow]);
+          // Make Range 2 deletable when a new row is created
+          setRange2Deletable(true);
+        }
+      }
+    }
+  };
+
+  // Handle Range 2 deletion - promote dynamic row to Range 2 position
+  useEffect(() => {
+    if (!range2Visible && dynamicRows.length > 0) {
+      // Promote first dynamic row to Range 2
+      const firstDynamicRow = dynamicRows[0];
+      setStandardRange2Start(firstDynamicRow.rangeStart);
+      setStandardRange2End(""); // Reset end price so user can re-complete
+      setRow3Checked(firstDynamicRow.checkboxChecked);
+      // Remove the promoted row from dynamic rows
+      setDynamicRows(dynamicRows.slice(1));
+      // Make Range 2 visible again
+      setRange2Visible(true);
+      setRange2Deletable(false);
+    } else if (!range2Visible) {
+      setRange2Deletable(false);
+    }
+  }, [range2Visible]);
+
+  // Update third row starting price when Range 2 ending price changes
+  useEffect(() => {
+    if (dynamicRows.length > 0 && standardRange2End !== "" && standardRange2End !== null) {
+      const newThirdRowStart = Number(standardRange2End) + 0.01;
+      const updatedRows = [...dynamicRows];
+      updatedRows[0].rangeStart = newThirdRowStart;
+      setDynamicRows(updatedRows);
+    }
+  }, [standardRange2End]);
+
+  // Validate dynamic rows whenever they change
+  useEffect(() => {
+    validateDynamicRows();
+  }, [dynamicRows]);
+
+
+  // Track if any pricing rule changes have been made
+  const [hasPricingChanges, setHasPricingChanges] = useState(false);
+
+  // Initial values to track changes
+  const [initialPricingValues, setInitialPricingValues] = useState({
+    basicPricingCost: "Product Cost",
+    basicPricingPattern: "+",
+    basicPricingValue: 0,
+    comparedPricingEnabled: false,
+    comparedPricingCost: "Product Cost",
+    comparedPricingPattern: "+",
+    comparedPricingValue: 0,
+    pricingRuleType: "PricingRankBasic"
+  });
+
+  // Check for changes whenever pricing values change
+  useEffect(() => {
+    const hasChanges =
+      basicPricingCost !== initialPricingValues.basicPricingCost ||
+      basicPricingPattern !== initialPricingValues.basicPricingPattern ||
+      basicPricingValue !== initialPricingValues.basicPricingValue ||
+      comparedPricingEnabled !== initialPricingValues.comparedPricingEnabled ||
+      comparedPricingCost !== initialPricingValues.comparedPricingCost ||
+      comparedPricingPattern !== initialPricingValues.comparedPricingPattern ||
+      comparedPricingValue !== initialPricingValues.comparedPricingValue ||
+      pricingRuleType !== initialPricingValues.pricingRuleType;
+
+    setHasPricingChanges(hasChanges);
+  }, [basicPricingCost, basicPricingPattern, basicPricingValue, comparedPricingEnabled, comparedPricingCost, comparedPricingPattern, comparedPricingValue, pricingRuleType, initialPricingValues]);
+
+  // Save pricing changes
+  const handleSavePricingChanges = () => {
+    // Update initial values to current values
+    setInitialPricingValues({
+      basicPricingCost,
+      basicPricingPattern,
+      basicPricingValue,
+      comparedPricingEnabled,
+      comparedPricingCost,
+      comparedPricingPattern,
+      comparedPricingValue,
+      pricingRuleType
+    });
+    setHasPricingChanges(false);
+    // Add any additional save logic here
+  };
+  const [priceThresholdOption, setPriceThresholdOption] = useState("any");
+  const [inventoryChangesEnabled, setInventoryChangesEnabled] = useState(false); // default OFF
+  const [skuChangesEnabled, setSkuChangesEnabled] = useState(true); // default ON  
+  const [cancelledOrderEnabled, setCancelledOrderEnabled] = useState(true); // default ON
+  const [aiRecommendationEnabled, setAiRecommendationEnabled] = useState(true); // default ON
+  const [originalPriceChangesEnabled, setOriginalPriceChangesEnabled] = useState(false);
+  const [originalPriceThresholdOption, setOriginalPriceThresholdOption] = useState("any");
+  const [originalInventoryChangesEnabled, setOriginalInventoryChangesEnabled] = useState(false);
+  const [originalSkuChangesEnabled, setOriginalSkuChangesEnabled] = useState(true);
+  const [originalCancelledOrderEnabled, setOriginalCancelledOrderEnabled] = useState(true);
+  const [originalAiRecommendationEnabled, setOriginalAiRecommendationEnabled] = useState(true);
+  const { hasUnsavedChanges, setHasUnsavedChanges, shouldShakeSettingsButtons, triggerSettingsButtonsShake } = useUnsavedChanges();
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [aliexpressPopoverOpen, setAliexpressPopoverOpen] = useState(false);
+  const [temuPopoverOpen, setTemuPopoverOpen] = useState(false);
+  const [aliexpressDefault, setAliexpressDefault] = useState("YES");
+  const [temuDefault, setTemuDefault] = useState("NO");
+  const [aliexpressNote, setAliexpressNote] = useState("");
+  const [defaultMessage, setDefaultMessage] = useState("");
+  const [salesChannelMessage, setSalesChannelMessage] = useState("");
+  const [phoneNumberRows, setPhoneNumberRows] = useState([{ id: 1, country: "global", number: "" }]);
+  const [defaultPhoneRows, setDefaultPhoneRows] = useState([
+    { id: 1, country: "global", number: "0000000" },
+    { id: 2, country: "us", number: "0000000000" },
+    { id: 3, country: "br", number: "00000000000" },
+    { id: 4, country: "fr", number: "000000001" },
+    { id: 5, country: "uk", number: "0000000001" },
+    { id: 6, country: "ca", number: "0000000000" }
+  ]);
+
+  // Comprehensive country list with unique phone numbers for "Show more" - extracted from provided code
+  const allCountriesWithPhones = [
+    { id: 1, country: "global", number: "0000000" },
+    { id: 2, country: "us", number: "0000000000" },
+    { id: 3, country: "br", number: "00000000000" },
+    { id: 4, country: "fr", number: "000000001" },
+    { id: 5, country: "uk", number: "0000000001" },
+    { id: 6, country: "ca", number: "0000000000" },
+    { id: 7, country: "ar", number: "0000000000" },
+    { id: 8, country: "at", number: "0000000000" },
+    { id: 9, country: "au", number: "000000000" },
+    { id: 10, country: "be", number: "0000000000" },
+    { id: 11, country: "bg", number: "000000000" },
+    { id: 12, country: "bh", number: "00000000" },
+    { id: 13, country: "ch", number: "000000000" },
+    { id: 14, country: "cl", number: "000000000" },
+    { id: 15, country: "co", number: "0000000000" },
+    { id: 16, country: "cy", number: "00000000" },
+    { id: 17, country: "cz", number: "000000000" },
+    { id: 18, country: "de", number: "00000000001" },
+    { id: 19, country: "dk", number: "00000000" },
+    { id: 20, country: "ee", number: "00000000" },
+    { id: 21, country: "es", number: "0000000001" },
+    { id: 22, country: "gn", number: "000000000" },
+    { id: 23, country: "gp", number: "000000000" },
+    { id: 24, country: "gr", number: "0000000000" },
+    { id: 25, country: "hk", number: "00000000" },
+    { id: 26, country: "hr", number: "000000000" },
+    { id: 27, country: "hu", number: "000000000" },
+    { id: 28, country: "id", number: "0000000000" },
+    { id: 29, country: "ie", number: "000000000" },
+    { id: 30, country: "il", number: "500000000" },
+    { id: 31, country: "in", number: "0000000000" },
+    { id: 32, country: "it", number: "0000000001" },
+    { id: 33, country: "jp", number: "0000000000" },
+    { id: 34, country: "kr", number: "1000000000" },
+    { id: 35, country: "kw", number: "00000000" },
+    { id: 36, country: "lt", number: "00000000" },
+    { id: 37, country: "lu", number: "000000000" },
+    { id: 38, country: "lv", number: "00000000" },
+    { id: 39, country: "mq", number: "000000000" },
+    { id: 40, country: "mt", number: "00000000" },
+    { id: 41, country: "mx", number: "0000000000" },
+    { id: 42, country: "my", number: "000000000" },
+    { id: 43, country: "no", number: "00000000" },
+    { id: 44, country: "nz", number: "00000000" },
+    { id: 45, country: "pe", number: "000000000" },
+    { id: 46, country: "pf", number: "00000000" },
+    { id: 47, country: "ph", number: "0000000000" },
+    { id: 48, country: "pl", number: "0000000001" },
+    { id: 49, country: "qa", number: "00000000" },
+    { id: 50, country: "ro", number: "000000000" },
+    { id: 51, country: "ru", number: "0000000000" },
+    { id: 52, country: "se", number: "000000000" },
+    { id: 53, country: "sg", number: "00000000" },
+    { id: 54, country: "si", number: "00000000" },
+    { id: 55, country: "sk", number: "000000000" },
+    { id: 56, country: "th", number: "000000000" },
+    { id: 57, country: "tr", number: "0000000000" },
+    { id: 58, country: "tw", number: "000000000" },
+    { id: 59, country: "ua", number: "000000001" },
+    { id: 60, country: "uy", number: "00000000" },
+    { id: 61, country: "vn", number: "000000000" },
+    { id: 62, country: "za", number: "000000000" },
+    { id: 63, country: "fi", number: "00000000" },
+    { id: 64, country: "nl", number: "0000000000" },
+    { id: 65, country: "cn", number: "000000000" }
+  ];
+  const [showMoreDefault, setShowMoreDefault] = useState(false);
+  const [syncDateRange, setSyncDateRange] = useState(undefined);
+
+  // Country list for phone number optimization - comprehensive list
+  const countries = [
+    { value: "global", label: "Global" },
+    { value: "us", label: "United States" },
+    { value: "uk", label: "United Kingdom" },
+    { value: "ca", label: "Canada" },
+    { value: "au", label: "Australia" },
+    { value: "de", label: "Germany" },
+    { value: "fr", label: "France" },
+    { value: "it", label: "Italy" },
+    { value: "es", label: "Spain" },
+    { value: "nl", label: "Netherlands" },
+    { value: "fi", label: "Finland" },
+    { value: "se", label: "Sweden" },
+    { value: "no", label: "Norway" },
+    { value: "dk", label: "Denmark" },
+    { value: "jp", label: "Japan" },
+    { value: "cn", label: "China" },
+    { value: "kr", label: "South Korea" },
+    { value: "in", label: "India" },
+    { value: "br", label: "Brazil" },
+    { value: "mx", label: "Mexico" },
+    { value: "ar", label: "Argentina" },
+    { value: "at", label: "Austria" },
+    { value: "be", label: "Belgium" },
+    { value: "bg", label: "Bulgaria" },
+    { value: "bh", label: "Bahrain" },
+    { value: "ch", label: "Switzerland" },
+    { value: "cl", label: "Chile" },
+    { value: "co", label: "Colombia" },
+    { value: "cy", label: "Cyprus" },
+    { value: "cz", label: "Czech Republic" },
+    { value: "ee", label: "Estonia" },
+    { value: "gn", label: "Guinea" },
+    { value: "gp", label: "Guadeloupe" },
+    { value: "gr", label: "Greece" },
+    { value: "hk", label: "Hong Kong,China" },
+    { value: "hr", label: "Croatia (local name: Hrvatska)" },
+    { value: "hu", label: "Hungary" },
+    { value: "id", label: "Indonesia" },
+    { value: "ie", label: "Ireland" },
+    { value: "il", label: "Israel" },
+    { value: "kw", label: "Kuwait" },
+    { value: "lt", label: "Lithuania" },
+    { value: "lu", label: "Luxembourg" },
+    { value: "lv", label: "Latvia" },
+    { value: "mq", label: "Martinique" },
+    { value: "mt", label: "Malta" },
+    { value: "my", label: "Malaysia" },
+    { value: "nz", label: "New Zealand" },
+    { value: "pe", label: "Peru" },
+    { value: "pf", label: "French Polynesia" },
+    { value: "ph", label: "Philippines" },
+    { value: "pl", label: "Poland" },
+    { value: "qa", label: "Qatar" },
+    { value: "ro", label: "Romania" },
+    { value: "ru", label: "Russian Federation" },
+    { value: "sg", label: "Singapore" },
+    { value: "si", label: "Slovenia" },
+    { value: "sk", label: "Slovakia (Slovak Republic)" },
+    { value: "th", label: "Thailand" },
+    { value: "tr", label: "Turkey" },
+    { value: "tw", label: "Taiwan,China" },
+    { value: "ua", label: "Ukraine" },
+    { value: "uy", label: "Uruguay" },
+    { value: "vn", label: "Vietnam" },
+    { value: "za", label: "South Africa" }
+  ];
+
+  const addPhoneNumberRow = () => {
+    const newId = Math.max(...phoneNumberRows.map(row => row.id)) + 1;
+    setPhoneNumberRows([...phoneNumberRows, { id: newId, country: "global", number: "" }]);
+  };
+
+  const removePhoneNumberRow = (id: number) => {
+    setPhoneNumberRows(phoneNumberRows.filter(row => row.id !== id));
+  };
+
+  const updatePhoneNumberRow = (id: number, field: string, value: string) => {
+    setPhoneNumberRows(phoneNumberRows.map(row =>
+      row.id === id ? { ...row, [field]: value } : row
+    ));
+  };
+
+  const loadAllCountries = () => {
+    setDefaultPhoneRows(allCountriesWithPhones);
+    setShowMoreDefault(true);
+  };
+
+  const addDefaultPhoneRow = () => {
+    const newId = Math.max(...defaultPhoneRows.map(row => row.id)) + 1;
+    setDefaultPhoneRows([...defaultPhoneRows, { id: newId, country: "global", number: "" }]);
+  };
+
+  const removeDefaultPhoneRow = (id: number) => {
+    setDefaultPhoneRows(defaultPhoneRows.filter(row => row.id !== id));
+  };
+
+  const updateDefaultPhoneRow = (id: number, field: string, value: string) => {
+    setDefaultPhoneRows(defaultPhoneRows.map(row =>
+      row.id === id ? { ...row, [field]: value } : row
+    ));
+  };
+  const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [temuNote, setTemuNote] = useState("");
+  const [showAccountDetails, setShowAccountDetails] = useState(false);
+  const [showTemuAccountDetails, setShowTemuAccountDetails] = useState(false);
+  const [showEbayAccountDetails, setShowEbayAccountDetails] = useState(false);
+  const [showSwitchAccountDialog, setShowSwitchAccountDialog] = useState(false);
+
+  // Automated Mapping state
+  const [mappingRows, setMappingRows] = useState([
+    { id: 1, storeValue: '', supplierValue: '' }
+  ]);
+
+  // Automated Mapping functions
+  const addMappingRow = () => {
+    const newId = Math.max(...mappingRows.map(row => row.id)) + 1;
+    setMappingRows([...mappingRows, { id: newId, storeValue: '', supplierValue: '' }]);
+  };
+
+  const deleteMappingRow = (id: number) => {
+    setMappingRows(mappingRows.filter(row => row.id !== id));
+  };
+
+  const updateMappingRow = (id: number, field: 'storeValue' | 'supplierValue', value: string) => {
+    setMappingRows(mappingRows.map(row =>
+      row.id === id ? { ...row, [field]: value } : row
+    ));
+  };
+  const [isAutoLoginEnabled, setIsAutoLoginEnabled] = useState(true);
+  const [useSupplierIdAsSku, setUseSupplierIdAsSku] = useState(true);
+  const [pushProductOption, setPushProductOption] = useState("SendCostAbleProductCostToShopify");
+  const [migrationType, setMigrationType] = useState("1");
+  const [sourceStore, setSourceStore] = useState("");
+  const [targetStore, setTargetStore] = useState("");
+  const [migrateProducts, setMigrateProducts] = useState(true);
+  const [migrateMapping, setMigrateMapping] = useState(true);
+
+  // Multilingual product language states
+  const [frenchEnabled, setFrenchEnabled] = useState(false);
+  const [portugueseEnabled, setPortugueseEnabled] = useState(false);
+  const [germanEnabled, setGermanEnabled] = useState(false);
+  const [italianEnabled, setItalianEnabled] = useState(false);
+  const [spanishEnabled, setSpanishEnabled] = useState(false);
+
+  // Automatic inventory update states
+  const [inventoryProductOption, setInventoryProductOption] = useState("AutoSyncInventoryProductInvalidDoNothing");
+  const [inventoryVariantOption, setInventoryVariantOption] = useState("AutoSyncInventoryVariantInvalidDoNothing");
+  const [inventoryMappingOption, setInventoryMappingOption] = useState("DoNothing");
+  const [inventoryAboveZeroOption, setInventoryAboveZeroOption] = useState("NotifyOutStockNothing");
+
+  // Manual price update states
+  const [selectedStoresForPriceUpdate, setSelectedStoresForPriceUpdate] = useState<string[]>([]);
+
+  const handlePushProductOptionChange = (value: string) => {
+    if (value === "SendCostAbleProductAndShippingCostToShopify") {
+      setShowUpgradeDialog(true);
+    } else {
+      setPushProductOption(value);
+    }
+  };
+  const [productDescriptionOption, setProductDescriptionOption] = useState("CustomProdDescSpecAndOverview");
+  const [setProductsTaxable, setSetProductsTaxable] = useState(false);
+  const [automaticPriceUpdateOption, setAutomaticPriceUpdateOption] = useState("PriceTypeDoNothing");
+  const [priceChangeThresholdOption, setPriceChangeThresholdOption] = useState("number");
+  const [priceIncreaseChecked, setPriceIncreaseChecked] = useState(true);
+  const [priceDecreaseChecked, setPriceDecreaseChecked] = useState(true);
+  const [priceChangePercentage, setPriceChangePercentage] = useState(0);
+  const [lastManualPriceUpdate, setLastManualPriceUpdate] = useState<Date | null>(null);
+  const [manualPriceUpdateUsageCount, setManualPriceUpdateUsageCount] = useState(0);
+  const [availableStores, setAvailableStores] = useState<string[]>([]);
+
+  // Product settings original values for tracking changes
+  const [originalProductSettings, setOriginalProductSettings] = useState({
+    pushProductOption: "SendCostAbleProductCostToShopify",
+    productDescriptionOption: "CustomProdDescSpecAndOverview",
+    migrationType: "1",
+    sourceStore: "",
+    targetStore: "",
+    migrateProducts: true,
+    migrateMapping: true,
+    frenchEnabled: false,
+    portugueseEnabled: false,
+    germanEnabled: false,
+    italianEnabled: false,
+    spanishEnabled: false
+  });
+
+  const handleAddStaff = () => {
+    setShowUpgradeDialog(true);
+  };
+
+  const handleAutomaticPriceUpdateOptionChange = (value: string) => {
+    if (value !== "PriceTypeDoNothing") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setAutomaticPriceUpdateOption(value);
+    }
+  };
+
+  const handlePriceChangeThresholdOptionChange = (value: string) => {
+    if (value !== "number") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setPriceChangeThresholdOption(value);
+    }
+  };
+
+  const handleInventoryProductOptionChange = (value: string) => {
+    if (value !== "AutoSyncInventoryProductInvalidDoNothing") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setInventoryProductOption(value);
+    }
+  };
+
+  const handleInventoryVariantOptionChange = (value: string) => {
+    if (value !== "AutoSyncInventoryVariantInvalidDoNothing") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setInventoryVariantOption(value);
+    }
+  };
+
+  const handleInventoryMappingOptionChange = (value: string) => {
+    if (value !== "DoNothing") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setInventoryMappingOption(value);
+    }
+  };
+
+  const handleInventoryAboveZeroOptionChange = (value: string) => {
+    if (value !== "NotifyOutStockNothing") {
+      setShowUpgradeDialog(true);
+      // Don't change the state - keep it at default
+    } else {
+      setInventoryAboveZeroOption(value);
+    }
+  };
+
+  const handleStoreSelectionForPriceUpdate = (storeId: string, checked: boolean) => {
+    setSelectedStoresForPriceUpdate(prev => {
+      if (checked) {
+        return [...prev, storeId];
+      } else {
+        return prev.filter(id => id !== storeId);
+      }
+    });
+  };
+
+  const handlePriceChangeCheckboxClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowUpgradeDialog(true);
+  };
+
+  // Calculate manual price update usage statistics
+  const getManualPriceUpdateStats = () => {
+    const today = new Date();
+    const baseDate = lastManualPriceUpdate || today;
+    const refreshDate = new Date(baseDate);
+    refreshDate.setDate(refreshDate.getDate() + 30);
+
+    const totalTimes = 1;
+    const usedTimes = manualPriceUpdateUsageCount;
+    const remainingTimes = Math.max(0, totalTimes - usedTimes);
+
+    const formatDate = (date: Date) => {
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    };
+
+    return {
+      remainingTimes,
+      usedTimes,
+      totalTimes,
+      refreshDate: formatDate(refreshDate)
+    };
+  };
+
+  // Check for unsaved changes in notification settings
+  useEffect(() => {
+    if (activeTab === "notification") {
+      const hasChanges = priceChangesEnabled !== originalPriceChangesEnabled ||
+                        priceThresholdOption !== originalPriceThresholdOption ||
+                        inventoryChangesEnabled !== originalInventoryChangesEnabled ||
+                        skuChangesEnabled !== originalSkuChangesEnabled ||
+                        cancelledOrderEnabled !== originalCancelledOrderEnabled ||
+                        aiRecommendationEnabled !== originalAiRecommendationEnabled;
+      setHasUnsavedChanges(hasChanges);
+    }
+  }, [activeTab, priceChangesEnabled, priceThresholdOption, inventoryChangesEnabled, skuChangesEnabled, cancelledOrderEnabled, aiRecommendationEnabled, originalPriceChangesEnabled, originalPriceThresholdOption, originalInventoryChangesEnabled, originalSkuChangesEnabled, originalCancelledOrderEnabled, originalAiRecommendationEnabled]);
+
+  // Clear unsaved changes when switching to tabs that don't have tracking
+  useEffect(() => {
+    if (activeTab !== "notification" && activeTab !== "product") {
+      setHasUnsavedChanges(false);
+    }
+  }, [activeTab]);
+
+  // Check for unsaved changes in product settings
+  useEffect(() => {
+    if (activeTab === "product") {
+      const hasProductChanges = (
+        pushProductOption !== originalProductSettings.pushProductOption ||
+        productDescriptionOption !== originalProductSettings.productDescriptionOption ||
+        migrationType !== originalProductSettings.migrationType ||
+        sourceStore !== originalProductSettings.sourceStore ||
+        targetStore !== originalProductSettings.targetStore ||
+        migrateProducts !== originalProductSettings.migrateProducts ||
+        migrateMapping !== originalProductSettings.migrateMapping ||
+        frenchEnabled !== originalProductSettings.frenchEnabled ||
+        portugueseEnabled !== originalProductSettings.portugueseEnabled ||
+        germanEnabled !== originalProductSettings.germanEnabled ||
+        italianEnabled !== originalProductSettings.italianEnabled ||
+        spanishEnabled !== originalProductSettings.spanishEnabled
+      );
+      setHasUnsavedChanges(hasProductChanges);
+    }
+  }, [activeTab, pushProductOption, productDescriptionOption, migrationType, sourceStore, targetStore, migrateProducts, migrateMapping, frenchEnabled, portugueseEnabled, germanEnabled, italianEnabled, spanishEnabled, originalProductSettings]);
+
+  // Handle price changes enabled toggle
+  const handlePriceChangesToggle = (enabled: boolean) => {
+    setPriceChangesEnabled(enabled);
+  };
+
+  // Handle price threshold option change
+  const handlePriceThresholdChange = (value: string) => {
+    setPriceThresholdOption(value);
+  };
+
+  // Handle tab change with unsaved changes check
+  const handleTabChange = (tabId: string) => {
+    if (hasUnsavedChanges && (activeTab === "notification" || activeTab === "product") && tabId !== activeTab) {
+      triggerSettingsButtonsShake();
+      return;
+    }
+    setActiveTab(tabId);
+  };
+
+  // Handle save changes
+  const handleSaveChanges = () => {
+    // Update all original values to current values
+    setOriginalPriceChangesEnabled(priceChangesEnabled);
+    setOriginalPriceThresholdOption(priceThresholdOption);
+    setOriginalInventoryChangesEnabled(inventoryChangesEnabled);
+    setOriginalSkuChangesEnabled(skuChangesEnabled);
+    setOriginalCancelledOrderEnabled(cancelledOrderEnabled);
+    setOriginalAiRecommendationEnabled(aiRecommendationEnabled);
+
+    // Update product settings original values
+    setOriginalProductSettings({
+      pushProductOption,
+      productDescriptionOption,
+      migrationType,
+      sourceStore,
+      targetStore,
+      migrateProducts,
+      migrateMapping,
+      frenchEnabled,
+      portugueseEnabled,
+      germanEnabled,
+      italianEnabled,
+      spanishEnabled
+    });
+
+    setHasUnsavedChanges(false);
+    // Here you would typically save to backend
+  };
+
+  // Handle discard changes
+  const handleDiscardChanges = () => {
+    // Reset all current values to original values
+    setPriceChangesEnabled(originalPriceChangesEnabled);
+    setPriceThresholdOption(originalPriceThresholdOption);
+    setInventoryChangesEnabled(originalInventoryChangesEnabled);
+    setSkuChangesEnabled(originalSkuChangesEnabled);
+    setCancelledOrderEnabled(originalCancelledOrderEnabled);
+    setAiRecommendationEnabled(originalAiRecommendationEnabled);
+
+    // Reset product settings to original values
+    setPushProductOption(originalProductSettings.pushProductOption);
+    setProductDescriptionOption(originalProductSettings.productDescriptionOption);
+    setMigrationType(originalProductSettings.migrationType);
+    setSourceStore(originalProductSettings.sourceStore);
+    setTargetStore(originalProductSettings.targetStore);
+    setMigrateProducts(originalProductSettings.migrateProducts);
+    setMigrateMapping(originalProductSettings.migrateMapping);
+    setFrenchEnabled(originalProductSettings.frenchEnabled);
+    setPortugueseEnabled(originalProductSettings.portugueseEnabled);
+    setGermanEnabled(originalProductSettings.germanEnabled);
+    setItalianEnabled(originalProductSettings.italianEnabled);
+    setSpanishEnabled(originalProductSettings.spanishEnabled);
+
+    setHasUnsavedChanges(false);
+  };
+
+
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchExpanded(false);
+      }
+    };
+
+    if (isSearchExpanded) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearchExpanded]);
+
+  // Handle clicks outside settings page area to trigger shake when there are unsaved changes
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (hasUnsavedChanges && activeTab === "notification") {
+        const settingsContainer = document.querySelector('.settings-container');
+        if (settingsContainer && !settingsContainer.contains(event.target as Node)) {
+          // Check if click is outside the settings page width area
+          const settingsRect = settingsContainer.getBoundingClientRect();
+          const clickX = event.clientX;
+          
+          if (clickX < settingsRect.left || clickX > settingsRect.right) {
+            event.preventDefault();
+            triggerSettingsButtonsShake();
+          }
+        }
+      }
+    };
+
+    if (hasUnsavedChanges && activeTab === "notification") {
+      document.addEventListener('click', handleOutsideClick, { capture: true });
+    }
+
+    return () => {
+      document.removeEventListener('click', handleOutsideClick, { capture: true });
+    };
+  }, [hasUnsavedChanges, activeTab, triggerSettingsButtonsShake]);
+
+  return (
+    <TooltipProvider>
+      <div className="h-full w-full flex flex-col settings-container">
+        <div className="flex-shrink-0 px-8 py-6">
+        <div className="mx-auto w-full max-w-6xl">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="mb-2 flex items-center space-x-3">
+              <div className="bg-primary/10 rounded-lg p-2">
+                <Settings className="text-primary h-6 w-6" />
+              </div>
+              <h1 className="text-foreground text-4xl font-medium">Settings</h1>
+            </div>
+            <p className="text-muted-foreground">
+              Configure your account preferences and application settings
+            </p>
+          </div>
+
+          {/* Setup Guide Section */}
+          <div className="mb-8">
+            <Accordion type="single" collapsible defaultValue="setup-guide" className="w-full border rounded-lg">
+            <AccordionItem value="setup-guide" className="border-b-0">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                <div className="text-left">
+                  <div className="text-2xl font-medium mb-2 capitalize">Setup guide</div>
+                  <div className="text-base text-muted-foreground font-normal">
+                    Use this guide to make your operation more convenient. Current completion progress 
+                    <span className="ml-1">(0/2)</span>
+                  </div>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6">
+                <div className="space-y-0">
+                  <Accordion type="multiple" className="w-full">
+                    {/* Shipping Template Guide */}
+                    <AccordionItem value="shipping-guide" className="border-0">
+                      <AccordionTrigger className="px-6 pt-4 pb-2 hover:no-underline [&>svg]:hidden rounded-t-lg data-[state=open]:rounded-b-none data-[state=open]:bg-[#fafafa] dark:data-[state=open]:bg-muted">
+                        <div className="flex items-start gap-0">
+                          <div 
+                            className="flex-shrink-0 rounded-full mt-[3px] ml-3 mr-4"
+                            style={{
+                              border: '2px dashed hsl(var(--foreground) / 0.5)',
+                              borderRadius: '50%',
+                              height: '20px',
+                              width: '20px'
+                            }}
+                          ></div>
+                          <p className="text-lg font-medium text-left">
+                            Set matching shipping template automatically for faster ordering
+                          </p>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-0 pt-0">
+                        <div className="rounded-b-lg p-6 pt-2 bg-[#fafafa] dark:bg-muted">
+                          <div className="flex gap-12">
+                            <div className="flex-1 flex flex-col">
+                              <div className="ml-12 flex-1 flex flex-col justify-between">
+                                <p className="text-base text-muted-foreground leading-relaxed">
+                                  How to set up the shipping method, you can click the video on the right to view the setting method. You can also click{" "}
+                                  <a 
+                                    href="https://help.dshipit.com/set-add-global-shipping-method/" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-primary hover:underline"
+                                  >
+                                    here
+                                  </a>{" "}
+                                  to check our blog article
+                                </p>
+                                <Button variant="outline" className="uppercase self-start">
+                                  GO TO SET
+                                </Button>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="relative">
+                                <img src="/shipping_template.jpg" className="w-[261px] h-[124px]" />
+                                <img className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[50px] h-[50px]" src="/play-icon.png" alt="" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Pricing Template Guide */}
+                    <AccordionItem value="pricing-guide" className="border-0">
+                      <AccordionTrigger className="px-6 pt-4 pb-2 hover:no-underline [&>svg]:hidden rounded-t-lg data-[state=open]:rounded-b-none data-[state=open]:bg-[#fafafa] dark:data-[state=open]:bg-muted">
+                        <div className="flex items-start gap-0">
+                          <div 
+                            className="flex-shrink-0 rounded-full mt-[3px] ml-3 mr-4"
+                            style={{
+                              border: '2px dashed hsl(var(--foreground) / 0.5)',
+                              borderRadius: '50%',
+                              height: '20px',
+                              width: '20px'
+                            }}
+                          ></div>
+                          <p className="text-lg font-medium text-left">
+                            Set the price template and DShipIt will automatically calculate the price for you
+                          </p>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-0 pt-0">
+                        <div className="rounded-b-lg p-6 pt-2 bg-[#fafafa] dark:bg-muted">
+                          <div className="flex gap-12">
+                            <div className="flex-1 flex flex-col">
+                              <div className="ml-12 flex-1 flex flex-col justify-between">
+                                <p className="text-base text-muted-foreground leading-relaxed">
+                                  How to set the price template, you can click the video on the right to view the setting method, You can also click{" "}
+                                  <a 
+                                    href="https://help.dshipit.com/set-pricing-rules/" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-primary hover:underline"
+                                  >
+                                    here
+                                  </a>{" "}
+                                  to check our blog article
+                                </p>
+                                <Button variant="outline" className="uppercase self-start">
+                                  GO TO SET
+                                </Button>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="relative">
+                                <img src="/pricing_template.jpg" className="w-[261px] h-[124px]" />
+                                <img className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[50px] h-[50px]" src="/play-icon.png" alt="" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0">
+        <div className="mx-auto w-full max-w-6xl h-full">
+          <div className="flex h-full">
+          {/* Left Sidebar */}
+          <div className="w-auto bg-background flex flex-col border-r flex-shrink-0 min-w-0">
+            {/* Tab Navigation */}
+            <div className="p-2">
+              {settingsData.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleTabChange(item.id)}
+                    className={`w-full flex items-center px-6 py-2 text-left font-normal rounded-lg text-base mb-1 transition-colors whitespace-nowrap ${
+                      activeTab === item.id 
+                        ? 'bg-muted text-foreground' 
+                        : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <Icon className="mr-3" />
+                    {item.label}
+                  </button>
+                );
+              })}
+              
+              {/* Subscription & Billing Button */}
+              <div className="px-4 pt-4">
+                <Button className="w-full">
+                  Subscription & Billing
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Content Area */}
+          <div className={`flex-1 ${hasUnsavedChanges ? 'pb-24' : ''}`}>
+            {/* Shipping Settings Content */}
+            {activeTab === "shipping" && (
+              <div className="px-6 space-y-6">
+                {/* Tracking Section */}
+                <Accordion type="single" collapsible defaultValue="tracking" className="w-full">
+                  <AccordionItem value="tracking" className="border-none">
+                    <AccordionTrigger className="text-xl font-bold hover:no-underline px-0 py-0">
+                      <div>
+                        <div className="text-left">Tracking</div>
+                        <div className="text-base text-muted-foreground font-normal mt-2">
+                          Activate this feature to trace the tracking status of orders that have been shipped.
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-0 pb-0 pt-3">
+                      <div className="border rounded-lg px-4 py-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src="/ebayicon.jfif"
+                              alt="Spiderco"
+                              className="w-6 h-6"
+                            />
+                            <span className="font-medium">spiderco</span>
+                          </div>
+                          <Switch />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                {/* Shipping Section */}
+                <Accordion type="single" collapsible defaultValue="shipping" className="w-full">
+                  <AccordionItem value="shipping" className="border-none">
+                    <AccordionTrigger className="text-xl font-bold hover:no-underline px-0 py-0">
+                      <div>
+                        <div className="text-left">Shipping</div>
+                        <div className="text-base text-muted-foreground font-normal mt-2">
+                          Set up your default shipping method for specific country.
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-0 pb-0 pt-3">
+                      {/* Supplier Tabs */}
+                      <Tabs defaultValue="aliexpress" className="w-full">
+                        <TabsList className="inline-flex bg-transparent p-0 gap-2 border-0">
+                          <TabsTrigger
+                            value="aliexpress"
+                            className="rounded-[1.25rem] px-4 py-2 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground border-0"
+                          >
+                            AliExpress
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="temu"
+                            className="rounded-[1.25rem] px-4 py-2 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground border-0"
+                          >
+                            Temu
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="alibaba"
+                            className="rounded-[1.25rem] px-4 py-2 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=inactive]:bg-muted data-[state=inactive]:text-muted-foreground border-0"
+                          >
+                            Alibaba
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="aliexpress" className="mt-6">
+                          <RadioGroup defaultValue="global" className="space-y-6">
+                            {/* Global Shipping Method Option */}
+                            <div className="space-y-4">
+                              <div className="flex items-start space-x-3">
+                                <RadioGroupItem value="global" id="global" className="mt-1" />
+                                <div className="flex-1">
+                                  <Label htmlFor="global" className="text-[1.1rem] font-semibold cursor-pointer">
+                                    Add Global shipping method card
+                                  </Label>
+                                  <p className="text-[0.95rem] text-muted-foreground mt-1">
+                                    Set up your default shipping method for global countries. Auto order system will choose shipping method according to your setting while placing orders. Option 1 will be your first choice.
+                                  </p>
+
+                                  {/* Global Method Accordion */}
+                                  <div className="mt-4">
+                                    <Accordion type="multiple" defaultValue={["section-1"]} className="w-full border rounded-lg">
+                                      {/* First Section - Global */}
+                                      <AccordionItem value="section-1" className="border-0">
+                                        <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                                          <div className="flex items-center justify-between w-full">
+                                            <Select defaultValue="global">
+                                              <SelectTrigger
+                                                className="w-[404px] text-[0.925rem]"
+                                                onClick={(e) => e.stopPropagation()}
+                                              >
+                                                <SelectValue />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="global">Global</SelectItem>
+                                                <SelectItem value="us">United States</SelectItem>
+                                                <SelectItem value="uk">United Kingdom</SelectItem>
+                                                <SelectItem value="ca">Canada</SelectItem>
+                                                <SelectItem value="au">Australia</SelectItem>
+                                                <SelectItem value="de">Germany</SelectItem>
+                                                <SelectItem value="fr">France</SelectItem>
+                                                <SelectItem value="it">Italy</SelectItem>
+                                                <SelectItem value="es">Spain</SelectItem>
+                                                <SelectItem value="nl">Netherlands</SelectItem>
+                                                <SelectItem value="be">Belgium</SelectItem>
+                                                <SelectItem value="se">Sweden</SelectItem>
+                                                <SelectItem value="no">Norway</SelectItem>
+                                                <SelectItem value="dk">Denmark</SelectItem>
+                                                <SelectItem value="fi">Finland</SelectItem>
+                                                <SelectItem value="ch">Switzerland</SelectItem>
+                                                <SelectItem value="at">Austria</SelectItem>
+                                                <SelectItem value="pl">Poland</SelectItem>
+                                                <SelectItem value="cz">Czech Republic</SelectItem>
+                                                <SelectItem value="hu">Hungary</SelectItem>
+                                                <SelectItem value="sk">Slovakia</SelectItem>
+                                                <SelectItem value="si">Slovenia</SelectItem>
+                                                <SelectItem value="hr">Croatia</SelectItem>
+                                                <SelectItem value="bg">Bulgaria</SelectItem>
+                                                <SelectItem value="ro">Romania</SelectItem>
+                                                <SelectItem value="gr">Greece</SelectItem>
+                                                <SelectItem value="pt">Portugal</SelectItem>
+                                                <SelectItem value="ie">Ireland</SelectItem>
+                                                <SelectItem value="lu">Luxembourg</SelectItem>
+                                                <SelectItem value="mt">Malta</SelectItem>
+                                                <SelectItem value="cy">Cyprus</SelectItem>
+                                                <SelectItem value="ee">Estonia</SelectItem>
+                                                <SelectItem value="lv">Latvia</SelectItem>
+                                                <SelectItem value="lt">Lithuania</SelectItem>
+                                                <SelectItem value="jp">Japan</SelectItem>
+                                                <SelectItem value="kr">South Korea</SelectItem>
+                                                <SelectItem value="cn">China</SelectItem>
+                                                <SelectItem value="hk">Hong Kong</SelectItem>
+                                                <SelectItem value="sg">Singapore</SelectItem>
+                                                <SelectItem value="my">Malaysia</SelectItem>
+                                                <SelectItem value="th">Thailand</SelectItem>
+                                                <SelectItem value="ph">Philippines</SelectItem>
+                                                <SelectItem value="id">Indonesia</SelectItem>
+                                                <SelectItem value="vn">Vietnam</SelectItem>
+                                                <SelectItem value="in">India</SelectItem>
+                                                <SelectItem value="bd">Bangladesh</SelectItem>
+                                                <SelectItem value="pk">Pakistan</SelectItem>
+                                                <SelectItem value="lk">Sri Lanka</SelectItem>
+                                                <SelectItem value="np">Nepal</SelectItem>
+                                                <SelectItem value="mm">Myanmar</SelectItem>
+                                                <SelectItem value="kh">Cambodia</SelectItem>
+                                                <SelectItem value="la">Laos</SelectItem>
+                                                <SelectItem value="mn">Mongolia</SelectItem>
+                                                <SelectItem value="tw">Taiwan</SelectItem>
+                                                <SelectItem value="mo">Macau</SelectItem>
+                                                <SelectItem value="br">Brazil</SelectItem>
+                                                <SelectItem value="mx">Mexico</SelectItem>
+                                                <SelectItem value="ar">Argentina</SelectItem>
+                                                <SelectItem value="cl">Chile</SelectItem>
+                                                <SelectItem value="co">Colombia</SelectItem>
+                                                <SelectItem value="pe">Peru</SelectItem>
+                                                <SelectItem value="ve">Venezuela</SelectItem>
+                                                <SelectItem value="ec">Ecuador</SelectItem>
+                                                <SelectItem value="bo">Bolivia</SelectItem>
+                                                <SelectItem value="py">Paraguay</SelectItem>
+                                                <SelectItem value="uy">Uruguay</SelectItem>
+                                                <SelectItem value="gf">French Guiana</SelectItem>
+                                                <SelectItem value="sr">Suriname</SelectItem>
+                                                <SelectItem value="gy">Guyana</SelectItem>
+                                                <SelectItem value="za">South Africa</SelectItem>
+                                                <SelectItem value="eg">Egypt</SelectItem>
+                                                <SelectItem value="ma">Morocco</SelectItem>
+                                                <SelectItem value="dz">Algeria</SelectItem>
+                                                <SelectItem value="tn">Tunisia</SelectItem>
+                                                <SelectItem value="ly">Libya</SelectItem>
+                                                <SelectItem value="sd">Sudan</SelectItem>
+                                                <SelectItem value="et">Ethiopia</SelectItem>
+                                                <SelectItem value="ke">Kenya</SelectItem>
+                                                <SelectItem value="ug">Uganda</SelectItem>
+                                                <SelectItem value="tz">Tanzania</SelectItem>
+                                                <SelectItem value="mz">Mozambique</SelectItem>
+                                                <SelectItem value="mg">Madagascar</SelectItem>
+                                                <SelectItem value="mw">Malawi</SelectItem>
+                                                <SelectItem value="zm">Zambia</SelectItem>
+                                                <SelectItem value="zw">Zimbabwe</SelectItem>
+                                                <SelectItem value="bw">Botswana</SelectItem>
+                                                <SelectItem value="na">Namibia</SelectItem>
+                                                <SelectItem value="sz">Eswatini</SelectItem>
+                                                <SelectItem value="ls">Lesotho</SelectItem>
+                                                <SelectItem value="gh">Ghana</SelectItem>
+                                                <SelectItem value="ng">Nigeria</SelectItem>
+                                                <SelectItem value="ci">Côte d'Ivoire</SelectItem>
+                                                <SelectItem value="sn">Senegal</SelectItem>
+                                                <SelectItem value="ml">Mali</SelectItem>
+                                                <SelectItem value="bf">Burkina Faso</SelectItem>
+                                                <SelectItem value="ne">Niger</SelectItem>
+                                                <SelectItem value="td">Chad</SelectItem>
+                                                <SelectItem value="cm">Cameroon</SelectItem>
+                                                <SelectItem value="cf">Central African Republic</SelectItem>
+                                                <SelectItem value="ga">Gabon</SelectItem>
+                                                <SelectItem value="gq">Equatorial Guinea</SelectItem>
+                                                <SelectItem value="cg">Republic of the Congo</SelectItem>
+                                                <SelectItem value="cd">Democratic Republic of the Congo</SelectItem>
+                                                <SelectItem value="ao">Angola</SelectItem>
+                                                <SelectItem value="ru">Russia</SelectItem>
+                                                <SelectItem value="ua">Ukraine</SelectItem>
+                                                <SelectItem value="by">Belarus</SelectItem>
+                                                <SelectItem value="md">Moldova</SelectItem>
+                                                <SelectItem value="ge">Georgia</SelectItem>
+                                                <SelectItem value="am">Armenia</SelectItem>
+                                                <SelectItem value="az">Azerbaijan</SelectItem>
+                                                <SelectItem value="kz">Kazakhstan</SelectItem>
+                                                <SelectItem value="kg">Kyrgyzstan</SelectItem>
+                                                <SelectItem value="tj">Tajikistan</SelectItem>
+                                                <SelectItem value="tm">Turkmenistan</SelectItem>
+                                                <SelectItem value="uz">Uzbekistan</SelectItem>
+                                                <SelectItem value="af">Afghanistan</SelectItem>
+                                                <SelectItem value="ir">Iran</SelectItem>
+                                                <SelectItem value="iq">Iraq</SelectItem>
+                                                <SelectItem value="sy">Syria</SelectItem>
+                                                <SelectItem value="lb">Lebanon</SelectItem>
+                                                <SelectItem value="jo">Jordan</SelectItem>
+                                                <SelectItem value="il">Israel</SelectItem>
+                                                <SelectItem value="ps">Palestine</SelectItem>
+                                                <SelectItem value="sa">Saudi Arabia</SelectItem>
+                                                <SelectItem value="ae">United Arab Emirates</SelectItem>
+                                                <SelectItem value="qa">Qatar</SelectItem>
+                                                <SelectItem value="kw">Kuwait</SelectItem>
+                                                <SelectItem value="bh">Bahrain</SelectItem>
+                                                <SelectItem value="om">Oman</SelectItem>
+                                                <SelectItem value="ye">Yemen</SelectItem>
+                                                <SelectItem value="tr">Turkey</SelectItem>
+                                                <SelectItem value="is">Iceland</SelectItem>
+                                                <SelectItem value="nz">New Zealand</SelectItem>
+                                                <SelectItem value="fj">Fiji</SelectItem>
+                                                <SelectItem value="pg">Papua New Guinea</SelectItem>
+                                                <SelectItem value="sb">Solomon Islands</SelectItem>
+                                                <SelectItem value="vu">Vanuatu</SelectItem>
+                                                <SelectItem value="nc">New Caledonia</SelectItem>
+                                                <SelectItem value="pf">French Polynesia</SelectItem>
+                                                <SelectItem value="ws">Samoa</SelectItem>
+                                                <SelectItem value="to">Tonga</SelectItem>
+                                                <SelectItem value="ki">Kiribati</SelectItem>
+                                                <SelectItem value="tv">Tuvalu</SelectItem>
+                                                <SelectItem value="nr">Nauru</SelectItem>
+                                                <SelectItem value="mh">Marshall Islands</SelectItem>
+                                                <SelectItem value="fm">Micronesia</SelectItem>
+                                                <SelectItem value="pw">Palau</SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-10 w-10 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                              }}
+                                            >
+                                              <svg
+                                                className="size-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path fillRule="evenodd" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                              </svg>
+                                            </Button>
+                                          </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="px-4 pb-4">
+                                          <div className="space-y-3">
+                                            <div className="flex items-center justify-between ml-14">
+                                              <Select defaultValue="aliexpress-standard-be">
+                                                <SelectTrigger className="w-[348px] text-[0.925rem]">
+                                                  <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  {SHIPPING_METHODS.map((method) => (
+                                                    <SelectItem key={method.value} value={method.value}>
+                                                      {method.label}
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-10 w-10 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                                              >
+                                                <svg
+                                                  className="size-5"
+                                                  fill="currentColor"
+                                                  viewBox="0 0 24 24"
+                                                >
+                                                  <path fillRule="evenodd" d="M0 0h24v24H0z" fill="none"/>
+                                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                                </svg>
+                                              </Button>
+                                            </div>
+                                            {/* Dynamic shipping method rows */}
+                                            {globalShippingRows.map((row) => (
+                                              <div key={row.id} className="ml-14">
+                                                <Select value={row.selectedMethod}>
+                                                  <SelectTrigger className="w-[348px] text-[0.925rem]">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent>
+                                                    {SHIPPING_METHODS.map((method) => (
+                                                      <SelectItem key={method.value} value={method.value}>
+                                                        {method.label}
+                                                      </SelectItem>
+                                                    ))}
+                                                  </SelectContent>
+                                                </Select>
+                                              </div>
+                                            ))}
+
+                                            <div className="ml-14">
+                                              <Select onValueChange={(value) => addGlobalShippingRow(value)}>
+                                                <SelectTrigger className="w-[348px] data-[placeholder]:text-gray-400 text-[0.925rem]">
+                                                  <SelectValue placeholder="Add more shipping method" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  {SHIPPING_METHODS.map((method) => (
+                                                    <SelectItem key={method.value} value={method.value}>
+                                                      {method.label}
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                            </div>
+                                          </div>
+                                        </AccordionContent>
+                                      </AccordionItem>
+
+                                      {/* Second Section - Choose Country */}
+                                      <AccordionItem value="section-2" className="border-0">
+                                        <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                                          <div className="flex items-center justify-between w-full">
+                                            <Select>
+                                              <SelectTrigger className="w-[404px] text-[0.925rem]">
+                                                <SelectValue placeholder="Choose a country" />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                {countries.map((country) => (
+                                                  <SelectItem key={country.value} value={country.value}>
+                                                    {country.label}
+                                                  </SelectItem>
+                                                ))}
+                                              </SelectContent>
+                                            </Select>
+                                            <Button
+                                              type="button"
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-10 w-10 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                                            >
+                                              <svg
+                                                className="size-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path fillRule="evenodd" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                              </svg>
+                                            </Button>
+                                          </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="px-4 pb-4">
+                                          <div className="space-y-3">
+                                            <div className="ml-14">
+                                              <Select onValueChange={(value) => addGlobalShippingRow(value)}>
+                                                <SelectTrigger className="w-[348px] data-[placeholder]:text-gray-400 text-[0.925rem]">
+                                                  <SelectValue placeholder="Add more shipping method" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  {SHIPPING_METHODS.map((method) => (
+                                                    <SelectItem key={method.value} value={method.value}>
+                                                      {method.label}
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                            </div>
+                                          </div>
+                                        </AccordionContent>
+                                      </AccordionItem>
+                                    </Accordion>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Advanced Option */}
+                            <div className="space-y-4">
+                              <div className="flex items-start space-x-3">
+                                <RadioGroupItem value="advanced" id="advanced" className="mt-1" />
+                                <div className="flex-1">
+                                  <Label htmlFor="advanced" className="text-[1.1rem] font-semibold cursor-pointer">
+                                    Advanced
+                                  </Label>
+                                  <p className="text-[0.95rem] text-muted-foreground mt-1">
+                                    Set up your default shipping method by price range and delivery date range.
+                                  </p>
+
+                                  {/* Advanced Method Accordion */}
+                                  <div className="mt-4">
+                                    <Accordion type="single" collapsible defaultValue="advanced-1" className="w-full border rounded-lg">
+                                      <AccordionItem value="advanced-1" className="border-none">
+                                        <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                                          <div className="flex items-center justify-between w-full pr-4">
+                                            <Select defaultValue="global-advanced">
+                                              <SelectTrigger className="w-[400px] text-[0.925rem]">
+                                                <SelectValue />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="global-advanced">Global (Advanced)</SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                            <Button
+                                              type="button"
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-10 w-10 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                                            >
+                                              <svg
+                                                className="size-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                              >
+                                                <path fillRule="evenodd" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                              </svg>
+                                            </Button>
+                                          </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="px-4 pb-4">
+                                          <div className="space-y-4">
+                                            <div className="grid grid-cols-1 gap-4">
+                                              <div>
+                                                <Label className="text-sm font-medium">Price Range ($)</Label>
+                                                <div className="flex items-center space-x-2 mt-1">
+                                                  <Input type="number" placeholder="Min" className="w-20" />
+                                                  <span className="text-muted-foreground">to</span>
+                                                  <Input type="number" placeholder="Max" className="w-20" />
+                                                </div>
+                                              </div>
+                                              <div>
+                                                <Label className="text-sm font-medium">Delivery Date Range (days)</Label>
+                                                <div className="flex items-center space-x-2 mt-1">
+                                                  <Input type="number" placeholder="Min" className="w-20" />
+                                                  <span className="text-muted-foreground">to</span>
+                                                  <Input type="number" placeholder="Max" className="w-20" />
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <RadioGroup defaultValue="less-cost" className="space-y-2">
+                                              <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="less-day" id="less-day" />
+                                                <Label htmlFor="less-day" className="text-[0.95rem] cursor-pointer">
+                                                  When multiple options meet my conditions, I need less day
+                                                </Label>
+                                              </div>
+                                              <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="less-cost" id="less-cost" />
+                                                <Label htmlFor="less-cost" className="text-[0.95rem] cursor-pointer">
+                                                  When multiple options meet my conditions, I need less cost
+                                                </Label>
+                                              </div>
+                                            </RadioGroup>
+                                          </div>
+                                        </AccordionContent>
+                                      </AccordionItem>
+                                    </Accordion>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </RadioGroup>
+                        </TabsContent>
+
+                        <TabsContent value="temu" className="mt-6">
+                          <div className="text-center py-8 text-muted-foreground">
+                            Temu shipping settings will be configured here.
+                          </div>
+                        </TabsContent>
+
+                        <TabsContent value="alibaba" className="mt-6">
+                          <div className="text-center py-8 text-muted-foreground">
+                            Alibaba shipping settings will be configured here.
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            )}
+
+            {/* Notification Settings Content */}
+            {activeTab === "notification" && (
+              <div className="px-6 space-y-6">
+                <div className="space-y-6">
+                  {/* Price Changes Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">Price Changes</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get notified when product prices change on supplier platforms
+                        </p>
+                      </div>
+                      <Switch
+                        checked={priceChangesEnabled}
+                        onCheckedChange={handlePriceChangesToggle}
+                      />
+                    </div>
+
+                    {priceChangesEnabled && (
+                      <div className="ml-4 space-y-3">
+                        <div>
+                          <Label className="text-sm font-medium">Price threshold</Label>
+                          <RadioGroup
+                            value={priceThresholdOption}
+                            onValueChange={handlePriceThresholdChange}
+                            className="mt-2"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="any" id="any-change" />
+                              <Label htmlFor="any-change" className="text-sm cursor-pointer">
+                                Any price change
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="percentage" id="percentage-change" />
+                              <Label htmlFor="percentage-change" className="text-sm cursor-pointer">
+                                Price change exceeds percentage
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Inventory Changes Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">Inventory Changes</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get notified when product inventory levels change
+                        </p>
+                      </div>
+                      <Switch
+                        checked={inventoryChangesEnabled}
+                        onCheckedChange={setInventoryChangesEnabled}
+                      />
+                    </div>
+                  </div>
+
+                  {/* SKU Changes Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">SKU Changes</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get notified when product SKUs are modified
+                        </p>
+                      </div>
+                      <Switch
+                        checked={skuChangesEnabled}
+                        onCheckedChange={setSkuChangesEnabled}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cancelled Orders Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">Cancelled Orders</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get notified when orders are cancelled
+                        </p>
+                      </div>
+                      <Switch
+                        checked={cancelledOrderEnabled}
+                        onCheckedChange={setCancelledOrderEnabled}
+                      />
+                    </div>
+                  </div>
+
+                  {/* AI Recommendations Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">AI Recommendations</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get AI-powered recommendations for optimization
+                        </p>
+                      </div>
+                      <Switch
+                        checked={aiRecommendationEnabled}
+                        onCheckedChange={setAiRecommendationEnabled}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Other Settings Tabs Placeholder */}
+            {activeTab === "general" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  User Management settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "application" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Stores & Suppliers settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "product" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Product Settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "pricing" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Pricing & Currencies settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "mapping" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Automated Mapping settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "order" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Order Settings will be configured here.
+                </div>
+              </div>
+            )}
+
+            {activeTab === "fulfillment" && (
+              <div className="px-6 space-y-6">
+                <div className="text-center py-8 text-muted-foreground">
+                  Fulfillment Settings will be configured here.
+                </div>
+              </div>
+            )}
+          </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Save/Discard Buttons */}
+      {hasUnsavedChanges && (
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-50">
+          <div className="mx-auto w-full max-w-6xl flex justify-end space-x-3">
+            <Button
+              variant="outline"
+              onClick={handleDiscardChanges}
+              className={`${shouldShakeSettingsButtons ? 'animate-pulse' : ''}`}
+            >
+              Discard Changes
+            </Button>
+            <Button
+              onClick={handleSaveChanges}
+              className={`${shouldShakeSettingsButtons ? 'animate-pulse' : ''}`}
+            >
+              Save Changes
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Upgrade Dialog */}
+      <UpgradePlanDialog
+        isOpen={showUpgradeDialog}
+        onClose={() => setShowUpgradeDialog(false)}
+      />
+      </div>
+    </TooltipProvider>
+  );
+}

@@ -1,0 +1,234 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+  --font-rubik: var(--font-rubik);
+  
+  /* Essential DSI Colors for Tailwind */
+  --color-dsi-sky: var(--dsi-sky);
+  --color-dsi-teal-50: var(--dsi-teal-50);
+  --color-dsi-teal-100: var(--dsi-teal-100);
+  --color-dsi-teal-200: var(--dsi-teal-200);
+  --color-dsi-teal-500: var(--dsi-teal-500);
+  --color-dsi-cyan-6: var(--dsi-cyan-6);
+  --color-dsi-cyan-7: var(--dsi-cyan-7);
+  
+  /* Core Tailwind mappings */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #15aabf;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.85 0.15 45);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.65 0.25 15);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.65 0.25 45);
+  
+  /* DSI Cyan System */
+  --dsi-cyan-6: #15aabf;
+  --dsi-cyan-7: #1098ad;
+  --dsi-cyan-light: #7FDCFC;
+  --dsi-cyan-lighter: #96E0FD;
+  --dsi-cyan-lightest: #ADE4FD;
+  
+  /* DSI Sky and Teal variants */
+  --dsi-sky: #68DAFC;
+  --dsi-teal-50: oklch(0.98 0.01 190);
+  --dsi-teal-100: oklch(0.95 0.03 190);
+  --dsi-teal-200: oklch(0.9 0.05 190);
+  --dsi-teal-500: oklch(0.65 0.15 190);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #15aabf;
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.4 0.2 45);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.7 0.25 15);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.7 0.25 45);
+  
+  /* DSI colors for dark mode */
+  --dsi-sky: #68DAFC;
+  --dsi-teal-50: oklch(0.15 0.01 190);
+  --dsi-teal-100: oklch(0.2 0.03 190);
+  --dsi-teal-200: oklch(0.25 0.05 190);
+  --dsi-teal-500: oklch(0.65 0.15 190);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    text-decoration: none !important;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Remove text decoration globally */
+  [data-slot="sheet-title"] {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+  a, a:hover, button, [role="button"], [data-state], [data-slot="accordion-trigger"], .accordion-trigger {
+    text-decoration: none !important;
+  }
+  *:hover {
+    text-decoration: none !important;
+  }
+}
+
+/* Input hover and focus effects - Ant Design pattern with cyan colors */
+input:hover,
+[data-slot="select-trigger"]:hover {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+}
+
+input:focus,
+[data-slot="select-trigger"]:focus,
+[data-slot="select-trigger"]:focus-within,
+[data-slot="select-trigger"][data-state="open"] {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+  box-shadow: 0 0 0 3px rgba(173, 228, 253, 0.2) !important;
+  outline: 0 !important;
+}
+
+/* Counter component outer border effects */
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1:hover,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1:focus-within {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+  box-shadow: 0 0 0 3px rgba(173, 228, 253, 0.2) !important;
+  outline: 0 !important;
+}
+
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 button:hover,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 input:hover,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 button:focus,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 input:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Shadcn horizontal tabs styling - cyan active border, no hover backgrounds */
+[data-radix-tabs-trigger][data-state="active"],
+[data-radix-tabs-trigger]:focus,
+html [data-radix-tabs-trigger]:hover {
+  background: transparent !important;
+  border-bottom: 2px solid var(--dsi-sky) !important;
+}
+
+/* Dropdown menu items hover - soft light cyan */
+[role="option"]:hover {
+  background-color: var(--dsi-teal-50) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+[role="option"]:active {
+  background-color: var(--dsi-teal-100) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+[role="option"][data-state="selected"],
+[role="option"][aria-selected="true"],
+[data-slot="select-item"][data-state="checked"],
+[data-slot="select-item"][aria-selected="true"],
+.select-item[data-state="checked"],
+.select-item[aria-selected="true"] {
+  background-color: var(--dsi-teal-200) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Location dialog button styling */
+[data-slot="dialog-content"].w-\[480px\] [data-slot="button"]:not(:disabled) {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+[data-slot="dialog-content"].w-\[480px\] [data-slot="button"]:not(:disabled):hover {
+  background-color: var(--dsi-cyan-7) !important;
+  opacity: 1 !important;
+}
+
+/* Shadcn Button Component Improvements */
+/* Outline button - soft cyan variants */
+[data-slot="button"][data-variant="outline"]:hover {
+  background-color: var(--dsi-teal-50) !important;
+  border-color: var(--dsi-cyan-6) !important;
+  color: var(--dsi-cyan-7) !important;
+}
+
+/* Ghost button - soft cyan variants */
+[data-slot="button"][data-variant="ghost"]:hover {
+  background-color: var(--dsi-teal-50) !important;
+  color: var(--dsi-cyan-7) !important;
+}
+
+/* Default button - solid cyan */
+[data-slot="button"][data-variant="default"] {
+  background-color: var(--dsi-cyan-6) !important;
+  color: white !important;
+}
+
+[data-slot="button"][data-variant="default"]:hover {
+  background-color: var(--dsi-cyan-7) !important;
+}

@@ -1,0 +1,37 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { TopNavigation } from "@/components/TopNavigation";
+import { PromoBanner } from "@/components/PromoBanner";
+import { Sidebar } from "@/components/Sidebar";
+import { ProductCountsProvider } from "@/contexts/ProductCountsContext";
+import { UnsavedChangesProvider } from "@/contexts/UnsavedChangesContext";
+
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
+
+export function AppLayout({ children }: AppLayoutProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  return (
+    <ProductCountsProvider>
+      <UnsavedChangesProvider>
+        <div className="min-h-screen w-full overflow-x-clip">
+          <TopNavigation onMobileMenuToggle={toggleMobileMenu} />
+          <PromoBanner />
+          <Sidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+          <main className="pt-28 md:ml-[272px]">{children}</main>
+        </div>
+      </UnsavedChangesProvider>
+    </ProductCountsProvider>
+  );
+}

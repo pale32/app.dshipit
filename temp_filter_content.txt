@@ -1,0 +1,48 @@
+                      <Accordion type="multiple" defaultValue={["marketplace", "date"]} className="space-y-6">
+                        {/* Marketplace Filter */}
+                        <AccordionItem value="marketplace" className="border-b border-gray-200">
+                          <AccordionTrigger className="flex items-center justify-between w-full py-4 text-left font-medium hover:no-underline text-base">
+                            <span>Filter by market places</span>
+                          </AccordionTrigger>
+                          <AccordionContent className="pt-2 pb-4 pl-4">
+                            <div className="space-y-0">
+                              <RadioGroup value={marketplaceFilter} onValueChange={setMarketplaceFilter}>
+                                <div className="space-y-1">
+                                  <div className="flex items-center space-x-2 py-1.5">
+                                    <RadioGroupItem value="aliexpress" id="aliexpress" />
+                                    <Label htmlFor="aliexpress" className="cursor-pointer text-base font-normal flex items-center gap-2">
+                                      <img 
+                                        src="https://img.dsers.com/develop_center/86fb80da57132d31f0d19dbcd666ed77.png" 
+                                        alt="AliExpress" 
+                                        className="w-6 h-6"
+                                      />
+                                      <span style={{width: '250px', overflowWrap: 'break-word'}}>AliExpress</span>
+                                    </Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2 py-1.5">
+                                    <RadioGroupItem value="temu" id="temu" />
+                                    <Label htmlFor="temu" className="cursor-pointer text-base font-normal flex items-center gap-2">
+                                      <img 
+                                        src="https://img.dsers.com/develop_center/3b63f059fd9237b4b4665605a2c3d760.png" 
+                                        alt="Temu" 
+                                        className="w-6 h-6"
+                                      />
+                                      <span style={{width: '250px', overflowWrap: 'break-word'}}>Temu</span>
+                                    </Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2 py-1.5">
+                                    <RadioGroupItem value="alibaba" id="alibaba" />
+                                    <Label htmlFor="alibaba" className="cursor-pointer text-base font-normal flex items-center gap-2">
+                                      <img 
+                                        src="https://img.dsers.com/develop_center/ff23a943f964dc5c3eab83e0da36211d.png" 
+                                        alt="Alibaba" 
+                                        className="w-6 h-6"
+                                      />
+                                      <span style={{width: '250px', overflowWrap: 'break-word'}}>Alibaba</span>
+                                    </Label>
+                                  </div>
+                                </div>
+                              </RadioGroup>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>

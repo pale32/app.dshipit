@@ -1,0 +1,928 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+  --font-rubik: var(--font-rubik);
+  /* DSI Branded Color Variants */
+  --color-dsi-primary-hover: var(--dsi-primary-hover);
+  --color-dsi-primary-light: var(--dsi-primary-light);
+  --color-dsi-primary-lighter: var(--dsi-primary-lighter);
+  --color-dsi-primary-lightest: var(--dsi-primary-lightest);
+  --color-dsi-orange: var(--dsi-orange);
+  --color-dsi-orange-hover: var(--dsi-orange-hover);
+  --color-dsi-orange-light: var(--dsi-orange-light);
+  --color-dsi-orange-lighter: var(--dsi-orange-lighter);
+  --color-dsi-orange-lightest: var(--dsi-orange-lightest);
+  /* DSI Warm Color Combinations */
+  --color-dsi-warm-button: var(--dsi-warm-button);
+  --color-dsi-warm-bg: var(--dsi-warm-bg);
+  --color-dsi-warm-coral-button: var(--dsi-warm-coral-button);
+  --color-dsi-warm-coral-bg: var(--dsi-warm-coral-bg);
+  /* DSI Gray Variants */
+  --color-dsi-gray-50: var(--dsi-gray-50);
+  --color-dsi-gray-100: var(--dsi-gray-100);
+  --color-dsi-gray-200: var(--dsi-gray-200);
+  --color-dsi-gray-300: var(--dsi-gray-300);
+  --color-dsi-gray-400: var(--dsi-gray-400);
+  --color-dsi-gray-500: var(--dsi-gray-500);
+  --color-dsi-gray-600: var(--dsi-gray-600);
+  --color-dsi-gray-700: var(--dsi-gray-700);
+  --color-dsi-gray-800: var(--dsi-gray-800);
+  --color-dsi-gray-900: var(--dsi-gray-900);
+  --color-dsi-gray-950: var(--dsi-gray-950);
+  /* DSI Teal Variants */
+  --color-dsi-teal: var(--dsi-teal);
+  --color-dsi-teal-hover: var(--dsi-teal-hover);
+  --color-dsi-teal-light: var(--dsi-teal-light);
+  --color-dsi-teal-lighter: var(--dsi-teal-lighter);
+  --color-dsi-teal-lightest: var(--dsi-teal-lightest);
+  --color-dsi-teal-50: var(--dsi-teal-50);
+  --color-dsi-teal-100: var(--dsi-teal-100);
+  --color-dsi-teal-200: var(--dsi-teal-200);
+  --color-dsi-teal-300: var(--dsi-teal-300);
+  --color-dsi-teal-400: var(--dsi-teal-400);
+  --color-dsi-teal-500: var(--dsi-teal-500);
+  --color-dsi-teal-600: var(--dsi-teal-600);
+  --color-dsi-teal-700: var(--dsi-teal-700);
+  --color-dsi-teal-800: var(--dsi-teal-800);
+  --color-dsi-teal-900: var(--dsi-teal-900);
+  --color-dsi-teal-950: var(--dsi-teal-950);
+  --color-dsi-warning: var(--dsi-warning);
+  --color-dsi-warning-foreground: var(--dsi-warning-foreground);
+  --color-dsi-yellow: var(--dsi-yellow);
+  --color-dsi-yellow-hover: var(--dsi-yellow-hover);
+  --color-dsi-yellow-light: var(--dsi-yellow-light);
+  --color-dsi-yellow-lighter: var(--dsi-yellow-lighter);
+  --color-dsi-yellow-lightest: var(--dsi-yellow-lightest);
+  --color-dsi-yellow-50: var(--dsi-yellow-50);
+  --color-dsi-yellow-100: var(--dsi-yellow-100);
+  --color-dsi-yellow-200: var(--dsi-yellow-200);
+  --color-dsi-yellow-300: var(--dsi-yellow-300);
+  --color-dsi-yellow-400: var(--dsi-yellow-400);
+  --color-dsi-yellow-500: var(--dsi-yellow-500);
+  --color-dsi-yellow-600: var(--dsi-yellow-600);
+  --color-dsi-yellow-700: var(--dsi-yellow-700);
+  --color-dsi-yellow-800: var(--dsi-yellow-800);
+  --color-dsi-yellow-900: var(--dsi-yellow-900);
+  --color-dsi-yellow-950: var(--dsi-yellow-950);
+  /* DSI Ocean Blue Variants */
+  --color-dsi-ocean: var(--dsi-ocean);
+  --color-dsi-ocean-hover: var(--dsi-ocean-hover);
+  --color-dsi-ocean-light: var(--dsi-ocean-light);
+  --color-dsi-ocean-lighter: var(--dsi-ocean-lighter);
+  --color-dsi-ocean-lightest: var(--dsi-ocean-lightest);
+  --color-dsi-ocean-50: var(--dsi-ocean-50);
+  --color-dsi-ocean-100: var(--dsi-ocean-100);
+  --color-dsi-ocean-200: var(--dsi-ocean-200);
+  --color-dsi-ocean-300: var(--dsi-ocean-300);
+  --color-dsi-ocean-400: var(--dsi-ocean-400);
+  --color-dsi-ocean-500: var(--dsi-ocean-500);
+  --color-dsi-ocean-600: var(--dsi-ocean-600);
+  --color-dsi-ocean-700: var(--dsi-ocean-700);
+  --color-dsi-ocean-800: var(--dsi-ocean-800);
+  --color-dsi-ocean-900: var(--dsi-ocean-900);
+  --color-dsi-ocean-950: var(--dsi-ocean-950);
+  --color-dsi-ocean-dark: var(--dsi-ocean-dark);
+  --color-dsi-teal-ocean: var(--dsi-teal-ocean);
+  /* DSI Brown Orange Variants */
+  --color-dsi-brown-orange: var(--dsi-brown-orange);
+  --color-dsi-brown-orange-hover: var(--dsi-brown-orange-hover);
+  --color-dsi-brown-orange-light: var(--dsi-brown-orange-light);
+  --color-dsi-brown-orange-lighter: var(--dsi-brown-orange-lighter);
+  --color-dsi-brown-orange-lightest: var(--dsi-brown-orange-lightest);
+  --color-dsi-brown-orange-50: var(--dsi-brown-orange-50);
+  --color-dsi-brown-orange-100: var(--dsi-brown-orange-100);
+  /* DSI Modern Color Palette */
+  --color-dsi-dark-0: var(--dsi-dark-0);
+  --color-dsi-dark-1: var(--dsi-dark-1);
+  --color-dsi-dark-2: var(--dsi-dark-2);
+  --color-dsi-dark-3: var(--dsi-dark-3);
+  --color-dsi-dark-4: var(--dsi-dark-4);
+  --color-dsi-dark-5: var(--dsi-dark-5);
+  --color-dsi-dark-6: var(--dsi-dark-6);
+  --color-dsi-dark-7: var(--dsi-dark-7);
+  --color-dsi-dark-8: var(--dsi-dark-8);
+  --color-dsi-dark-9: var(--dsi-dark-9);
+  --color-dsi-gray-0: var(--dsi-gray-0);
+  --color-dsi-gray-1: var(--dsi-gray-1);
+  --color-dsi-gray-2: var(--dsi-gray-2);
+  --color-dsi-gray-3: var(--dsi-gray-3);
+  --color-dsi-gray-4: var(--dsi-gray-4);
+  --color-dsi-gray-5: var(--dsi-gray-5);
+  --color-dsi-gray-6: var(--dsi-gray-6);
+  --color-dsi-gray-7: var(--dsi-gray-7);
+  --color-dsi-gray-8: var(--dsi-gray-8);
+  --color-dsi-gray-9: var(--dsi-gray-9);
+  --color-dsi-red-0: var(--dsi-red-0);
+  --color-dsi-red-1: var(--dsi-red-1);
+  --color-dsi-red-2: var(--dsi-red-2);
+  --color-dsi-red-3: var(--dsi-red-3);
+  --color-dsi-red-4: var(--dsi-red-4);
+  --color-dsi-red-5: var(--dsi-red-5);
+  --color-dsi-red-6: var(--dsi-red-6);
+  --color-dsi-red-7: var(--dsi-red-7);
+  --color-dsi-red-8: var(--dsi-red-8);
+  --color-dsi-red-9: var(--dsi-red-9);
+  --color-dsi-blue-0: var(--dsi-blue-0);
+  --color-dsi-blue-1: var(--dsi-blue-1);
+  --color-dsi-blue-2: var(--dsi-blue-2);
+  --color-dsi-blue-3: var(--dsi-blue-3);
+  --color-dsi-blue-4: var(--dsi-blue-4);
+  --color-dsi-blue-5: var(--dsi-blue-5);
+  --color-dsi-blue-6: var(--dsi-blue-6);
+  --color-dsi-blue-7: var(--dsi-blue-7);
+  --color-dsi-blue-8: var(--dsi-blue-8);
+  --color-dsi-blue-9: var(--dsi-blue-9);
+  --color-dsi-green-0: var(--dsi-green-0);
+  --color-dsi-green-1: var(--dsi-green-1);
+  --color-dsi-green-2: var(--dsi-green-2);
+  --color-dsi-green-3: var(--dsi-green-3);
+  --color-dsi-green-4: var(--dsi-green-4);
+  --color-dsi-green-5: var(--dsi-green-5);
+  --color-dsi-green-6: var(--dsi-green-6);
+  --color-dsi-green-7: var(--dsi-green-7);
+  --color-dsi-green-8: var(--dsi-green-8);
+  --color-dsi-green-9: var(--dsi-green-9);
+  --color-dsi-orange-0: var(--dsi-orange-0);
+  --color-dsi-orange-1: var(--dsi-orange-1);
+  --color-dsi-orange-2: var(--dsi-orange-2);
+  --color-dsi-orange-3: var(--dsi-orange-3);
+  --color-dsi-orange-4: var(--dsi-orange-4);
+  --color-dsi-orange-5: var(--dsi-orange-5);
+  --color-dsi-orange-6: var(--dsi-orange-6);
+  --color-dsi-orange-7: var(--dsi-orange-7);
+  --color-dsi-orange-8: var(--dsi-orange-8);
+  --color-dsi-orange-9: var(--dsi-orange-9);
+  /* DSI Multi-Color Brand Variants */
+  --color-dsi-amber: var(--dsi-amber);
+  --color-dsi-amber-light: var(--dsi-amber-light);
+  --color-dsi-amber-lighter: var(--dsi-amber-lighter);
+  --color-dsi-amber-lightest: var(--dsi-amber-lightest);
+  --color-dsi-sky: var(--dsi-sky);
+  --color-dsi-sky-light: var(--dsi-sky-light);
+  --color-dsi-sky-lighter: var(--dsi-sky-lighter);
+  --color-dsi-sky-lightest: var(--dsi-sky-lightest);
+  --color-dsi-purple: var(--dsi-purple);
+  --color-dsi-purple-light: var(--dsi-purple-light);
+  --color-dsi-purple-lighter: var(--dsi-purple-lighter);
+  --color-dsi-purple-lightest: var(--dsi-purple-lightest);
+  --color-dsi-green: var(--dsi-green);
+  --color-dsi-green-light: var(--dsi-green-light);
+  --color-dsi-green-lighter: var(--dsi-green-lighter);
+  --color-dsi-green-lightest: var(--dsi-green-lightest);
+  /* Multi-color variants for Tailwind */
+  --color-brand-amber: #FE962C;
+  --color-brand-sky: #68DAFC;
+  --color-brand-purple: #AAA4E9;
+  --color-brand-green: #87C95B;
+  --color-dsi-brown-orange-200: var(--dsi-brown-orange-200);
+  --color-dsi-brown-orange-300: var(--dsi-brown-orange-300);
+  --color-dsi-brown-orange-400: var(--dsi-brown-orange-400);
+  --color-dsi-brown-orange-500: var(--dsi-brown-orange-500);
+  --color-dsi-brown-orange-600: var(--dsi-brown-orange-600);
+  --color-dsi-brown-orange-700: var(--dsi-brown-orange-700);
+  --color-dsi-brown-orange-800: var(--dsi-brown-orange-800);
+  --color-dsi-brown-orange-900: var(--dsi-brown-orange-900);
+  --color-dsi-brown-orange-950: var(--dsi-brown-orange-950);
+  --color-dsi-brown-orange-dark: var(--dsi-brown-orange-dark);
+  --color-dsi-error: var(--dsi-error);
+  --color-dsi-error-foreground: var(--dsi-error-foreground);
+  --color-dsi-red: var(--dsi-red);
+  --color-dsi-red-light: var(--dsi-red-light);
+  /* Legacy mappings for compatibility */
+  --color-primary-hover: var(--dsi-primary-hover);
+  --color-primary-light: var(--dsi-primary-light);
+  --color-primary-lighter: var(--dsi-primary-lighter);
+  --color-warning: var(--dsi-warning);
+  --color-warning-foreground: var(--dsi-warning-foreground);
+  --color-error: var(--dsi-error);
+  --color-error-foreground: var(--dsi-error-foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --main-background: oklch(0.995 0.004 65);
+  --promo-background: oklch(0.96 0.02 180);
+  --promo-button: oklch(0.75 0.08 180);
+  /* Dark warm text variants */
+  --dsi-warm-text-dark: oklch(0.35 0.12 65);
+  --dsi-warm-text-medium: oklch(0.45 0.1 65);
+  --dsi-warm-text-light: oklch(0.5 0.08 65);
+  --promo-text-dark: oklch(0.35 0.12 180);
+  --promo-text-medium: oklch(0.45 0.1 180);
+  --promo-text-light: oklch(0.4 0.11 180);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* DSI Branded Orange Primary - High Conversion Orange */
+  --primary: oklch(0.65 0.25 45);
+  --primary-foreground: oklch(1 0 0);
+  /* DSI Orange Variants */
+  --dsi-primary-hover: oklch(0.97 0.05 45);
+  --dsi-primary-light: oklch(0.85 0.15 45);
+  --dsi-primary-lighter: oklch(0.95 0.08 45);
+  --dsi-primary-lightest: oklch(0.97 0.05 45);
+  --dsi-orange: oklch(0.65 0.25 45);
+  --dsi-orange-hover: oklch(0.75 0.18 60);
+  --dsi-orange-light: oklch(0.85 0.15 45);
+  --dsi-orange-lighter: oklch(0.95 0.08 45);
+  --dsi-orange-lightest: oklch(0.98 0.03 45);
+  /* DSI Warm Color Combinations - #dcaa70 and #fcf4ee */
+  --dsi-warm-button: oklch(0.75 0.08 65);
+  --dsi-warm-bg: oklch(0.97 0.02 65);
+  /* DSI Extra Warm Color Combinations - #e2a6a3 and #fff3f2 */
+  --dsi-warm-coral-button: oklch(0.75 0.08 15);
+  --dsi-warm-coral-bg: oklch(0.98 0.01 15);
+  /* DSI Multi-Color Brand Variants - Soft but readable platform colors */
+  --dsi-amber: #FE962C;
+  --dsi-amber-light: #FEA94C;
+  --dsi-amber-lighter: #FEBC6C;
+  --dsi-amber-lightest: #FED89C;
+  --dsi-sky: #68DAFC;
+  --dsi-sky-light: #7FDCFC;
+  --dsi-sky-lighter: #96E0FD;
+  --dsi-sky-lightest: #ADE4FD;
+  --dsi-purple: #AAA4E9;
+  --dsi-purple-light: #B7B2EC;
+  --dsi-purple-lighter: #C4C0EF;
+  --dsi-purple-lightest: #D1CEF2;
+  --dsi-green: #87C95B;
+  --dsi-green-light: #95D06B;
+  --dsi-green-lighter: #A3D77B;
+  --dsi-green-lightest: #B1DE8B;
+  /* DSI Gray Variants */
+  --dsi-gray-50: oklch(0.98 0 0);
+  --dsi-gray-100: oklch(0.95 0 0);
+  --dsi-gray-200: oklch(0.9 0 0);
+  --dsi-gray-300: oklch(0.83 0 0);
+  --dsi-gray-400: oklch(0.64 0 0);
+  --dsi-gray-500: oklch(0.53 0 0);
+  --dsi-gray-600: oklch(0.42 0 0);
+  --dsi-gray-700: oklch(0.32 0 0);
+  --dsi-gray-800: oklch(0.22 0 0);
+  --dsi-gray-900: oklch(0.15 0 0);
+  --dsi-gray-950: oklch(0.1 0 0);
+  /* DSI Teal Variants */
+  --dsi-teal: oklch(0.65 0.15 190);
+  --dsi-teal-hover: oklch(0.6 0.18 190);
+  --dsi-teal-light: oklch(0.75 0.12 190);
+  --dsi-teal-lighter: oklch(0.85 0.08 190);
+  --dsi-teal-lightest: oklch(0.95 0.03 190);
+  --dsi-teal-50: oklch(0.98 0.01 190);
+  --dsi-teal-100: oklch(0.95 0.03 190);
+  --dsi-teal-200: oklch(0.9 0.05 190);
+  --dsi-teal-300: oklch(0.8 0.1 190);
+  --dsi-teal-400: oklch(0.7 0.12 190);
+  --dsi-teal-500: oklch(0.65 0.15 190);
+  --dsi-teal-600: oklch(0.55 0.18 190);
+  --dsi-teal-700: oklch(0.45 0.15 190);
+  --dsi-teal-800: oklch(0.35 0.12 190);
+  --dsi-teal-900: oklch(0.25 0.08 190);
+  --dsi-teal-950: oklch(0.15 0.05 190);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.85 0.15 45);
+  --accent-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.65 0.25 15);
+  /* DSI Yellow variants for complementary colors */
+  --dsi-warning: oklch(0.75 0.2 85);
+  --dsi-warning-foreground: oklch(0.145 0 0);
+  --dsi-yellow: oklch(0.75 0.2 85);
+  --dsi-yellow-hover: oklch(0.7 0.18 85);
+  --dsi-yellow-light: oklch(0.85 0.15 85);
+  --dsi-yellow-lighter: oklch(0.9 0.1 85);
+  --dsi-yellow-lightest: oklch(0.97 0.05 85);
+  --dsi-yellow-50: oklch(0.98 0.01 85);
+  --dsi-yellow-100: oklch(0.95 0.03 85);
+  --dsi-yellow-200: oklch(0.9 0.05 85);
+  --dsi-yellow-300: oklch(0.8 0.1 85);
+  --dsi-yellow-400: oklch(0.75 0.15 85);
+  --dsi-yellow-500: oklch(0.7 0.18 85);
+  --dsi-yellow-600: oklch(0.65 0.2 85);
+  --dsi-yellow-700: oklch(0.55 0.18 85);
+  --dsi-yellow-800: oklch(0.45 0.15 85);
+  --dsi-yellow-900: oklch(0.35 0.1 85);
+  --dsi-yellow-950: oklch(0.25 0.05 85);
+  /* DSI Ocean Blue Variants */
+  --dsi-ocean: oklch(0.45 0.12 240);
+  --dsi-ocean-hover: oklch(0.4 0.15 240);
+  --dsi-ocean-light: oklch(0.55 0.1 240);
+  --dsi-ocean-lighter: oklch(0.7 0.08 240);
+  --dsi-ocean-lightest: oklch(0.85 0.05 240);
+  --dsi-ocean-50: oklch(0.98 0.01 240);
+  --dsi-ocean-100: oklch(0.95 0.02 240);
+  --dsi-ocean-200: oklch(0.9 0.04 240);
+  --dsi-ocean-300: oklch(0.8 0.06 240);
+  --dsi-ocean-400: oklch(0.65 0.08 240);
+  --dsi-ocean-500: oklch(0.5 0.1 240);
+  --dsi-ocean-600: oklch(0.45 0.12 240);
+  --dsi-ocean-700: oklch(0.4 0.15 240);
+  --dsi-ocean-800: oklch(0.3 0.12 240);
+  --dsi-ocean-900: oklch(0.2 0.08 240);
+  --dsi-ocean-950: oklch(0.15 0.05 240);
+  --dsi-ocean-dark: oklch(0.12 0.1 240);
+  --dsi-teal-ocean: oklch(0.35 0.08 210);
+  /* DSI Brown Orange Variants */
+  --dsi-brown-orange: oklch(0.5 0.15 30);
+  --dsi-brown-orange-hover: oklch(0.45 0.18 30);
+  --dsi-brown-orange-light: oklch(0.6 0.12 30);
+  --dsi-brown-orange-lighter: oklch(0.75 0.08 30);
+  --dsi-brown-orange-lightest: oklch(0.9 0.05 30);
+  --dsi-brown-orange-50: oklch(0.98 0.01 30);
+  --dsi-brown-orange-100: oklch(0.95 0.02 30);
+  --dsi-brown-orange-200: oklch(0.9 0.04 30);
+  --dsi-brown-orange-300: oklch(0.8 0.06 30);
+  --dsi-brown-orange-400: oklch(0.7 0.1 30);
+  --dsi-brown-orange-500: oklch(0.6 0.12 30);
+  --dsi-brown-orange-600: oklch(0.5 0.15 30);
+  --dsi-brown-orange-700: oklch(0.4 0.18 30);
+  --dsi-brown-orange-800: oklch(0.3 0.15 30);
+  --dsi-brown-orange-900: oklch(0.2 0.1 30);
+  --dsi-brown-orange-950: oklch(0.15 0.08 30);
+  --dsi-brown-orange-dark: oklch(0.12 0.08 25);
+  /* DSI Red variants for alerts */
+  --dsi-error: oklch(0.6 0.25 15);
+  --dsi-error-foreground: oklch(1 0 0);
+  --dsi-red: oklch(0.6 0.25 15);
+  --dsi-red-light: oklch(0.75 0.2 15);
+  /* DSI Modern Color Palette - Actual Values */
+  --dsi-dark-0: #c9c9c9;
+  --dsi-dark-1: #b8b8b8;
+  --dsi-dark-2: #828282;
+  --dsi-dark-3: #696969;
+  --dsi-dark-4: #424242;
+  --dsi-dark-5: #3b3b3b;
+  --dsi-dark-6: #2e2e2e;
+  --dsi-dark-7: #242424;
+  --dsi-dark-8: #1f1f1f;
+  --dsi-dark-9: #141414;
+  --dsi-gray-0: #f8f9fa;
+  --dsi-gray-1: #f1f3f5;
+  --dsi-gray-2: #e9ecef;
+  --dsi-gray-3: #dee2e6;
+  --dsi-gray-4: #ced4da;
+  --dsi-gray-5: #adb5bd;
+  --dsi-gray-6: #868e96;
+  --dsi-gray-7: #495057;
+  --dsi-gray-8: #343a40;
+  --dsi-gray-9: #212529;
+  --dsi-red-0: #fff5f5;
+  --dsi-red-1: #ffe3e3;
+  --dsi-red-2: #ffc9c9;
+  --dsi-red-3: #ffa8a8;
+  --dsi-red-4: #ff8787;
+  --dsi-red-5: #ff6b6b;
+  --dsi-red-6: #fa5252;
+  --dsi-red-7: #f03e3e;
+  --dsi-red-8: #e03131;
+  --dsi-red-9: #c92a2a;
+  --dsi-blue-0: #e7f5ff;
+  --dsi-blue-1: #d0ebff;
+  --dsi-blue-2: #a5d8ff;
+  --dsi-blue-3: #74c0fc;
+  --dsi-blue-4: #4dabf7;
+  --dsi-blue-5: #339af0;
+  --dsi-blue-6: #228be6;
+  --dsi-blue-7: #1c7ed6;
+  --dsi-blue-8: #1971c2;
+  --dsi-blue-9: #1864ab;
+  --dsi-green-0: #ebfbee;
+  --dsi-green-1: #d3f9d8;
+  --dsi-green-2: #b2f2bb;
+  --dsi-green-3: #8ce99a;
+  --dsi-green-4: #69db7c;
+  --dsi-green-5: #51cf66;
+  --dsi-green-6: #40c057;
+  --dsi-green-7: #37b24d;
+  --dsi-green-8: #2f9e44;
+  --dsi-green-9: #2b8a3e;
+  --dsi-orange-0: #fff4e6;
+  --dsi-orange-1: #ffe8cc;
+  --dsi-orange-2: #ffd8a8;
+  --dsi-orange-3: #ffc078;
+  --dsi-orange-4: #ffa94d;
+  --dsi-orange-5: #ff922b;
+  --dsi-orange-6: #fd7e14;
+  --dsi-orange-7: #f76707;
+  --dsi-orange-8: #e8590c;
+  --dsi-orange-9: #d9480f;
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.65 0.25 45);
+  --chart-1: oklch(0.65 0.25 45);
+  --chart-2: oklch(0.75 0.2 85);
+  --chart-3: oklch(0.6 0.25 15);
+  --chart-4: oklch(0.85 0.15 45);
+  --chart-5: oklch(0.95 0.08 45);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.65 0.25 45);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.65 0.25 45);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  /* DSI Bright Orange Primary for Dark Mode */
+  --primary: oklch(0.7 0.25 45);
+  --primary-foreground: oklch(0.145 0 0);
+  /* DSI Orange Variants for Dark Mode */
+  --dsi-primary-hover: oklch(0.25 0.1 45);
+  --dsi-primary-light: oklch(0.4 0.2 45);
+  --dsi-primary-lighter: oklch(0.3 0.15 45);
+  --dsi-primary-lightest: oklch(0.25 0.1 45);
+  --dsi-orange: oklch(0.7 0.25 45);
+  --dsi-orange-hover: oklch(0.65 0.22 60);
+  --dsi-orange-light: oklch(0.4 0.2 45);
+  --dsi-orange-lighter: oklch(0.3 0.15 45);
+  --dsi-orange-lightest: oklch(0.25 0.1 45);
+  /* DSI Warm Color Combinations for Dark Mode */
+  --dsi-warm-button: oklch(0.65 0.1 65);
+  --dsi-warm-bg: oklch(0.25 0.02 65);
+  /* DSI Extra Warm Color Combinations for Dark Mode */
+  --dsi-warm-coral-button: oklch(0.65 0.1 15);
+  --dsi-warm-coral-bg: oklch(0.25 0.01 15);
+  /* DSI Multi-Color Brand Variants for Dark Mode */
+  --dsi-amber: #FE962C;
+  --dsi-amber-light: #FEA94C;
+  --dsi-amber-lighter: #FEBC6C;
+  --dsi-amber-lightest: #FED89C;
+  --dsi-sky: #68DAFC;
+  --dsi-sky-light: #7FDCFC;
+  --dsi-sky-lighter: #96E0FD;
+  --dsi-sky-lightest: #ADE4FD;
+  --dsi-purple: #AAA4E9;
+  --dsi-purple-light: #B7B2EC;
+  --dsi-purple-lighter: #C4C0EF;
+  --dsi-purple-lightest: #D1CEF2;
+  --dsi-green: #87C95B;
+  --dsi-green-light: #95D06B;
+  --dsi-green-lighter: #A3D77B;
+  --dsi-green-lightest: #B1DE8B;
+  /* DSI Gray Variants for Dark Mode */
+  --dsi-gray-50: oklch(0.1 0 0);
+  --dsi-gray-100: oklch(0.15 0 0);
+  --dsi-gray-200: oklch(0.22 0 0);
+  --dsi-gray-300: oklch(0.32 0 0);
+  --dsi-gray-400: oklch(0.42 0 0);
+  --dsi-gray-500: oklch(0.53 0 0);
+  --dsi-gray-600: oklch(0.64 0 0);
+  --dsi-gray-700: oklch(0.75 0 0);
+  --dsi-gray-800: oklch(0.85 0 0);
+  --dsi-gray-900: oklch(0.9 0 0);
+  --dsi-gray-950: oklch(0.95 0 0);
+  /* DSI Teal Variants for Dark Mode */
+  --dsi-teal: oklch(0.7 0.15 190);
+  --dsi-teal-hover: oklch(0.65 0.18 190);
+  --dsi-teal-light: oklch(0.8 0.12 190);
+  --dsi-teal-lighter: oklch(0.35 0.08 190);
+  --dsi-teal-lightest: oklch(0.25 0.03 190);
+  --dsi-teal-50: oklch(0.15 0.01 190);
+  --dsi-teal-100: oklch(0.2 0.03 190);
+  --dsi-teal-200: oklch(0.25 0.05 190);
+  --dsi-teal-300: oklch(0.35 0.1 190);
+  --dsi-teal-400: oklch(0.5 0.12 190);
+  --dsi-teal-500: oklch(0.65 0.15 190);
+  --dsi-teal-600: oklch(0.75 0.18 190);
+  --dsi-teal-700: oklch(0.8 0.15 190);
+  --dsi-teal-800: oklch(0.25 0.15 190);
+  --dsi-teal-900: oklch(0.9 0.08 190);
+  --dsi-teal-950: oklch(0.95 0.05 190);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.4 0.2 45);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.7 0.25 15);
+  /* DSI Yellow variants for dark mode */
+  --dsi-warning: oklch(0.8 0.2 85);
+  --dsi-warning-foreground: oklch(0.145 0 0);
+  --dsi-yellow: oklch(0.8 0.2 85);
+  --dsi-yellow-hover: oklch(0.75 0.18 85);
+  --dsi-yellow-light: oklch(0.85 0.15 85);
+  --dsi-yellow-lighter: oklch(0.35 0.1 85);
+  --dsi-yellow-lightest: oklch(0.25 0.08 85);
+  --dsi-yellow-50: oklch(0.15 0.01 85);
+  --dsi-yellow-100: oklch(0.2 0.03 85);
+  --dsi-yellow-200: oklch(0.25 0.05 85);
+  --dsi-yellow-300: oklch(0.35 0.1 85);
+  --dsi-yellow-400: oklch(0.5 0.15 85);
+  --dsi-yellow-500: oklch(0.65 0.18 85);
+  --dsi-yellow-600: oklch(0.75 0.2 85);
+  --dsi-yellow-700: oklch(0.8 0.18 85);
+  --dsi-yellow-800: oklch(0.85 0.15 85);
+  --dsi-yellow-900: oklch(0.9 0.1 85);
+  --dsi-yellow-950: oklch(0.95 0.05 85);
+  /* DSI Ocean Blue Variants for Dark Mode */
+  --dsi-ocean: oklch(0.65 0.12 240);
+  --dsi-ocean-hover: oklch(0.6 0.15 240);
+  --dsi-ocean-light: oklch(0.75 0.1 240);
+  --dsi-ocean-lighter: oklch(0.4 0.08 240);
+  --dsi-ocean-lightest: oklch(0.3 0.05 240);
+  --dsi-ocean-50: oklch(0.15 0.01 240);
+  --dsi-ocean-100: oklch(0.2 0.02 240);
+  --dsi-ocean-200: oklch(0.25 0.04 240);
+  --dsi-ocean-300: oklch(0.35 0.06 240);
+  --dsi-ocean-400: oklch(0.5 0.08 240);
+  --dsi-ocean-500: oklch(0.65 0.1 240);
+  --dsi-ocean-600: oklch(0.7 0.12 240);
+  --dsi-ocean-700: oklch(0.75 0.15 240);
+  --dsi-ocean-800: oklch(0.8 0.12 240);
+  --dsi-ocean-900: oklch(0.85 0.08 240);
+  --dsi-ocean-950: oklch(0.9 0.05 240);
+  --dsi-ocean-dark: oklch(0.25 0.12 240);
+  --dsi-teal-ocean: oklch(0.4 0.1 210);
+  /* DSI Brown Orange Variants for Dark Mode */
+  --dsi-brown-orange: oklch(0.7 0.15 30);
+  --dsi-brown-orange-hover: oklch(0.65 0.18 30);
+  --dsi-brown-orange-light: oklch(0.8 0.12 30);
+  --dsi-brown-orange-lighter: oklch(0.4 0.08 30);
+  --dsi-brown-orange-lightest: oklch(0.3 0.05 30);
+  --dsi-brown-orange-50: oklch(0.15 0.01 30);
+  --dsi-brown-orange-100: oklch(0.2 0.02 30);
+  --dsi-brown-orange-200: oklch(0.25 0.04 30);
+  --dsi-brown-orange-300: oklch(0.35 0.06 30);
+  --dsi-brown-orange-400: oklch(0.5 0.1 30);
+  --dsi-brown-orange-500: oklch(0.65 0.12 30);
+  --dsi-brown-orange-600: oklch(0.75 0.15 30);
+  --dsi-brown-orange-700: oklch(0.8 0.18 30);
+  --dsi-brown-orange-800: oklch(0.85 0.15 30);
+  --dsi-brown-orange-900: oklch(0.9 0.1 30);
+  --dsi-brown-orange-950: oklch(0.95 0.08 30);
+  --dsi-brown-orange-dark: oklch(0.25 0.1 25);
+  
+  /* New DSI Color System */
+  --dsi-color-dark-0: #c9c9c9;
+  --dsi-color-dark-1: #b8b8b8;
+  --dsi-color-dark-2: #828282;
+  --dsi-color-dark-3: #696969;
+  --dsi-color-dark-4: #424242;
+  --dsi-color-dark-5: #3b3b3b;
+  --dsi-color-dark-6: #2e2e2e;
+  --dsi-color-dark-7: #242424;
+  --dsi-color-dark-8: #1f1f1f;
+  --dsi-color-dark-9: #141414;
+  --dsi-color-gray-0: #f8f9fa;
+  --dsi-color-gray-1: #f1f3f5;
+  --dsi-color-gray-2: #e9ecef;
+  --dsi-color-gray-3: #dee2e6;
+  --dsi-color-gray-4: #ced4da;
+  --dsi-color-gray-5: #adb5bd;
+  --dsi-color-gray-6: #868e96;
+  --dsi-color-gray-7: #495057;
+  --dsi-color-gray-8: #343a40;
+  --dsi-color-gray-9: #212529;
+  --dsi-color-red-0: #fff5f5;
+  --dsi-color-red-1: #ffe3e3;
+  --dsi-color-red-2: #ffc9c9;
+  --dsi-color-red-3: #ffa8a8;
+  --dsi-color-red-4: #ff8787;
+  --dsi-color-red-5: #ff6b6b;
+  --dsi-color-red-6: #fa5252;
+  --dsi-color-red-7: #f03e3e;
+  --dsi-color-red-8: #e03131;
+  --dsi-color-red-9: #c92a2a;
+  --dsi-color-pink-0: #fff0f6;
+  --dsi-color-pink-1: #ffdeeb;
+  --dsi-color-pink-2: #fcc2d7;
+  --dsi-color-pink-3: #faa2c1;
+  --dsi-color-pink-4: #f783ac;
+  --dsi-color-pink-5: #f06595;
+  --dsi-color-pink-6: #e64980;
+  --dsi-color-pink-7: #d6336c;
+  --dsi-color-pink-8: #c2255c;
+  --dsi-color-pink-9: #a61e4d;
+  --dsi-color-grape-0: #f8f0fc;
+  --dsi-color-grape-1: #f3d9fa;
+  --dsi-color-grape-2: #eebefa;
+  --dsi-color-grape-3: #e599f7;
+  --dsi-color-grape-4: #da77f2;
+  --dsi-color-grape-5: #cc5de8;
+  --dsi-color-grape-6: #be4bdb;
+  --dsi-color-grape-7: #ae3ec9;
+  --dsi-color-grape-8: #9c36b5;
+  --dsi-color-grape-9: #862e9c;
+  --dsi-color-violet-0: #f3f0ff;
+  --dsi-color-violet-1: #e5dbff;
+  --dsi-color-violet-2: #d0bfff;
+  --dsi-color-violet-3: #b197fc;
+  --dsi-color-violet-4: #9775fa;
+  --dsi-color-violet-5: #845ef7;
+  --dsi-color-violet-6: #7950f2;
+  --dsi-color-violet-7: #7048e8;
+  --dsi-color-violet-8: #6741d9;
+  --dsi-color-violet-9: #5f3dc4;
+  --dsi-color-indigo-0: #edf2ff;
+  --dsi-color-indigo-1: #dbe4ff;
+  --dsi-color-indigo-2: #bac8ff;
+  --dsi-color-indigo-3: #91a7ff;
+  --dsi-color-indigo-4: #748ffc;
+  --dsi-color-indigo-5: #5c7cfa;
+  --dsi-color-indigo-6: #4c6ef5;
+  --dsi-color-indigo-7: #4263eb;
+  --dsi-color-indigo-8: #3b5bdb;
+  --dsi-color-indigo-9: #364fc7;
+  --dsi-color-blue-0: #e7f5ff;
+  --dsi-color-blue-1: #d0ebff;
+  --dsi-color-blue-2: #a5d8ff;
+  --dsi-color-blue-3: #74c0fc;
+  --dsi-color-blue-4: #4dabf7;
+  --dsi-color-blue-5: #339af0;
+  --dsi-color-blue-6: #228be6;
+  --dsi-color-blue-7: #1c7ed6;
+  --dsi-color-blue-8: #1971c2;
+  --dsi-color-blue-9: #1864ab;
+  --dsi-color-cyan-0: #e3fafc;
+  --dsi-color-cyan-1: #c5f6fa;
+  --dsi-color-cyan-2: #99e9f2;
+  --dsi-color-cyan-3: #66d9e8;
+  --dsi-color-cyan-4: #3bc9db;
+  --dsi-color-cyan-5: #22b8cf;
+  --dsi-color-cyan-6: #15aabf;
+  --dsi-color-cyan-7: #1098ad;
+  --dsi-color-cyan-8: #0c8599;
+  --dsi-color-cyan-9: #0b7285;
+  --dsi-color-teal-0: #e6fcf5;
+  --dsi-color-teal-1: #c3fae8;
+  --dsi-color-teal-2: #96f2d7;
+  --dsi-color-teal-3: #63e6be;
+  --dsi-color-teal-4: #38d9a9;
+  --dsi-color-teal-5: #20c997;
+  --dsi-color-teal-6: #12b886;
+  --dsi-color-teal-7: #0ca678;
+  --dsi-color-teal-8: #099268;
+  --dsi-color-teal-9: #087f5b;
+  --dsi-color-green-0: #ebfbee;
+  --dsi-color-green-1: #d3f9d8;
+  --dsi-color-green-2: #b2f2bb;
+  --dsi-color-green-3: #8ce99a;
+  --dsi-color-green-4: #69db7c;
+  --dsi-color-green-5: #51cf66;
+  --dsi-color-green-6: #40c057;
+  --dsi-color-green-7: #37b24d;
+  --dsi-color-green-8: #2f9e44;
+  --dsi-color-green-9: #2b8a3e;
+  --dsi-color-lime-0: #f4fce3;
+  --dsi-color-lime-1: #e9fac8;
+  --dsi-color-lime-2: #d8f5a2;
+  --dsi-color-lime-3: #c0eb75;
+  --dsi-color-lime-4: #a9e34b;
+  --dsi-color-lime-5: #94d82d;
+  --dsi-color-lime-6: #82c91e;
+  --dsi-color-lime-7: #74b816;
+  --dsi-color-lime-8: #66a80f;
+  --dsi-color-lime-9: #5c940d;
+  --dsi-color-yellow-0: #fff9db;
+  --dsi-color-yellow-1: #fff3bf;
+  --dsi-color-yellow-2: #ffec99;
+  --dsi-color-yellow-3: #ffe066;
+  --dsi-color-yellow-4: #ffd43b;
+  --dsi-color-yellow-5: #fcc419;
+  --dsi-color-yellow-6: #fab005;
+  --dsi-color-yellow-7: #f59f00;
+  --dsi-color-yellow-8: #f08c00;
+  --dsi-color-yellow-9: #e67700;
+  --dsi-color-orange-0: #fff4e6;
+  --dsi-color-orange-1: #ffe8cc;
+  --dsi-color-orange-2: #ffd8a8;
+  --dsi-color-orange-3: #ffc078;
+  --dsi-color-orange-4: #ffa94d;
+  --dsi-color-orange-5: #ff922b;
+  --dsi-color-orange-6: #fd7e14;
+  --dsi-color-orange-7: #f76707;
+  --dsi-color-orange-8: #e8590c;
+  --dsi-color-orange-9: #d9480f;
+  /* DSI Red variants for dark mode */
+  --dsi-error: oklch(0.65 0.25 15);
+  --dsi-error-foreground: oklch(0.985 0 0);
+  --dsi-red: oklch(0.65 0.25 15);
+  --dsi-red-light: oklch(0.75 0.2 15);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.7 0.25 45);
+  --chart-1: oklch(0.7 0.25 45);
+  --chart-2: oklch(0.8 0.2 85);
+  --chart-3: oklch(0.65 0.25 15);
+  --chart-4: oklch(0.4 0.2 45);
+  --chart-5: oklch(0.3 0.15 45);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.7 0.25 45);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.7 0.25 45);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Override sheet title color to black and remove underlines */
+  [data-slot="sheet-title"] {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+  
+  /* Remove underlines from all links globally */
+  a {
+    text-decoration: none !important;
+  }
+  
+  /* Remove hover underline effects */
+  a:hover {
+    text-decoration: none !important;
+  }
+  
+  /* Remove underlines from all interactive elements */
+  button, 
+  [role="button"],
+  [data-state],
+  [data-slot="accordion-trigger"],
+  .accordion-trigger,
+  * {
+    text-decoration: none !important;
+  }
+  
+  /* Remove underlines on hover for all elements */
+  *:hover {
+    text-decoration: none !important;
+  }
+}
+
+/* Input hover and focus effects - Ant Design pattern with cyan colors */
+/* Target all input elements and select triggers */
+input:hover,
+[data-slot="select-trigger"]:hover {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+}
+
+input:focus,
+[data-slot="select-trigger"]:focus,
+[data-slot="select-trigger"]:focus-within,
+[data-slot="select-trigger"][data-state="open"] {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+  box-shadow: 0 0 0 3px rgba(173, 228, 253, 0.2) !important;
+  outline: 0 !important;
+}
+
+/* Apply hover/focus effects to outer borders ONLY of ShadcnCounter components */
+/* Target the motion.div container that wraps the counter - exclude inner elements */
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1:hover {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+}
+
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1:focus-within {
+  border-color: var(--dsi-sky) !important;
+  border-right-width: 1px !important;
+  box-shadow: 0 0 0 3px rgba(173, 228, 253, 0.2) !important;
+  outline: 0 !important;
+}
+
+/* Prevent inner counter elements from getting the input styling */
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 button:hover,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 input:hover,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 button:focus,
+.flex.items-center.gap-0.border.border-input.rounded-md.flex-1 input:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Shadcn horizontal tabs styling - cyan active border, no hover backgrounds */
+[data-radix-tabs-trigger][data-state="active"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-bottom: 2px solid var(--dsi-sky) !important;
+}
+
+[data-radix-tabs-trigger]:focus {
+  border-bottom: 2px solid var(--dsi-sky) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Remove yellow hover backgrounds from tabs */
+html [data-radix-tabs-trigger]:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Dropdown menu items hover - soft light cyan */
+[role="option"]:hover {
+  background-color: var(--dsi-teal-50) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Dropdown menu items active state */
+[role="option"]:active {
+  background-color: var(--dsi-teal-100) !important;
+  background: var(--dsi-teal-100) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Dropdown menu items selected state - override orange with cyan */
+[role="option"][data-state="selected"],
+[role="option"][aria-selected="true"],
+[data-slot="select-item"][data-state="checked"],
+[data-slot="select-item"][aria-selected="true"],
+.select-item[data-state="checked"],
+.select-item[aria-selected="true"] {
+  background-color: var(--dsi-teal-200) !important;
+  background: var(--dsi-teal-200) !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* More aggressive override for select items */
+html [role="option"][data-state="selected"],
+html [role="option"][aria-selected="true"],
+html [data-slot="select-item"][data-state="checked"],
+html [data-slot="select-item"][aria-selected="true"] {
+  background-color: var(--dsi-teal-200) !important;
+  background: var(--dsi-teal-200) !important;
+}
+
+/* Location dialog Confirm button styling - cyan-6 when active */
+[data-slot="dialog-content"].w-\[480px\] [data-slot="button"]:not(:disabled) {
+  background-color: #15aabf !important;
+  background: #15aabf !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+[data-slot="dialog-content"].w-\[480px\] [data-slot="button"]:not(:disabled):hover {
+  background-color: #1098ad !important;
+  background: #1098ad !important;
+  opacity: 1 !important;
+}
+
+/* Simple button color change - override primary color and add color variables */
+:root {
+  --primary: #15aabf;
+  --dsi-color-cyan-6: #15aabf;
+  --dsi-color-cyan-7: #1098ad;
+}
