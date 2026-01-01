@@ -27,7 +27,11 @@ import {
   TrendingDown,
   Sun,
   Moon,
+  Store,
+  Plus,
+  Check,
 } from "lucide-react";
+import { useStore, platformInfo } from "@/contexts/StoreContext";
 
 interface TopNavigationProps {
   onMobileMenuToggle?: () => void;
@@ -43,6 +47,7 @@ const profitData = {
 export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
   const router = useRouter();
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { stores, activeStore, setActiveStore, isLoading } = useStore();
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -88,6 +93,65 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
               priority
             />
           </button>
+
+          {/* Store Switcher */}
+          {!isLoading && stores.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden h-9 gap-2 border-border bg-background px-3 hover:bg-muted sm:flex"
+                >
+                  {activeStore && (
+                    <>
+                      <div
+                        className={`h-2 w-2 rounded-full ${platformInfo[activeStore.platform].color}`}
+                      />
+                      <span className="max-w-[120px] truncate text-sm font-medium">
+                        {activeStore.name}
+                      </span>
+                    </>
+                  )}
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64">
+                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                  Switch Store
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {stores.map((store) => (
+                  <DropdownMenuItem
+                    key={store.id}
+                    className="cursor-pointer gap-3"
+                    onClick={() => setActiveStore(store)}
+                  >
+                    <div
+                      className={`h-2.5 w-2.5 rounded-full ${platformInfo[store.platform].color}`}
+                    />
+                    <div className="flex flex-1 flex-col">
+                      <span className="text-sm font-medium">{store.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {platformInfo[store.platform].label}
+                      </span>
+                    </div>
+                    {activeStore?.id === store.id && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer gap-2 text-primary"
+                  onClick={() => router.push("/settings/stores")}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add New Store</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Center Section - Profit Ticker (Hidden on mobile) */}
