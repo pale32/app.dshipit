@@ -27,27 +27,25 @@ import {
   TrendingDown,
   Sun,
   Moon,
-  Store,
   Plus,
   Check,
+  Package,
+  DollarSign,
+  ShoppingCart,
+  AlertCircle,
 } from "lucide-react";
 import { useStore, platformInfo } from "@/contexts/StoreContext";
+import { useDashboardStats } from "@/contexts/DashboardStatsContext";
 
 interface TopNavigationProps {
   onMobileMenuToggle?: () => void;
 }
 
-// Mock profit data - in production this would come from context/API
-const profitData = {
-  todayProfit: 342.50,
-  percentChange: 12.5,
-  isUp: true,
-};
-
 export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
   const router = useRouter();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const { stores, activeStore, setActiveStore, isLoading } = useStore();
+  const { stats, isLoading: statsLoading } = useDashboardStats();
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -66,19 +64,8 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
   return (
     <nav className="bg-background border-border fixed top-0 z-50 h-16 w-full border-b shadow-sm">
       <div className="flex h-full items-center justify-between px-4 sm:px-6">
-        {/* Left Section - Mobile Menu + Logo */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onMobileMenuToggle}
-            className="h-9 w-9 p-0 md:hidden"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-
+        {/* Left Section - Logo + Store Switcher */}
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Logo */}
           <button
             onClick={() => router.push("/")}
@@ -89,12 +76,12 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
               alt="DShipIt Logo"
               width={140}
               height={37}
-              className="h-8 w-auto sm:h-9"
+              className="h-7 w-auto sm:h-9"
               priority
             />
           </button>
 
-          {/* Store Switcher */}
+          {/* Store Switcher - Desktop */}
           {!isLoading && stores.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -154,62 +141,119 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
           )}
         </div>
 
-        {/* Center Section - Profit Ticker (Hidden on mobile) */}
-        <div className="hidden items-center gap-2 rounded-lg bg-muted/50 px-4 py-2 md:flex">
-          <span className="text-xs text-muted-foreground">Today&apos;s Profit</span>
-          <span className="text-lg font-semibold text-foreground">
-            ${profitData.todayProfit.toFixed(2)}
-          </span>
-          <div
-            className={`flex items-center gap-0.5 text-xs font-medium ${
-              profitData.isUp ? "text-green-600" : "text-red-500"
-            }`}
-          >
-            {profitData.isUp ? (
-              <TrendingUp className="h-3.5 w-3.5" />
-            ) : (
-              <TrendingDown className="h-3.5 w-3.5" />
-            )}
-            <span>{profitData.percentChange}%</span>
-          </div>
+        {/* Center Section - Stats Ticker (Hidden on mobile) */}
+        <div className="hidden items-center gap-1 lg:flex">
+          {statsLoading || !stats ? (
+            <div className="flex items-center gap-6 px-3 py-1.5">
+              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+            </div>
+          ) : (
+            <>
+              {/* Revenue */}
+              <div className="flex items-center gap-2 rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => router.push("/analytics")}>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Revenue</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold">${stats.revenue.value.toLocaleString()}</span>
+                    <span className={`flex items-center text-[10px] font-medium ${stats.revenue.isUp ? "text-green-600" : "text-red-500"}`}>
+                      {stats.revenue.isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {Math.abs(stats.revenue.change).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-border" />
+
+              {/* Profit */}
+              <div className="flex items-center gap-2 rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => router.push("/analytics")}>
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Profit</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold text-green-600">${stats.profit.value.toLocaleString()}</span>
+                    <span className={`flex items-center text-[10px] font-medium ${stats.profit.isUp ? "text-green-600" : "text-red-500"}`}>
+                      {stats.profit.isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {Math.abs(stats.profit.change).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-border" />
+
+              {/* Orders Today */}
+              <div className="flex items-center gap-2 rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => router.push("/orders")}>
+                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Orders</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold">{stats.orders.value}</span>
+                    <span className={`flex items-center text-[10px] font-medium ${stats.orders.isUp ? "text-green-600" : "text-red-500"}`}>
+                      {stats.orders.isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {Math.abs(stats.orders.change).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-border" />
+
+              {/* Pending Shipments */}
+              <div className="flex items-center gap-2 rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => router.push("/orders?status=pending")}>
+                <Package className={`h-4 w-4 ${stats.pending.isUrgent ? "text-amber-500" : "text-muted-foreground"}`} />
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Pending</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-sm font-semibold ${stats.pending.isUrgent ? "text-amber-500" : ""}`}>{stats.pending.value}</span>
+                    {stats.pending.isUrgent && <AlertCircle className="h-3 w-3 text-amber-500" />}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Right Section - Help + Settings + Theme + Notifications + User */}
+        {/* Right Section */}
         <div className="flex items-center gap-1 sm:gap-2">
-          {/* Help Button */}
+          {/* Desktop Only: Help Button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/support")}
-            className="h-9 w-9 p-0 hover:bg-muted"
+            className="hidden h-9 w-9 p-0 hover:bg-muted sm:flex"
           >
             <HelpCircle className="h-5 w-5" />
             <span className="sr-only">Help</span>
           </Button>
 
-          {/* Vertical Divider */}
-          <div className="h-5 w-px bg-border" />
+          {/* Desktop Only: Vertical Divider */}
+          <div className="hidden h-5 w-px bg-border sm:block" />
 
-          {/* Settings Button */}
+          {/* Desktop Only: Settings Button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push("/settings")}
-            className="h-9 w-9 p-0 hover:bg-muted"
+            className="hidden h-9 w-9 p-0 hover:bg-muted sm:flex"
           >
             <Settings className="h-5 w-5" />
             <span className="sr-only">Settings</span>
           </Button>
 
-          {/* Vertical Divider */}
-          <div className="h-5 w-px bg-border" />
+          {/* Desktop Only: Vertical Divider */}
+          <div className="hidden h-5 w-px bg-border sm:block" />
 
-          {/* Theme Toggle */}
+          {/* Desktop Only: Theme Toggle */}
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleTheme}
-            className="h-9 w-9 p-0 hover:bg-muted"
+            className="hidden h-9 w-9 p-0 hover:bg-muted sm:flex"
           >
             {theme === "light" ? (
               <Moon className="h-5 w-5" />
@@ -219,7 +263,7 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {/* Notifications Popover */}
+          {/* Notifications Popover - Always visible */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -282,18 +326,18 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
             </PopoverContent>
           </Popover>
 
-          {/* User Profile Dropdown */}
+          {/* Desktop Only: User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 gap-2 px-2 hover:bg-muted sm:px-3"
+                className="hidden h-9 gap-2 px-2 hover:bg-muted sm:flex sm:px-3"
               >
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
                   <User className="h-4 w-4 text-primary" />
                 </div>
-                <ChevronDown className="hidden h-3.5 w-3.5 text-muted-foreground sm:block" />
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -324,12 +368,35 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
                 Support
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={toggleTheme}
+              >
+                {theme === "light" ? (
+                  <Moon className="mr-2 h-4 w-4" />
+                ) : (
+                  <Sun className="mr-2 h-4 w-4" />
+                )}
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Mobile Only: Menu Button (right side, modern placement) */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMobileMenuToggle}
+            className="h-9 w-9 p-0 sm:hidden"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
         </div>
       </div>
     </nav>
