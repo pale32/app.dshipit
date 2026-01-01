@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { TopNavigation } from "@/components/TopNavigation";
-import { PromoBanner } from "@/components/PromoBanner";
+import { SmartBanner } from "@/components/SmartBanner";
 import { Sidebar } from "@/components/Sidebar";
 import { ProductCountsProvider } from "@/contexts/ProductCountsContext";
 import { UnsavedChangesProvider } from "@/contexts/UnsavedChangesContext";
@@ -27,9 +27,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       <UnsavedChangesProvider>
         <div className="min-h-screen w-full overflow-x-clip">
           <TopNavigation onMobileMenuToggle={toggleMobileMenu} />
-          <PromoBanner />
+          <SmartBanner />
           <Sidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
-          <main className="pt-28 md:ml-[272px]">{children}</main>
+          <main className="pt-16 md:ml-[272px]">{children}</main>
         </div>
       </UnsavedChangesProvider>
     </ProductCountsProvider>

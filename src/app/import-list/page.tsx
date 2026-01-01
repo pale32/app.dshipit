@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import 'tui-image-editor/dist/tui-image-editor.css';
 import { downloadImagesAsZip } from "@/lib/utils";
 import { getImportList, removeFromImportList, updateImportListItem, ImportListItem } from '@/lib/import-list-storage';
+import { saveEditedImage, getEditedImage, getAllEditedImagesForProduct } from '@/lib/image-storage';
 import { getTags, addTag, updateTagName, deleteTag, applyTagsToProducts, Tag } from '@/lib/tags-storage';
 import { currencyService } from '@/services/currencyService';
 import { setSupplierOptimizerImage } from '@/lib/supplier-optimizer-storage';
@@ -816,16 +817,16 @@ export default function ImportListPage() {
     console.log('handleSaveEditedImage called');
     console.log('imageEditorRef.current:', imageEditorRef.current);
     console.log('currentEditingImageIndex:', currentEditingImageIndex);
-    
-    if (imageEditorRef.current && currentEditingImageIndex !== null) {
+
+    if (imageEditorRef.current && currentEditingImageIndex !== null && currentEditingProduct) {
       const editorInstance = imageEditorRef.current.getInstance();
       console.log('editorInstance:', editorInstance);
-      
+
       if (!editorInstance) {
         console.error('Editor instance not available');
         return;
       }
-      
+
       try {
         // Get the edited image data with proper format and quality
         const editedImageData = editorInstance.toDataURL({
@@ -833,34 +834,36 @@ export default function ImportListPage() {
           quality: 1
         });
         console.log('Got editedImageData:', editedImageData.substring(0, 100) + '...');
-        
-        // Convert to blob for better handling
-        const blob = await (await fetch(editedImageData)).blob();
-        console.log('Converted to blob, size:', blob.size);
-        
+
+        // Save to IndexedDB for persistent storage
+        await saveEditedImage(
+          currentEditingProduct.id,
+          currentEditingImageIndex,
+          editedImageData
+        );
+        console.log('Saved to IndexedDB');
+
         // Update the product images array with the edited image data
         const updatedImages = [...productImages];
         updatedImages[currentEditingImageIndex] = editedImageData;
         setProductImages(updatedImages);
         console.log('Updated product images array');
-        
-        console.log('Edited image saved successfully:', {
-          dataURL: editedImageData.substring(0, 50) + '...',
-          blobSize: blob.size + ' bytes'
-        });
-        
+
+        console.log('Edited image saved successfully');
+
         // Close the editor and return to Images tab
         setImageEditorOpen(false);
         setCurrentEditingImage(null);
         setCurrentEditingImageIndex(null);
-        
+
       } catch (error) {
         console.error('Error in save process:', error);
       }
     } else {
       console.error('Missing requirements:', {
         imageEditorRef: !!imageEditorRef.current,
-        currentEditingImageIndex
+        currentEditingImageIndex,
+        currentEditingProduct: !!currentEditingProduct
       });
     }
   };
@@ -1155,13 +1158,32 @@ export default function ImportListPage() {
         setHeight(currentEditingProduct.dimensions.height);
         setDimensionUnit(currentEditingProduct.dimensions.unit);
       }
-      // Set product images if available
-      if (currentEditingProduct.images && currentEditingProduct.images.length > 0) {
-        setProductImages(currentEditingProduct.images);
-      } else if (currentEditingProduct.image) {
-        // Fallback to single main image if no images array
-        setProductImages([currentEditingProduct.image]);
-      }
+      // Set product images if available, then overlay any edited images from IndexedDB
+      const loadImagesWithEdits = async () => {
+        let baseImages: string[] = [];
+        if (currentEditingProduct.images && currentEditingProduct.images.length > 0) {
+          baseImages = [...currentEditingProduct.images];
+        } else if (currentEditingProduct.image) {
+          baseImages = [currentEditingProduct.image];
+        }
+
+        // Load any edited images from IndexedDB and overlay them
+        try {
+          const editedImages = await getAllEditedImagesForProduct(currentEditingProduct.id);
+          if (editedImages.size > 0) {
+            editedImages.forEach((dataUrl, index) => {
+              if (index < baseImages.length) {
+                baseImages[index] = dataUrl;
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Failed to load edited images from IndexedDB:', error);
+        }
+
+        setProductImages(baseImages);
+      };
+      loadImagesWithEdits();
       // Set description if available
       if (currentEditingProduct.description) {
         setEditingProductDescription(currentEditingProduct.description);

@@ -661,6 +661,52 @@
   [data-slot="select-item"] {
     pointer-events: auto !important;
   }
+
+  /* Ensure Popover content has proper pointer events and z-index */
+  [data-slot="popover-content"],
+  [data-slot="popover-trigger"] {
+    pointer-events: auto !important;
+  }
+
+  [data-slot="popover-content"] {
+    z-index: 9999 !important;
+  }
+
+  /* Ensure react-datepicker works properly */
+  .react-datepicker,
+  .react-datepicker-popper,
+  .react-datepicker__month-container,
+  .react-datepicker__header,
+  .react-datepicker__day-names,
+  .react-datepicker__week,
+  .react-datepicker__day,
+  .react-datepicker__navigation,
+  .react-datepicker__navigation-icon,
+  .react-datepicker__current-month {
+    pointer-events: auto !important;
+  }
+
+  /* Ensure react-datepicker is visible and clickable */
+  .react-datepicker-wrapper,
+  .react-datepicker__input-container {
+    display: block !important;
+  }
+
+  /* Display dual calendars horizontally side by side */
+  .react-datepicker {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+
+  .react-datepicker__month-container {
+    flex: 0 0 auto !important;
+  }
+
+  /* Hide forward navigation when at current month (max date) */
+  .datepicker-at-max .react-datepicker__navigation--next {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
   
   
 }

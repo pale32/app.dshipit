@@ -2080,7 +2080,7 @@ export default function FindProductsPage() {
 
     return (
       <div
-        className="fixed z-[35] bg-background border-b-0 left-0 right-0 md:left-[272px] top-56 h-24"
+        className="fixed z-[25] bg-background border-b-0 left-0 right-0 md:left-[272px] top-56 h-24"
       >
         <div className="mx-auto w-full max-w-6xl px-4">
           {renderSearchBar(vendor, logoSrc)}
@@ -2091,7 +2091,7 @@ export default function FindProductsPage() {
 
   const TabsHeader = () => (
     <div
-      className="fixed z-40 bg-background top-28 left-0 right-0 md:left-[272px] overflow-visible"
+      className="fixed z-30 bg-background top-28 left-0 right-0 md:left-[272px] overflow-visible"
     >
       <div className="mx-auto w-full max-w-6xl px-4 py-6">
         <div className="flex items-center h-16">
