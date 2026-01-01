@@ -107,18 +107,18 @@
   --card-foreground: oklch(0 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0 0 0);
-  /* DSI Branded Blue-Violet Primary - Trusted & Modern (#6877FA) */
-  --primary: #6877FA;
+  /* DSI Branded Blue-to-Violet Primary - Modern & Friendly (blue base with pinkish-violet end) */
+  --primary: #7C5AE6;
   --primary-foreground: #ffffff;
-  /* DSI Blue-Violet Color Scale */
-  --dsi-violet-darkest: #3344C0;
-  --dsi-violet-darker: #4455D4;
-  --dsi-violet-dark: #5566E8;
-  --dsi-violet: #6877FA;
-  --dsi-violet-light: #8A96FC;
-  --dsi-violet-lighter: #A8B2FD;
-  --dsi-violet-lightest: #D4D9FE;
-  --dsi-violet-ultra-light: #ECEFFE;
+  /* DSI Blue-Violet Color Scale - Blue base transitioning to pinkish violet */
+  --dsi-violet-darkest: #4338CA;
+  --dsi-violet-darker: #5B4CD9;
+  --dsi-violet-dark: #6B55E0;
+  --dsi-violet: #7C5AE6;
+  --dsi-violet-light: #9575F0;
+  --dsi-violet-lighter: #B49BF8;
+  --dsi-violet-lightest: #D8CCFC;
+  --dsi-violet-ultra-light: #EDE9FE;
   /* DSI Orange/Sky Color Variants - Modern theme */
   --dsi-sky: #FE962C;
   --dsi-sky-light: #FEA94C;
@@ -151,20 +151,20 @@
   --dsi-red-light: oklch(0.75 0.2 15);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: #6877FA;
-  --chart-1: #6877FA;
-  --chart-2: #8A96FC;
+  --ring: #7C5AE6;
+  --chart-1: #7C5AE6;
+  --chart-2: #9575F0;
   --chart-3: oklch(0.6 0.25 15);
-  --chart-4: #A8B2FD;
-  --chart-5: #D4D9FE;
+  --chart-4: #B49BF8;
+  --chart-5: #D8CCFC;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0 0 0);
-  --sidebar-primary: #6877FA;
+  --sidebar-primary: #7C5AE6;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: #6877FA;
+  --sidebar-ring: #7C5AE6;
 }
 
 .dark {
@@ -174,14 +174,14 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  /* DSI Bright Blue-Violet Primary for Dark Mode (#6877FA) */
-  --primary: #8A96FC;
+  /* DSI Bright Blue-Violet Primary for Dark Mode */
+  --primary: #9575F0;
   --primary-foreground: #1a1a1a;
   /* DSI Blue-Violet Variants for Dark Mode */
-  --dsi-primary-hover: #5566E8;
-  --dsi-primary-light: #8A96FC;
-  --dsi-primary-lighter: #A8B2FD;
-  --dsi-primary-lightest: #D4D9FE;
+  --dsi-primary-hover: #6B55E0;
+  --dsi-primary-light: #9575F0;
+  --dsi-primary-lighter: #B49BF8;
+  --dsi-primary-lightest: #D8CCFC;
   --dsi-orange: oklch(0.7 0.25 45);
   --dsi-orange-hover: #5566E8;
   --dsi-orange-light: #8A96FC;
@@ -335,20 +335,20 @@
   --dsi-red-light: oklch(0.75 0.2 15);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #8A96FC;
-  --chart-1: #8A96FC;
-  --chart-2: #A8B2FD;
+  --ring: #9575F0;
+  --chart-1: #9575F0;
+  --chart-2: #B49BF8;
   --chart-3: oklch(0.65 0.25 15);
-  --chart-4: #5566E8;
-  --chart-5: #4455D4;
+  --chart-4: #6B55E0;
+  --chart-5: #5B4CD9;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: #8A96FC;
+  --sidebar-primary: #9575F0;
   --sidebar-primary-foreground: #1a1a1a;
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: #8A96FC;
+  --sidebar-ring: #9575F0;
 }
 
 @layer base {
@@ -360,16 +360,16 @@
   }
   
   
-  /* Override primary backgrounds with blue-violet gradient (#6877FA) */
+  /* Override primary backgrounds with blue-to-pinkish-violet gradient (#7C5AE6) */
   .bg-primary {
-    background: linear-gradient(90deg, #5566E8 0%, #6877FA 100%) !important;
+    background: linear-gradient(90deg, #4F46E5 0%, #9333EA 100%) !important;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
   }
 
   .bg-primary:hover {
-    background: linear-gradient(90deg, #6877FA 0%, #8A96FC 100%) !important;
+    background: linear-gradient(90deg, #6366F1 0%, #A855F7 100%) !important;
   }
 
   .bg-primary::before {
@@ -396,7 +396,7 @@
   }
 
   .hover\:bg-primary\/90:hover {
-    background: linear-gradient(90deg, #6877FA 0%, #8A96FC 100%) !important;
+    background: linear-gradient(90deg, #6366F1 0%, #A855F7 100%) !important;
   }
 
   /* Upgrade dialog button shine effect */
@@ -505,7 +505,7 @@
   
   /* Global button and input hover and focus styles */
   [data-slot="button"]:hover {
-    border-color: #6877FA !important;
+    border-color: #7C5AE6 !important;
   }
 
   /* Exception for green switch account button */
@@ -533,7 +533,7 @@
 
   [data-slot="button"]:focus-visible {
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(104, 119, 250, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(124, 90, 230, 0.5) !important;
   }
   
   /* Input focus/hover styles removed - using Stripe-style shadow on container instead */

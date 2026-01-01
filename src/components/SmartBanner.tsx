@@ -9,6 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { UpgradePlanDialog } from "@/components/UpgradePlanDialog";
+
+type UpgradePlanDialogFeature = "orders" | "products" | "analytics" | "automation" | "suppliers" | "support";
 
 // Banner types for different promotional contexts
 type BannerType = "promo" | "announcement" | "reward" | "urgency" | "info";
@@ -274,6 +277,7 @@ export function SmartBanner() {
   const [activeBanner, setActiveBanner] = useState<BannerConfig | null>(null);
   const [isDismissed, setIsDismissed] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<{ days: number; hours: number; minutes: number } | null>(null);
+  const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
 
   // Update countdown every minute
   const updateCountdown = useCallback(() => {
@@ -383,7 +387,7 @@ export function SmartBanner() {
           <Button
             size="sm"
             className={`h-8 gap-1.5 px-4 text-xs font-semibold shadow-md transition-transform hover:scale-105 ${theme.cta}`}
-            onClick={() => window.location.href = activeBanner.ctaLink}
+            onClick={() => setIsUpgradeDialogOpen(true)}
           >
             {activeBanner.ctaText}
             <ArrowRight className="h-3.5 w-3.5" />
@@ -420,6 +424,13 @@ export function SmartBanner() {
         </div>
       </div>
     </div>
+
+    {/* Upgrade Plan Dialog */}
+    <UpgradePlanDialog
+      isOpen={isUpgradeDialogOpen}
+      onClose={() => setIsUpgradeDialogOpen(false)}
+      feature="orders"
+    />
     </>
   );
 }

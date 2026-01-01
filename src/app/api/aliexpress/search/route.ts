@@ -228,6 +228,11 @@ export async function GET(request: NextRequest) {
     const productList = data?.products?.selection_search_product;
 
     if (productList && Array.isArray(productList)) {
+      // Debug: log first product to see field names
+      if (productList[0]) {
+        console.log('AliExpress product fields:', Object.keys(productList[0]));
+        console.log('Sample product:', JSON.stringify(productList[0], null, 2));
+      }
       const unfilteredCount = productList.length;
 
       // Filter and map products - include products with 3+ star rating OR no rating (new products)
@@ -247,8 +252,9 @@ export async function GET(request: NextRequest) {
           const discountStr = item.discount?.replace('%', '') || '0';
           const discount = parseInt(discountStr, 10) || 0;
 
-          // Parse orders count from string like "3,000+" or "10,000+"
-          const ordersStr = item.orders?.replace(/[^0-9]/g, '') || '0';
+          // Parse orders/volume count - AliExpress uses 'volume' field for sales count
+          const ordersRaw = item.volume || item.orders || item.tradeCount || item.saleCount || '0';
+          const ordersStr = String(ordersRaw).replace(/[^0-9]/g, '') || '0';
           const ordersCount = parseInt(ordersStr, 10) || 0;
 
           // Rating: score is like "4.7"
@@ -291,6 +297,15 @@ export async function GET(request: NextRequest) {
             maxPrice: salePrice,
           };
         });
+
+      // Sort products by the requested order
+      if (sort === 'LAST_VOLUME_DESC') {
+        products.sort((a: any, b: any) => b.orders_count - a.orders_count);
+      } else if (sort === 'SALE_PRICE_ASC') {
+        products.sort((a: any, b: any) => parseFloat(a.target_sale_price) - parseFloat(b.target_sale_price));
+      } else if (sort === 'SALE_PRICE_DESC') {
+        products.sort((a: any, b: any) => parseFloat(b.target_sale_price) - parseFloat(a.target_sale_price));
+      }
 
       // If API returned fewer products than requested, we've reached the end
       const apiTotalCount = data?.totalCount || 0;

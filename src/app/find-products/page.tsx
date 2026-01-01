@@ -23,28 +23,8 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { searchProducts, transformProductForDisplay, getShippingCost, getProductDetails, type AliExpressProduct } from "@/lib/aliexpress-api";
 import { addToImportList, isInImportList, type ImportListItem } from "@/lib/import-list-storage";
 import { useProductCounts } from "@/contexts/ProductCountsContext";
-
-// Product display type
-interface DisplayProduct {
-  id: string;
-  title: string;
-  price: number;
-  endPrice: number;
-  discount: number;
-  orders: number;
-  shipping: number;
-  freeShipping?: boolean;
-  rating: number;
-  reviews: number;
-  image: string;
-  images?: string[]; // All product images
-  productUrl: string;
-  isImported?: boolean;
-  // Extended fields from API
-  shipFrom?: string;
-  storeName?: string;
-  deliveryDays?: string;
-}
+import type { DisplayProduct } from "@/types/find-products";
+import { ProductCard } from "@/components/find-products";
 
 export default function FindProductsPage() {
   const { refreshImportListCount } = useProductCounts();
@@ -60,7 +40,7 @@ export default function FindProductsPage() {
   const [shipFromCountry, setShipFromCountry] = useState("ALL");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState("Default");
+  const [sortBy, setSortBy] = useState("Orders");
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -197,8 +177,8 @@ export default function FindProductsPage() {
     return sortMap[sortOption] || 'default';
   };
 
-  // Popular search terms for variety - rotates on each page load
-  const defaultSearchTerms = ['phone case', 'summer', 'gift', 'accessories', 'jewelry', 'electronics', 'home decor', 'beauty'];
+  // Product keywords that return real products with orders
+  const defaultSearchTerms = ['phone case', 'earbuds', 'watch', 'bag', 'shoes', 'dress', 'jewelry', 'led lights'];
   const getRandomDefaultTerm = () => defaultSearchTerms[Math.floor(Math.random() * defaultSearchTerms.length)];
 
   // Track the current search term for pagination
@@ -516,25 +496,37 @@ export default function FindProductsPage() {
     return banners[vendor] || "/bannerAliexpressFindProducts.png";
   };
 
-  const aliexpressCategories = [
-    { label: "Ship from USA", image: "/shipFromUSAAliexpress.png" },
-    { label: "Ship From BR", image: "/shipFromPRAliexpress.png" },
-    { label: "Ship from AU", image: "/shipFromAUAliexpress.png" },
-    { label: "Ship from UK", image: "/shipFromUKAliexpress.png" },
-    { label: "Ship from FR", image: "/shipFromFRAliexpress.png" },
-    { label: "Ship from DE", image: "/shipFromDEAliexpress.png" },
-    { label: "Coats", image: "/CoatsAliexpress.png" },
-    { label: "Dresses", image: "/DressesAliexpress.png" },
-    { label: "Sunglasses", image: "/sunglassesAliexpress.png" },
-    { label: "Make Up", image: "/makeUpAliexpress.png" },
-    { label: "Jewelry", image: "/jewelryAliexpress.png" },
-    { label: "Nail Kits", image: "/nailKitsAliexpress.png" },
-    { label: "Hats", image: "/hatsAliexpress.png" },
-    { label: "Party Supplies", image: "/partySuppliesAliexpress.png" },
-    { label: "Pet Supplies", image: "/petSuppliesAliexpress.png" },
-    { label: "Tech Accessories", image: "/techAccessoriesAliexpress.png" },
-    { label: "Home Décor", image: "/homeDecorAliexpress.png" },
-    { label: "Oversize", image: "/oversizeAliexpress.png" }
+  // Category types: "ship_from" sets shipping origin filter, "product" triggers keyword search
+  type CategoryType = "ship_from" | "product";
+
+  interface CategoryItem {
+    label: string;
+    image: string;
+    type: CategoryType;
+    value: string; // Country code for ship_from, search keyword for product
+  }
+
+  const aliexpressCategories: CategoryItem[] = [
+    // Ship From categories - set shipFromCountry filter
+    { label: "Ship from USA", image: "/shipFromUSAAliexpress.png", type: "ship_from", value: "United States" },
+    { label: "Ship From BR", image: "/shipFromPRAliexpress.png", type: "ship_from", value: "Brazil" },
+    { label: "Ship from AU", image: "/shipFromAUAliexpress.png", type: "ship_from", value: "Australia" },
+    { label: "Ship from UK", image: "/shipFromUKAliexpress.png", type: "ship_from", value: "United Kingdom" },
+    { label: "Ship from FR", image: "/shipFromFRAliexpress.png", type: "ship_from", value: "France" },
+    { label: "Ship from DE", image: "/shipFromDEAliexpress.png", type: "ship_from", value: "Germany" },
+    // Product categories - trigger keyword search
+    { label: "Coats", image: "/CoatsAliexpress.png", type: "product", value: "coat jacket winter" },
+    { label: "Dresses", image: "/DressesAliexpress.png", type: "product", value: "dress women fashion" },
+    { label: "Sunglasses", image: "/sunglassesAliexpress.png", type: "product", value: "sunglasses eyewear" },
+    { label: "Make Up", image: "/makeUpAliexpress.png", type: "product", value: "makeup cosmetics beauty" },
+    { label: "Jewelry", image: "/jewelryAliexpress.png", type: "product", value: "jewelry necklace bracelet" },
+    { label: "Nail Kits", image: "/nailKitsAliexpress.png", type: "product", value: "nail art kit manicure" },
+    { label: "Hats", image: "/hatsAliexpress.png", type: "product", value: "hat cap beanie" },
+    { label: "Party Supplies", image: "/partySuppliesAliexpress.png", type: "product", value: "party supplies decoration" },
+    { label: "Pet Supplies", image: "/petSuppliesAliexpress.png", type: "product", value: "pet supplies dog cat" },
+    { label: "Tech Accessories", image: "/techAccessoriesAliexpress.png", type: "product", value: "phone accessories tech gadget" },
+    { label: "Home Décor", image: "/homeDecorAliexpress.png", type: "product", value: "home decor decoration" },
+    { label: "Oversize", image: "/oversizeAliexpress.png", type: "product", value: "oversize clothing fashion" }
   ];
 
   // Sample product data
@@ -998,19 +990,35 @@ export default function FindProductsPage() {
   };
 
   const handleCategorySelect = (categoryLabel: string) => {
-    setSelectedCategory(prev => {
-      if (prev === categoryLabel) {
-        // If clicking the same category, deselect it
-        return null;
+    // Find the category data
+    const category = aliexpressCategories.find(c => c.label === categoryLabel);
+
+    // Toggle selection
+    const isDeselecting = selectedCategory === categoryLabel;
+    setSelectedCategory(isDeselecting ? null : categoryLabel);
+
+    if (isDeselecting) {
+      // Deselecting - reset to default search and ship from
+      setShipFromCountry("ALL");
+      setCurrentSearchTerm(getRandomDefaultTerm());
+      setCurrentPage(1);
+    } else if (category) {
+      // Apply category filter based on type
+      if (category.type === "ship_from") {
+        // Ship From category - update shipFromCountry filter
+        setShipFromCountry(category.value);
+        // Keep current search term or use default
+        if (!currentSearchTerm || currentSearchTerm === "") {
+          setCurrentSearchTerm(getRandomDefaultTerm());
+        }
       } else {
-        // Select the new category (deselecting any previous one)
-        return categoryLabel;
+        // Product category - update search term with category keywords
+        setCurrentSearchTerm(category.value);
+        // Reset ship from to ALL for product searches
+        setShipFromCountry("ALL");
       }
-    });
-    
-    // TODO: Wire this to API filtering when real products are available
-    // This will be used to filter products based on the selected category
-    console.log('Category filter changed:', categoryLabel === selectedCategory ? null : categoryLabel);
+      setCurrentPage(1);
+    }
   };
 
 
@@ -1614,155 +1622,17 @@ export default function FindProductsPage() {
 
   const renderTemuProductGrid = () => (
     <div className="py-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {temuProducts.map((product) => (
-          <Card key={product.id} className="border-0 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.12)] transition-shadow duration-200 p-0 group relative overflow-hidden h-[390px] rounded-xl">
-            <div className="relative">
-              {/* Product Image */}
-              <div className="aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-t-xl">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  width={300}
-                  height={300}
-                  className="w-full h-full object-cover"
-                  unoptimized
-                />
-              </div>
-              
-              {/* Checkbox */}
-              <div className="absolute top-2 left-2 z-10">
-                <Checkbox
-                  checked={selectedProductIds.includes(product.id)}
-                  onCheckedChange={(checked) => handleProductSelect(product.id, checked === true)}
-                  className="h-5 w-5 bg-white border-2 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-white"
-                />
-              </div>
-
-              {/* Hover Buttons */}
-              <div className="absolute left-0 right-0 bottom-0 transform translate-y-1/2 translate-y-16 opacity-0 group-hover:translate-y-1/2 group-hover:opacity-100 transition-all duration-500 ease-out z-10 px-4 py-2">
-                <div className="flex gap-6 justify-end">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="default"
-                          size="icon"
-                          className="rounded-full w-10 h-10 cursor-pointer hover:cursor-pointer"
-                          onClick={() => console.log('Supplier Optimizer clicked for product:', product.id)}
-                        >
-                          <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="!w-6 !h-6" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                            <path d="M21 21l-6 -6"></path>
-                          </svg>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Supplier Optimizer
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="default"
-                          size="icon"
-                          disabled={product.isImported}
-                          className={`rounded-full w-10 h-10 ${product.isImported ? 'cursor-not-allowed bg-gray-400 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-600 hover:cursor-not-allowed' : 'cursor-pointer hover:cursor-pointer'}`}
-                          onClick={() => handleSingleImport(product)}
-                        >
-                          <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="!w-6 !h-6" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="none" d="M0 0h24v24H0V0z"></path>
-                            <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7zM20.1 3H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM19 19H5V5h14v14z"></path>
-                          </svg>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {product.isImported ? 'Imported' : 'Add To Import List'}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Details */}
-            <div className="px-3 pb-4 -mt-4 flex flex-col h-[170px] relative overflow-hidden">
-              {/* Movable Content */}
-              <div className="group-hover:translate-y-6 transition-all duration-500 ease-out">
-                {/* Title */}
-                <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex-shrink-0 cursor-pointer">
-                          <Image
-                            src="/aliexpressQualityControl.png"
-                            alt="Temu Quality Control"
-                            width={14}
-                            height={14}
-                            className="flex-shrink-0"
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent 
-                        side="top" 
-                        className="px-3 py-2 text-xs font-normal rounded-md shadow-lg"
-                      >
-                        <p>Temu Quality Control</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  <h3 
-                    className="text-sm font-normal text-foreground truncate leading-tight cursor-default min-w-0 flex-1"
-                    title={product.title}
-                  >
-                    {product.title}
-                  </h3>
-
-                  <CopyButton text={product.productUrl} />
-                </div>
-
-                {/* Price with Discount Badge */}
-                <div className="flex items-center gap-2 leading-none mt-2">
-                  <span className="text-lg font-bold text-black dark:text-white leading-none">
-                    US ${product.price.toFixed(2)}
-                  </span>
-                  {product.discount > 0 && (
-                    <span className="bg-gradient-to-r from-[#1E88E5] to-[#42A5F5] text-white text-[10px] font-semibold px-2 py-0.5 rounded-md leading-none shadow-sm">
-                      -{product.discount}%
-                    </span>
-                  )}
-                </div>
-
-                {/* Temu Badges */}
-                <div className="flex gap-2 mt-2 mb-2">
-                  <span className="bg-teal-100 text-teal-800 text-[9.5px] font-semibold px-2.5 py-0.5 rounded-lg leading-none">
-                    For US
-                  </span>
-                  <span className="bg-teal-100 text-teal-800 text-[9.5px] font-semibold px-2.5 py-0.5 rounded-lg leading-none">
-                    Free Return
-                  </span>
-                </div>
-              </div>
-
-              {/* Spacer to push bottom content down */}
-              <div className="flex-1"></div>
-
-              {/* Fixed Bottom Content - Orders Only */}
-              <div className="space-y-px">
-                {/* Orders */}
-                <div className="flex justify-between items-center text-sm text-muted-foreground leading-none py-2">
-                  <span>Orders</span>
-                  <span className="font-normal text-sm">{product.orders.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <ProductCard
+            key={product.id}
+            product={product}
+            isSelected={selectedProductIds.includes(product.id)}
+            onSelect={handleProductSelect}
+            onImport={handleSingleImport}
+            onSupplierOptimizer={(id) => console.log('Supplier Optimizer clicked for product:', id)}
+            shippingCost={shippingCosts[product.id]}
+          />
         ))}
       </div>
 
@@ -1810,187 +1680,17 @@ export default function FindProductsPage() {
 
       {/* Products Grid */}
       {((!isLoadingAliExpress && aliExpressProducts.length > 0) || activeTab !== 'aliexpress') && !(aliExpressError && activeTab === 'aliexpress') && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {productsToDisplay.map((product) => (
-          <Card key={product.id} className="border-0 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.12)] transition-shadow duration-200 p-0 group relative overflow-hidden h-[390px] rounded-xl">
-            <div className="relative">
-              {/* Product Image */}
-              <div className="aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-t-xl">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  width={300}
-                  height={300}
-                  className="w-full h-full object-cover"
-                  unoptimized
-                />
-              </div>
-              
-              {/* Checkbox */}
-              <div className="absolute top-2 left-2 z-10">
-                <Checkbox
-                  checked={selectedProductIds.includes(product.id)}
-                  onCheckedChange={(checked) => handleProductSelect(product.id, checked === true)}
-                  className="h-5 w-5 bg-white border-2 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-white"
-                />
-              </div>
-
-              {/* Hover Buttons */}
-              <div className="absolute left-0 right-0 bottom-0 transform translate-y-1/2 translate-y-16 opacity-0 group-hover:translate-y-1/2 group-hover:opacity-100 transition-all duration-500 ease-out z-10 px-4 py-2">
-                <div className="flex gap-6 justify-end">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="default"
-                          size="icon"
-                          className="rounded-full w-10 h-10 cursor-pointer hover:cursor-pointer"
-                          onClick={() => console.log('Supplier Optimizer clicked for product:', product.id)}
-                        >
-                          <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="!w-6 !h-6" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                            <path d="M21 21l-6 -6"></path>
-                          </svg>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Supplier Optimizer
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="default"
-                          size="icon"
-                          disabled={product.isImported}
-                          className={`rounded-full w-10 h-10 ${product.isImported ? 'cursor-not-allowed bg-gray-400 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-600 hover:cursor-not-allowed' : 'cursor-pointer hover:cursor-pointer'}`}
-                          onClick={() => handleSingleImport(product)}
-                        >
-                          <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="!w-6 !h-6" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="none" d="M0 0h24v24H0V0z"></path>
-                            <path d="M11 7h6v2h-6zm0 4h6v2h-6zm0 4h6v2h-6zM7 7h2v2H7zm0 4h2v2H7zm0 4h2v2H7zM20.1 3H3.9c-.5 0-.9.4-.9.9v16.2c0 .4.4.9.9.9h16.2c.4 0 .9-.5.9-.9V3.9c0-.5-.5-.9-.9-.9zM19 19H5V5h14v14z"></path>
-                          </svg>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {product.isImported ? 'Imported' : 'Add To Import List'}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Details */}
-            <div className="px-3 pb-4 -mt-4 flex flex-col h-[170px] group-hover:translate-y-6 transition-all duration-500 ease-out relative overflow-hidden">
-              {/* Title */}
-              <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex-shrink-0 cursor-pointer">
-                        <Image
-                          src="/aliexpressQualityControl.png"
-                          alt="AliExpress Quality Control"
-                          width={14}
-                          height={14}
-                          className="flex-shrink-0"
-                        />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent 
-                      side="top" 
-                      className="px-3 py-2 text-xs font-normal rounded-md shadow-lg"
-                    >
-                      <p>AliExpress Quality Control</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                
-                <h3 
-                  className="text-sm font-normal text-foreground truncate leading-tight cursor-default min-w-0 flex-1"
-                  title={product.title}
-                >
-                  {product.title}
-                </h3>
-
-                <CopyButton text={product.productUrl} />
-              </div>
-
-              {/* Price with Discount Badge */}
-              <div className="flex items-center gap-2 leading-none mt-2">
-                <span className="text-lg font-bold text-black dark:text-white leading-none">
-                  US ${product.price.toFixed(2)}
-                </span>
-                {product.discount > 0 && (
-                  <span className="bg-gradient-to-r from-[#1E88E5] to-[#42A5F5] text-white text-[10px] font-semibold px-2 py-0.5 rounded-md leading-none shadow-sm">
-                    -{product.discount}%
-                  </span>
-                )}
-              </div>
-
-              {/* Spacer for consistent card height */}
-              <div className="h-[18px]"></div>
-
-              {/* Spacer to push bottom content down */}
-              <div className="flex-1"></div>
-
-              {/* Bottom Content */}
-              <div className="space-y-px">
-                {/* Orders */}
-                <div className="flex justify-between items-center text-sm text-muted-foreground leading-none py-0">
-                  <span>Orders</span>
-                  <span className="font-normal text-sm">{product.orders.toLocaleString()}</span>
-                </div>
-
-                {/* Shipping */}
-                <div className="flex justify-between items-center text-sm text-muted-foreground leading-none py-0">
-                  <span>Shipping</span>
-                  <span className="font-normal text-sm">
-                    {('freeShipping' in product && product.freeShipping) || product.shipping === 0
-                      ? "Free"
-                      : product.shipping > 0
-                        ? `$${product.shipping.toFixed(2)}`
-                        : shippingCosts[product.id] !== undefined
-                          ? shippingCosts[product.id] === 0
-                            ? "Free"
-                            : shippingCosts[product.id] > 0
-                              ? `$${shippingCosts[product.id].toFixed(2)}`
-                              : "-"
-                          : "-"
-                    }
-                  </span>
-                </div>
-
-                {/* Rating */}
-                <div className="flex justify-between items-center leading-none py-0 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
-                  <div className="flex items-center">
-                    {product.rating > 0 ? (
-                      [...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-3 w-3 ${
-                            i < Math.floor(product.rating)
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))
-                    ) : (
-                      <span className="text-xs text-muted-foreground">New</span>
-                    )}
-                  </div>
-                  <span className="font-normal text-sm text-muted-foreground">
-                    {product.rating > 0 ? `${product.rating}` : "-"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <ProductCard
+            key={product.id}
+            product={product}
+            isSelected={selectedProductIds.includes(product.id)}
+            onSelect={handleProductSelect}
+            onImport={handleSingleImport}
+            onSupplierOptimizer={(id) => console.log('Supplier Optimizer clicked for product:', id)}
+            shippingCost={shippingCosts[product.id]}
+          />
         ))}
       </div>
       )}
