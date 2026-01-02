@@ -934,14 +934,14 @@ export default function FindProductsPage() {
 
   const renderSearchBar = (vendor: string, logoSrc: string) => (
     <div className="flex items-center gap-2">
-      {/* Vendor Logo - Hidden on mobile */}
-      <div className="hidden md:block flex-shrink-0">
+      {/* Vendor Logo */}
+      <div className="flex-shrink-0">
         <Image
           src={logoSrc}
           alt={`${vendor} logo`}
           width={80}
           height={28}
-          className="h-7 w-auto object-contain"
+          className="h-5 md:h-7 w-auto object-contain"
           priority
           unoptimized
         />
@@ -972,7 +972,10 @@ export default function FindProductsPage() {
             onClick={handleCameraClick}
             className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
           >
-            <Camera className="h-4 w-4 text-muted-foreground" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground size-[22px]">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
           </Button>
         )}
       </div>
@@ -999,7 +1002,7 @@ export default function FindProductsPage() {
   const GrayBarContent = () => {
     const currentProducts = getCurrentProducts();
     return (
-      <div className="flex items-center gap-2 w-full p-2 md:p-3 rounded-xl bg-card border shadow-sm">
+      <div className="flex items-center gap-2 w-full p-1.5 md:p-2 rounded-xl bg-card border">
           {/* Left - Select & Import */}
           <div className="flex items-center gap-2">
             <Checkbox
@@ -1029,7 +1032,7 @@ export default function FindProductsPage() {
               </svg>
               <span className="hidden sm:inline">Import</span>
               {selectedProductIds.length > 0 && (
-                <span className="px-1.5 py-0.5 rounded-md bg-primary-foreground/20 text-[10px] font-bold">
+                <span className="px-1.5 rounded-md bg-primary-foreground/20 text-[10px] font-bold leading-none">
                   {selectedProductIds.length}
                 </span>
               )}
@@ -1042,9 +1045,9 @@ export default function FindProductsPage() {
           {/* Shipping Filters */}
           <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide">
             <Select value={shipFromCountry} onValueChange={setShipFromCountry}>
-              <SelectTrigger className="h-8 w-auto min-w-0 px-2.5 text-xs border bg-background rounded-lg gap-1">
+              <SelectTrigger size="sm" className="h-8 w-auto min-w-0 px-2.5 py-0 text-xs border bg-background rounded-lg gap-1">
                 <span className="text-muted-foreground">From</span>
-                <span className="font-medium">{shipFromCountry === 'ALL' ? 'All' : shipFromCountry.slice(0, 2)}</span>
+                <span className="font-medium">{shipFromCountry === 'ALL' ? 'ALL' : shipFromCountry.slice(0, 2).toUpperCase()}</span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All Countries</SelectItem>
@@ -1057,9 +1060,9 @@ export default function FindProductsPage() {
             </Select>
 
             <Select value={shipToCountry} onValueChange={setShipToCountry}>
-              <SelectTrigger className="h-8 w-auto min-w-0 px-2.5 text-xs border bg-background rounded-lg gap-1">
+              <SelectTrigger size="sm" className="h-8 w-auto min-w-0 px-2.5 py-0 text-xs border bg-background rounded-lg gap-1">
                 <span className="text-muted-foreground">To</span>
-                <span className="font-medium">{shipToCountry.slice(0, 2)}</span>
+                <span className="font-medium">{shipToCountry.slice(0, 2).toUpperCase()}</span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="United States">United States</SelectItem>
@@ -1187,7 +1190,7 @@ export default function FindProductsPage() {
   // Gray bar - in document flow, sticks when scrolled
   const renderGrayBar = () => {
     return (
-      <div className="sticky top-[100px] md:top-[280px] z-20 py-1 bg-background">
+      <div className="sticky top-[178px] md:top-[280px] z-20 bg-background pb-[10px]">
         <GrayBarContent />
       </div>
     );
@@ -1343,7 +1346,7 @@ export default function FindProductsPage() {
 
   const renderTemuProductGrid = () => (
     <div className="py-6">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 gap-y-6">
         {temuProducts.map((product) => (
           <ProductCard
             key={product.id}
@@ -1380,7 +1383,7 @@ export default function FindProductsPage() {
       : getCurrentPageProducts();
 
     return (
-    <div className="py-6">
+    <div className="pt-2 pb-6 md:py-6">
       {/* Loading State */}
       {isLoadingAliExpress && activeTab === 'aliexpress' && (
         <div className="flex flex-col items-center justify-center py-16">
@@ -1401,7 +1404,7 @@ export default function FindProductsPage() {
 
       {/* Products Grid */}
       {((!isLoadingAliExpress && aliExpressProducts.length > 0) || activeTab !== 'aliexpress') && !(aliExpressError && activeTab === 'aliexpress') && (
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 gap-y-6">
         {productsToDisplay.map((product) => (
           <ProductCard
             key={product.id}
@@ -1501,7 +1504,7 @@ export default function FindProductsPage() {
 
     return (
       <div
-        className="fixed z-[25] bg-background border-b-0 left-0 right-0 md:left-[272px] top-[44px] md:top-56 h-12 md:h-14"
+        className="fixed z-40 bg-background left-0 right-0 md:left-[272px] top-[120px] md:top-56 h-[58px] md:h-14 flex items-center"
       >
         <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
           {renderSearchBar(vendor, logoSrc)}
@@ -1512,15 +1515,30 @@ export default function FindProductsPage() {
 
   const TabsHeader = () => (
     <div
-      className="fixed z-30 bg-background top-0 md:top-28 left-0 right-0 md:left-[272px] overflow-visible"
+      className="fixed z-30 bg-background top-16 md:top-28 left-0 right-0 md:left-[272px] overflow-visible h-[56px] md:h-auto"
     >
       <div className="mx-auto w-full max-w-6xl px-2 md:px-4 py-1 md:py-6">
-        <div className="flex items-center h-9 md:h-16">
-          {/* Scrollable tabs container on mobile */}
-          <div className="flex items-center flex-1 gap-1.5 md:gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center h-10 md:h-16">
+          {/* Mobile: Dropdown selector */}
+          <div className="md:hidden flex-1">
+            <Select value={activeTab} onValueChange={setActiveTab}>
+              <SelectTrigger className="w-full h-9 text-sm font-medium">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aliexpress">AliExpress</SelectItem>
+                <SelectItem value="temu">Temu</SelectItem>
+                <SelectItem value="alibaba">Alibaba</SelectItem>
+                <SelectItem value="banggood">Banggood</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Desktop: Horizontal tabs */}
+          <div className="hidden md:flex items-center flex-1 gap-2">
             <button
               onClick={() => setActiveTab("aliexpress")}
-              className={`flex-shrink-0 text-sm md:text-base font-medium px-3 md:px-5 py-1.5 md:py-2 rounded-full md:rounded-3xl transition-colors ${
+              className={`flex-shrink-0 text-base font-medium px-5 py-2 rounded-3xl transition-colors ${
                 activeTab === "aliexpress"
                   ? "bg-foreground text-background dark:bg-slate-700 dark:text-white"
                   : "bg-transparent text-muted-foreground border border-muted-foreground/25 hover:bg-muted/50 hover:text-foreground"
@@ -1530,7 +1548,7 @@ export default function FindProductsPage() {
             </button>
             <button
               onClick={() => setActiveTab("temu")}
-              className={`flex-shrink-0 text-sm md:text-base font-medium px-3 md:px-5 py-1.5 md:py-2 rounded-full md:rounded-3xl transition-colors ${
+              className={`flex-shrink-0 text-base font-medium px-5 py-2 rounded-3xl transition-colors ${
                 activeTab === "temu"
                   ? "bg-foreground text-background dark:bg-slate-700 dark:text-white"
                   : "bg-transparent text-muted-foreground border border-muted-foreground/25 hover:bg-muted/50 hover:text-foreground"
@@ -1540,7 +1558,7 @@ export default function FindProductsPage() {
             </button>
             <button
               onClick={() => setActiveTab("alibaba")}
-              className={`flex-shrink-0 text-sm md:text-base font-medium px-3 md:px-5 py-1.5 md:py-2 rounded-full md:rounded-3xl transition-colors ${
+              className={`flex-shrink-0 text-base font-medium px-5 py-2 rounded-3xl transition-colors ${
                 activeTab === "alibaba"
                   ? "bg-foreground text-background dark:bg-slate-700 dark:text-white"
                   : "bg-transparent text-muted-foreground border border-muted-foreground/25 hover:bg-muted/50 hover:text-foreground"
@@ -1550,7 +1568,7 @@ export default function FindProductsPage() {
             </button>
             <button
               onClick={() => setActiveTab("banggood")}
-              className={`flex-shrink-0 text-sm md:text-base font-medium px-3 md:px-5 py-1.5 md:py-2 rounded-full md:rounded-3xl transition-colors ${
+              className={`flex-shrink-0 text-base font-medium px-5 py-2 rounded-3xl transition-colors ${
                 activeTab === "banggood"
                   ? "bg-foreground text-background dark:bg-slate-700 dark:text-white"
                   : "bg-transparent text-muted-foreground border border-muted-foreground/25 hover:bg-muted/50 hover:text-foreground"
@@ -1629,45 +1647,37 @@ export default function FindProductsPage() {
     <>
       {isMounted && createPortal(<TabsHeader />, document.body)}
       {isMounted && createPortal(searchBarHeaderContent, document.body)}
-      <div className="h-full w-full pt-[100px] md:pt-44">
+      <div className="h-full w-full pt-0 md:pt-44">
         <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
           {/* Tab Content */}
           {activeTab === "aliexpress" && (
-            <div className="bg-transparent">
-              <div className="m-0">
-                {renderGrayBar()}
-                {renderProductGrid()}
-              </div>
-            </div>
+            <>
+              {renderGrayBar()}
+              {renderProductGrid()}
+            </>
           )}
 
           {activeTab === "temu" && (
-            <div className="bg-transparent">
-              <div className="m-0">
-                {renderTemuGrayBar()}
-                {renderTemuProductGrid()}
-              </div>
-            </div>
+            <>
+              {renderTemuGrayBar()}
+              {renderTemuProductGrid()}
+            </>
           )}
 
           {activeTab === "alibaba" && (
-            <div className="bg-transparent">
-              <div className="m-0">
-                {renderGrayBar()}
-                {renderProductGrid()}
-                {renderPagination()}
-              </div>
-            </div>
+            <>
+              {renderGrayBar()}
+              {renderProductGrid()}
+              {renderPagination()}
+            </>
           )}
 
           {activeTab === "banggood" && (
-            <div className="bg-transparent">
-              <div className="m-0">
-                {renderGrayBar()}
-                {renderProductGrid()}
-                {renderPagination()}
-              </div>
-            </div>
+            <>
+              {renderGrayBar()}
+              {renderProductGrid()}
+              {renderPagination()}
+            </>
           )}
         </div>
       </div>

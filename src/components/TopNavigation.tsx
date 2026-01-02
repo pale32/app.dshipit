@@ -62,10 +62,21 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <nav className="bg-background border-border fixed top-0 z-50 h-16 w-full border-b shadow-sm">
+    <nav className="bg-background fixed top-0 z-50 h-16 w-full border-b-0 md:border-b md:border-border shadow-sm">
       <div className="flex h-full items-center justify-between px-4 sm:px-6">
-        {/* Left Section - Logo + Store Switcher */}
+        {/* Left Section - Hamburger + Logo + Store Switcher */}
         <div className="flex items-center gap-3 sm:gap-4">
+          {/* Mobile Only: Menu Button (left side) */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMobileMenuToggle}
+            className="h-10 w-10 p-0 sm:hidden"
+          >
+            <Menu className="h-8 w-8" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+
           {/* Logo */}
           <button
             onClick={() => router.push("/")}
@@ -141,8 +152,8 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
           )}
         </div>
 
-        {/* Center Section - Stats Ticker (Hidden on mobile) */}
-        <div className="hidden items-center gap-1 lg:flex">
+        {/* Center Section - Stats Ticker */}
+        <div className="hidden items-center gap-1 sm:flex">
           {statsLoading || !stats ? (
             <div className="flex items-center gap-6 px-3 py-1.5">
               <div className="h-4 w-20 animate-pulse rounded bg-muted" />
@@ -387,16 +398,6 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Mobile Only: Menu Button (right side, modern placement) */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onMobileMenuToggle}
-            className="h-9 w-9 p-0 sm:hidden"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
         </div>
       </div>
     </nav>
