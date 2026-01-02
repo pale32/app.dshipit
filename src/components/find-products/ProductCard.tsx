@@ -32,9 +32,9 @@ export function ProductCard({
   shippingCost,
 }: ProductCardProps) {
   return (
-    <Card className="border-0 shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.1),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-300 p-0 group relative rounded-lg bg-white dark:bg-card">
+    <Card className="w-full border-0 shadow-none hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08)] transition-all duration-300 p-2 gap-0 group relative rounded-none bg-white dark:bg-card">
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden rounded-t-lg">
+      <div className="relative aspect-square overflow-hidden">
         <Image
           src={product.image}
           alt={product.title}
@@ -66,8 +66,8 @@ export function ProductCard({
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
 
         {/* Action Buttons - Bottom of Image on Hover */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-          <div className="flex gap-2 justify-center">
+        <div className="absolute bottom-2 left-0 right-0 px-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+          <div className="flex gap-1.5 justify-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -115,42 +115,46 @@ export function ProductCard({
           </div>
         </div>
       </div>
-
-      {/* Product Info - flex column with distributed spacing */}
-      <div className="p-2 flex flex-col">
-        {/* Title - 2 lines like AliExpress */}
-        <h3
-          className="text-sm text-foreground line-clamp-2 leading-snug min-h-[2.5em]"
-          title={product.title}
-        >
+      {/* Product Info */}
+      <div className="pt-2 flex flex-col gap-1">
+        {/* Title - 1 line */}
+        <h3 className="text-sm text-foreground truncate" title={product.title}>
           {product.title}
         </h3>
 
         {/* Price Row */}
-        <div className="flex items-baseline gap-1.5 mt-2">
-          <span className="text-base font-bold text-foreground">
-            ${product.price.toFixed(2)}
-          </span>
+        <div className="flex items-baseline">
+          <span className="text-xl font-bold text-[#ED383F] mr-2">${product.price.toFixed(2)}</span>
           {product.discount > 0 && (
-            <span className="text-xs text-muted-foreground line-through">
+            <span className="text-sm text-[#979797] line-through decoration-[#979797]">
               ${(product.price / (1 - product.discount / 100)).toFixed(2)}
             </span>
           )}
         </div>
 
-        {/* Stats Row - sold count left, rating right */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-          <span>{product.orders.toLocaleString()}+ sold</span>
-          <div className="flex items-center gap-0.5">
+        {/* Shipping */}
+        <div className="text-xs text-muted-foreground">
+          {(shippingCost !== undefined ? shippingCost : product.shipping) > 0 ? (
+            <span>+${(shippingCost !== undefined ? shippingCost : product.shipping).toFixed(2)} shipping</span>
+          ) : (
+            <span className="text-green-600 font-medium">Free shipping</span>
+          )}
+        </div>
+
+        {/* Rating | Sold Row */}
+        <div className="flex items-center text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
             {product.rating > 0 ? (
               <>
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span>{product.rating}</span>
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                <span className="font-medium">{product.rating}</span>
               </>
             ) : (
               <span>New</span>
             )}
           </div>
+          <span className="mx-2 w-px h-3 bg-border"></span>
+          <span>{product.orders.toLocaleString()} sold</span>
         </div>
       </div>
     </Card>
