@@ -189,6 +189,8 @@
   --dsi-orange-lightest: #D4D9FE;
   /* DSI Blue-Violet for input focus */
   --dsi-blue-200: #A8B2FD;
+  --dsi-blue-50: #cce1ff;
+  --dsi-import-bar-bg: #f3eef9;
   /* DSI Warm Color Combinations for Dark Mode */
   --dsi-warm-button: oklch(0.65 0.1 65);
   --dsi-warm-bg: oklch(0.25 0.02 65);

@@ -1615,12 +1615,12 @@ export default function ImportListPage() {
   };
 
   return (
-    <div className="h-full w-full px-8 py-6">
+    <div className="h-full w-full px-4 md:px-8 py-4 md:py-6">
       <div className="mx-auto w-full max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-medium text-foreground">Import list</h1>
+            <h1 className="text-2xl md:text-4xl font-medium text-foreground">Import list</h1>
             <Sheet open={isFilterOpen} onOpenChange={handleSheetOpenChange}>
               <SheetTrigger asChild>
                 <div className="flex items-center gap-2 cursor-pointer hover:text-foreground text-muted-foreground transition-colors">
@@ -1976,7 +1976,7 @@ export default function ImportListPage() {
             </Sheet>
           </div>
           <div className="flex items-center space-x-2 mt-2">
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm md:text-base">
               You can import and manage your suppliers' products here before publishing them to your store.
             </p>
             <TooltipProvider>
@@ -2007,10 +2007,10 @@ export default function ImportListPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between bg-card border rounded-lg p-4">
+        <div className="mb-4 md:mb-6">
+          <div className="flex items-center justify-between bg-[#f3eef9] rounded-[6px] md:rounded-xl px-1.5 py-1 md:px-2 md:py-1.5 gap-1.5 md:gap-2">
             {/* Left Side - Add to Import List Logic */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
               {/* Select All Checkbox */}
               <div 
                 className="flex items-center cursor-pointer"
@@ -2041,58 +2041,46 @@ export default function ImportListPage() {
                   )}
                 </div>
               </div>
-              <Button 
-                variant="default"
-                onClick={() => {
-                  if (selectedItems.length > 0) {
-                    // Handle adding products to import list
+              {selectedItems.length > 0 ? (
+                <Button
+                  size="sm"
+                  onClick={() => {
                     console.log(`Adding ${selectedItems.length} products to import list`, selectedItems);
-                  }
-                }}
-                disabled={selectedItems.length === 0}
-                style={{
-                  height: "40px",
-                  paddingLeft: "16px",
-                  paddingRight: "24px",
-                  borderRadius: "8px",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}
-                className={`${selectedItems.length > 0 ? "bg-primary text-white" : "bg-gray-300 hover:bg-gray-300 text-gray-600"} !important`}
-              >
-                <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" style={{fontSize: "24px", width: "24px !important", height: "24px !important", minWidth: "24px", minHeight: "24px", marginRight: "2px"}} className={`w-[24px] h-[24px] flex-shrink-0 ${selectedItems.length > 0 ? 'text-white' : 'text-gray-600'}`}>
-                  <title></title>
-                  <g id="画板" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                    <rect id="矩形" fillOpacity="0" fill="transparent" x="0" y="0" width="24" height="24"></rect>
-                    <g id="编组备份" transform="translate(2.000000, 3.000000)" fillRule="nonzero">
-                      <path d="M12.3809524,0 C13.9589088,0 15.2380952,1.27245387 15.2380952,2.84210526 C15.2380952,3.85749169 14.6935269,4.79574744 13.8095238,5.30344066 C12.9255207,5.81113388 11.836384,5.81113388 10.9523809,5.30344066 C10.5631504,5.07990106 10.2397254,4.77288914 9.99961642,4.41257419 C9.48853818,5.17926167 8.61307346,5.68421052 7.61904762,5.68421052 C6.04109119,5.68421052 4.76190477,4.41175665 4.76190477,2.84210526 C4.76190477,1.27245387 6.04109119,0 7.61904762,0 C8.61307346,0 9.48853818,0.504948851 10.0003557,1.27105043 C10.5114618,0.504948851 11.3869265,0 12.3809524,0 Z" id="形状结合" fillOpacity="0.7" fill="currentColor"></path>
-                      <path d="M17.6190476,3.31578946 C18.952381,3.31578946 20,4.35789472 20,5.68421052 C20,6.84786494 19.1935869,7.79274606 18.095316,8.00700689 L18.0952381,15.6315789 C18.0952381,16.9578947 17.047619,18 15.7142857,18 L4.28571428,18 C2.95238094,18 1.90476191,16.9105263 1.90476191,15.6315789 L1.9044409,8.00422842 C0.835899352,7.78469033 0,6.84290693 0,5.68421052 C0,4.40526316 1.04761904,3.31578946 2.38095238,3.31578946 L17.6190476,3.31578946 Z" id="形状结合" fill="currentColor"></path>
-                      <path d="M10,8.7631579 C8.66666666,8.7631579 7.52380953,7.86315789 7.09523809,6.67894736 C7,6.39473684 6.7142857,6.15789474 6.42857143,6.15789474 C5.95238096,6.15789474 5.61904762,6.63157894 5.76190477,7.10526315 C6.33333334,8.90526315 8.04761904,10.1842105 10,10.1842105 C11.952381,10.1842105 13.6666667,8.90526317 14.2380952,7.10526315 C14.3809524,6.63157894 14.047619,6.15789474 13.5714286,6.15789474 C13.2380952,6.15789474 13,6.34736843 12.9047619,6.67894736 C12.4761905,7.86315789 11.3333333,8.76315788 10,8.7631579 L10,8.7631579 Z" id="路径" fill="white"></path>
-                    </g>
-                  </g>
-                </svg>
-                Push to Store ({selectedItems.length}/{displayedProductsCount})
-              </Button>
+                  }}
+                  className="h-7 px-2 md:px-3 text-xs font-medium gap-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  <Store className="h-3 w-3" />
+                  <span className="hidden sm:inline">Push</span>
+                  <span className="text-[10px] font-bold">{selectedItems.length}</span>
+                </Button>
+              ) : (
+                <button
+                  disabled
+                  className="h-7 px-2 md:px-3 text-xs font-medium gap-1 text-muted-foreground shadow-sm rounded-md border border-input flex items-center bg-white"
+                >
+                  <Store className="h-3 w-3" />
+                  <span className="hidden sm:inline">Push</span>
+                  <span className="text-[10px]">0</span>
+                </button>
+              )}
             </div>
             
             {/* Right Side - Filter Controls */}
-            <div className="flex items-center">
+            <div className="flex items-center flex-wrap gap-1 md:gap-0">
               {/* Tag Management Menu */}
               <div className="flex items-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center space-x-2 px-2 py-1.5 text-base font-semibold hover:bg-accent rounded-md transition-colors" style={{ color: '#000' }}>
+                    <button className="flex items-center space-x-1 md:space-x-2 px-2 py-1.5 text-sm md:text-base font-semibold hover:bg-accent rounded-md transition-colors text-foreground">
                       <img
                         src="/dsi-tags_management.svg"
                         alt="Tag Management"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6"
-                        style={{ filter: 'brightness(0)' }}
+                        width={20}
+                        height={20}
+                        className="w-5 h-5 md:w-6 md:h-6 dark:invert"
                       />
-                      <span style={{ color: '#000' }}>Tag Management</span>
+                      <span className="hidden sm:inline">Tag Management</span>
+                      <span className="sm:hidden">Tags</span>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 bg-background border border-border shadow-lg">
@@ -2123,17 +2111,14 @@ export default function ImportListPage() {
               </div>
 
               {/* Vertical Divider */}
-              <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-600 mx-4"></div>
+              <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-600 mx-2 md:mx-4 hidden sm:block"></div>
 
               {/* Delete Products Dialog */}
               <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogTrigger asChild>
-                  <button className="flex items-center space-x-2 px-2 py-1.5 text-base font-semibold hover:bg-accent rounded-md transition-colors" style={{ color: '#000' }}>
-                    <svg stroke="#000" fill="#000" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
-                      <path fill="none" d="M0 0h24v24H0z"></path>
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
-                    </svg>
-                    <span style={{ color: '#000' }}>Delete</span>
+                  <button className="flex items-center space-x-1 md:space-x-2 px-2 py-1.5 text-sm md:text-base font-semibold hover:bg-accent rounded-md transition-colors text-foreground">
+                    <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
+                    <span className="hidden sm:inline">Delete</span>
                   </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -2247,11 +2232,11 @@ export default function ImportListPage() {
         </div>
 
         {/* Imported Products Grid */}
-        <div className="py-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="py-4 md:py-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4">
             {/* Dynamic Product Cards from Import List */}
             {importListItems.map((product) => (
-              <Card key={product.id} className="border-0 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.12)] transition-shadow duration-200 p-0 relative overflow-hidden h-[445px] rounded-xl">
+              <Card key={product.id} className="border-0 shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.12)] transition-shadow duration-200 p-0 relative overflow-hidden h-auto md:h-[445px] rounded-xl">
                 <div className="relative">
                   {/* Product Image */}
                   <div className="aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-t-xl w-full relative">
@@ -2308,21 +2293,21 @@ export default function ImportListPage() {
                 </div>
 
                 {/* Product Details */}
-                <div className="px-3 pb-6 pt-4 flex flex-col h-[240px] relative overflow-visible">
+                <div className="px-2 md:px-3 pb-3 md:pb-6 pt-3 md:pt-4 flex flex-col md:h-[240px] relative overflow-visible">
                   {/* Title */}
-                  <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+                  <div className="flex items-center gap-1 md:gap-1.5 whitespace-nowrap overflow-hidden">
                     <div className="flex-shrink-0 cursor-pointer">
                       <Image
                         src={product.supplierLogo}
                         alt={`${product.supplier} Quality Control`}
                         width={14}
                         height={14}
-                        className="flex-shrink-0"
+                        className="flex-shrink-0 w-3 h-3 md:w-[14px] md:h-[14px]"
                       />
                     </div>
 
                     <h3
-                      className="font-normal text-foreground truncate leading-tight cursor-default min-w-0 flex-1"
+                      className="font-normal text-foreground truncate leading-tight cursor-default min-w-0 flex-1 text-xs md:text-base"
                       title={product.name}
                     >
                       {product.name}
@@ -2330,8 +2315,8 @@ export default function ImportListPage() {
                   </div>
 
                   {/* Price */}
-                  <div className="flex items-center gap-2 leading-none mt-2">
-                    <span className="text-lg font-bold text-black dark:text-white leading-none">
+                  <div className="flex items-center gap-1 md:gap-2 leading-none mt-1 md:mt-2">
+                    <span className="text-sm md:text-lg font-bold text-black dark:text-white leading-none">
                       {getDisplayPrice(product)}
                     </span>
                     <TooltipProvider>
@@ -2363,7 +2348,7 @@ export default function ImportListPage() {
                   </div>
 
                   {/* Ship To Country Select - Opens sync rule dialog for this specific product */}
-                  <div className="my-3">
+                  <div className="my-2 md:my-3 hidden md:block">
                     <div
                       className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors"
                       onClick={() => {

@@ -439,23 +439,23 @@ const SidebarComponent = ({ isOpen = false, onClose }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile Overlay */}
-      {isOpen && <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={onClose} />}
+      {/* Mobile Overlay - starts below top nav (h-16), z-[45] to cover page content but stay below nav */}
+      {isOpen && <div className="fixed inset-0 top-16 z-[45] bg-black/50 md:hidden" onClick={onClose} />}
 
-      {/* Sidebar */}
+      {/* Sidebar - z-[46] on mobile to stay above overlay */}
       <div
-        className={`fixed top-0 left-0 z-50 h-screen transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:z-20 md:flex md:translate-x-0`}
+        className={`fixed top-16 md:top-0 left-0 z-[46] md:z-20 h-[calc(100vh-4rem)] md:h-screen transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:flex md:translate-x-0`}
       >
-        {/* Top spacing for navigation */}
-        <div className="absolute top-0 h-16 w-full flex-shrink-0 md:h-28" />
+        {/* Top spacing for navigation - only needed on desktop */}
+        <div className="absolute top-0 h-0 w-full flex-shrink-0 md:h-28" />
 
-        <div className="flex h-full w-full flex-row items-start pt-16 md:pt-28">
+        <div className="flex h-full w-full flex-row items-start pt-0 md:pt-28">
           {/* Sidebar */}
           <div
             className="bg-background border-border flex h-full w-[272px] flex-col border-r overscroll-contain"
           >
             {/* Mobile Close Button */}
-            <div className="border-border flex justify-end border-b p-4 md:hidden">
+            <div className="border-border flex justify-end border-b p-2 md:hidden">
               <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
                 <span className="sr-only">Close menu</span>
@@ -466,7 +466,7 @@ const SidebarComponent = ({ isOpen = false, onClose }: SidebarProps) => {
             <div
               className="min-h-0 flex-1 overflow-y-scroll overscroll-contain"
             >
-              <div className="grid h-auto w-full grid-cols-1 bg-transparent p-0 pt-4">
+              <div className="grid h-auto w-full grid-cols-1 bg-transparent p-0 pt-2 md:pt-4">
                 {renderSidebarItems(sidebarItems)}
               </div>
 

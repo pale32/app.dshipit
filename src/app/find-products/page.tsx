@@ -939,20 +939,18 @@ export default function FindProductsPage() {
     <div className="flex items-center gap-1.5 md:gap-2">
       {/* Mobile: Vendor Logo Selector Dropdown */}
       <div className="md:hidden flex-shrink-0">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-9 px-2 gap-1">
-              <Image
-                src={logoSrc}
-                alt={`${vendor} logo`}
-                width={70}
-                height={24}
-                className="h-5 w-auto object-contain"
-                priority
-                unoptimized
-              />
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-            </Button>
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger className="flex items-center h-9 px-2 gap-1 rounded-md hover:bg-accent">
+            <Image
+              src={logoSrc}
+              alt={`${vendor} logo`}
+              width={70}
+              height={24}
+              className="h-5 w-auto object-contain"
+              priority
+              unoptimized
+            />
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-44">
             <DropdownMenuItem onClick={() => setActiveTab("aliexpress")} className={activeTab === "aliexpress" ? "bg-muted" : ""}>
@@ -1044,9 +1042,9 @@ export default function FindProductsPage() {
     const hasSelection = selectedProductIds.length > 0;
 
     return (
-      <div className="flex items-center gap-1.5 md:gap-2 w-full p-1.5 md:p-2 md:rounded-xl bg-muted md:bg-card md:border">
-        {/* Left: Checkbox + Import button (when nothing selected) OR Checkbox + count (when selected) */}
-        <div className="flex items-center gap-1.5 flex-shrink-0">
+      <div className="flex items-center gap-1.5 md:gap-2 w-full px-1.5 py-1 md:px-2 md:py-1.5 rounded-[6px] md:rounded-xl md:border bg-[#f3eef9]">
+        {/* Left: Checkbox + count when selected - fixed width to prevent filter shift */}
+        <div className="flex items-center gap-1.5 flex-shrink-0 min-w-[40px]">
           <Checkbox
             checked={selectedProductIds.length === currentProducts.length && currentProducts.length > 0}
             onCheckedChange={(checked) => {
@@ -1060,22 +1058,11 @@ export default function FindProductsPage() {
                 setSelectedProductIds([]);
               }
             }}
-            className="h-4 w-4"
+            className="h-4 w-4 bg-background"
           />
-          {hasSelection ? (
-            <span className="text-xs font-medium text-primary whitespace-nowrap">
-              {selectedProductIds.length}
-            </span>
-          ) : (
-            <Button
-              size="sm"
-              disabled
-              className="h-7 px-2 md:px-3 text-xs font-medium gap-1 bg-muted text-muted-foreground hover:bg-muted"
-            >
-              <Plus className="h-3 w-3" />
-              <span className="hidden sm:inline">Import</span>
-            </Button>
-          )}
+          <span className={`text-xs font-medium whitespace-nowrap min-w-[16px] ${hasSelection ? 'text-primary' : 'text-transparent'}`}>
+            {hasSelection ? selectedProductIds.length : '0'}
+          </span>
         </div>
 
         {/* Divider */}
@@ -1084,7 +1071,7 @@ export default function FindProductsPage() {
         {/* Center: Filters */}
         <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide min-w-0">
           <Select value={shipFromCountry} onValueChange={setShipFromCountry}>
-            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-1">
+            <SelectTrigger size="sm" className="!h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-white rounded-md gap-1">
               <span className="text-muted-foreground text-xs">From</span>
               <span className="font-medium">{shipFromCountry === 'ALL' ? 'ALL' : shipFromCountry.slice(0, 2).toUpperCase()}</span>
             </SelectTrigger>
@@ -1099,7 +1086,7 @@ export default function FindProductsPage() {
           </Select>
 
           <Select value={shipToCountry} onValueChange={setShipToCountry}>
-            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-1">
+            <SelectTrigger size="sm" className="!h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-white rounded-md gap-1">
               <span className="text-muted-foreground text-xs">To</span>
               <span className="font-medium">{shipToCountry.slice(0, 2).toUpperCase()}</span>
             </SelectTrigger>
@@ -1120,7 +1107,7 @@ export default function FindProductsPage() {
           {/* Filter Sheet Button */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="h-7 px-1.5 md:px-2 gap-1">
+              <Button variant="outline" size="sm" className="h-7 px-1.5 md:px-2 gap-1 !bg-white">
                 <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" xmlns="http://www.w3.org/2000/svg">
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                 </svg>
@@ -1239,22 +1226,25 @@ export default function FindProductsPage() {
               <X className="h-3.5 w-3.5" />
             </Button>
           )}
-          <Button
-            size="sm"
-            onClick={handleImportProducts}
-            disabled={!hasSelection}
-            className={`h-7 px-2 md:px-3 text-xs font-medium gap-1 transition-all ${
-              hasSelection
-                ? 'bg-primary hover:bg-primary/90'
-                : 'bg-muted text-muted-foreground hover:bg-muted'
-            }`}
-          >
-            <Plus className="h-3 w-3" />
-            <span className="hidden sm:inline">Import</span>
-            {hasSelection && (
+          {hasSelection ? (
+            <Button
+              size="sm"
+              onClick={handleImportProducts}
+              className="h-7 px-2 md:px-3 text-xs font-medium gap-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">Import</span>
               <span className="text-[10px] font-bold">{selectedProductIds.length}</span>
-            )}
-          </Button>
+            </Button>
+          ) : (
+            <button
+              disabled
+              className="h-7 px-2 md:px-3 text-xs font-medium gap-1 text-muted-foreground shadow-sm rounded-md border border-input flex items-center bg-white"
+            >
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">Import</span>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -1651,12 +1641,10 @@ export default function FindProductsPage() {
 
           {/* Add Supplier Platform Menu - Hidden on mobile */}
           <div className="hidden md:flex ml-4 items-center h-12 flex-shrink-0 relative">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-1 text-sm font-normal text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200 select-none whitespace-nowrap relative">
-                  Add Supplier Platform
-                  <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                </div>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-normal text-muted-foreground hover:text-foreground cursor-pointer transition-colors duration-200 select-none whitespace-nowrap relative">
+                Add Supplier Platform
+                <ChevronDown className="h-4 w-4 flex-shrink-0" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80 z-50">
                 <div className="px-3 py-2 border-b">

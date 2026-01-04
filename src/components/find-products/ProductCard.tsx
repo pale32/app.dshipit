@@ -49,7 +49,7 @@ export function ProductCard({
           <Checkbox
             checked={isSelected}
             onCheckedChange={(checked) => onSelect(product.id, checked === true)}
-            className="h-5 w-5 bg-white/90 backdrop-blur-sm border-2 border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-white rounded"
+            className="h-5 w-5 bg-white/90 backdrop-blur-sm border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-white rounded"
           />
         </div>
 
