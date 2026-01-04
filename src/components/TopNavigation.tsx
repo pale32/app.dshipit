@@ -62,18 +62,18 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <nav className="bg-background fixed top-0 z-50 h-16 w-full border-b-0 md:border-b md:border-border shadow-sm">
-      <div className="flex h-full items-center justify-between px-4 sm:px-6">
-        {/* Left Section - Hamburger + Logo + Store Switcher */}
-        <div className="flex items-center gap-3 sm:gap-4">
+    <nav className="bg-background fixed top-0 z-50 h-16 w-full border-b-0 md:border-b md:border-border shadow-none md:shadow-sm">
+      <div className="flex h-full items-center justify-between px-2 sm:px-6">
+        {/* Left Section - Hamburger + Logo (fixed) */}
+        <div className="flex items-center gap-1.5 sm:gap-4 flex-shrink-0">
           {/* Mobile Only: Menu Button (left side) */}
           <Button
             variant="ghost"
             size="sm"
             onClick={onMobileMenuToggle}
-            className="h-10 w-10 p-0 sm:hidden"
+            className="h-9 w-9 p-0 sm:hidden"
           >
-            <Menu className="h-8 w-8" />
+            <Menu style={{ width: 22, height: 22, strokeWidth: 1.2 }} />
             <span className="sr-only">Toggle menu</span>
           </Button>
 
@@ -85,33 +85,36 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
             <Image
               src="/dsilogo.webp"
               alt="DShipIt Logo"
-              width={140}
-              height={37}
-              className="h-7 w-auto sm:h-9"
+              width={80}
+              height={21}
+              className="w-[90px] sm:w-[120px]"
               priority
             />
           </button>
+        </div>
 
-          {/* Store Switcher - Desktop */}
+        {/* Middle Section - Store Switcher + Revenue (share available space) */}
+        <div className="flex items-center justify-between gap-3 sm:gap-4 flex-1 min-w-0 px-2">
+          {/* Store Switcher */}
           {!isLoading && stores.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="hidden h-9 gap-2 border-border bg-background px-3 hover:bg-muted sm:flex"
+                  className="flex h-7 sm:h-9 gap-1 sm:gap-2 border-border bg-background px-1.5 sm:px-3 hover:bg-muted flex-shrink min-w-0"
                 >
                   {activeStore && (
                     <>
                       <div
-                        className={`h-2 w-2 rounded-full ${platformInfo[activeStore.platform].color}`}
+                        className={`h-2 w-2 rounded-full flex-shrink-0 ${platformInfo[activeStore.platform].color}`}
                       />
-                      <span className="max-w-[120px] truncate text-sm font-medium">
-                        {activeStore.name}
+                      <span className="truncate text-xs sm:text-sm font-medium">
+                        {activeStore.name.replace(/^My\s+/i, '').replace(/\s+Store$/i, '')}
                       </span>
                     </>
                   )}
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                  <ChevronDown className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64">
@@ -150,10 +153,20 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+
+          {/* Revenue - always show fully */}
+          {!statsLoading && stats && (
+            <div className="flex sm:hidden items-center flex-shrink-0">
+              <div className="flex flex-col items-start px-1 py-0.5 rounded-md hover:bg-muted/50 cursor-pointer leading-tight" onClick={() => router.push("/analytics")}>
+                <span className="text-[9px] uppercase tracking-wide text-green-600 font-medium">Revenue</span>
+                <span className="text-xs font-semibold whitespace-nowrap -mt-0.5">${stats.revenue.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Center Section - Stats Ticker */}
-        <div className="hidden items-center gap-1 sm:flex">
+        {/* Desktop Only: Center Section - Stats Ticker */}
+        <div className="hidden sm:flex items-center gap-1 flex-1 justify-center">
           {statsLoading || !stats ? (
             <div className="flex items-center gap-6 px-3 py-1.5">
               <div className="h-4 w-20 animate-pulse rounded bg-muted" />
@@ -162,7 +175,7 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
               <div className="h-4 w-16 animate-pulse rounded bg-muted" />
             </div>
           ) : (
-            <>
+            <div className="flex items-center gap-1">
               {/* Revenue */}
               <div className="flex items-center gap-2 rounded-md px-3 py-1.5 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => router.push("/analytics")}>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -225,12 +238,12 @@ export function TopNavigation({ onMobileMenuToggle }: TopNavigationProps) {
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           {/* Desktop Only: Help Button */}
           <Button
             variant="ghost"
