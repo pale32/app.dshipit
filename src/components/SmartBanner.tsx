@@ -326,15 +326,15 @@ export function SmartBanner() {
 
   return (
     <>
-    {/* Spacer to push content down when banner is visible (banner height ~44px + vertical gap) */}
-    <div className="h-14 sm:h-12" />
-    <div className={`fixed top-16 z-40 w-full ${theme.bg} shadow-lg`}>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:gap-4">
+    {/* Spacer to push content down when banner is visible */}
+    <div className="h-10 sm:h-11" />
+    <div className={`fixed top-16 z-40 w-full ${theme.bg}`}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-1.5 sm:gap-4 sm:px-4 sm:py-2">
         {/* Left: Icon + Message (single row) */}
         <div className="flex flex-1 items-center gap-2 overflow-hidden sm:gap-3">
           {/* Animated Icon */}
-          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${theme.accent} sm:h-8 sm:w-8`}>
-            <IconComponent className={`h-3.5 w-3.5 animate-pulse sm:h-4 sm:w-4 ${theme.text}`} />
+          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${theme.accent} sm:h-8 sm:w-8`}>
+            <IconComponent className={`h-3 w-3 animate-pulse sm:h-4 sm:w-4 ${theme.text}`} />
           </div>
 
           {/* Message - single line */}
@@ -386,11 +386,11 @@ export function SmartBanner() {
           {/* Primary CTA */}
           <Button
             size="sm"
-            className={`h-8 gap-1.5 px-4 text-xs font-semibold shadow-md transition-transform hover:scale-105 ${theme.cta}`}
+            className={`h-7 gap-1 px-3 text-xs font-semibold shadow-md transition-transform hover:scale-105 sm:h-8 sm:gap-1.5 sm:px-4 ${theme.cta}`}
             onClick={() => setIsUpgradeDialogOpen(true)}
           >
             {activeBanner.ctaText}
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
           </Button>
 
           {/* Terms Info */}

@@ -9,13 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Search, ChevronDown, CheckIcon, ArrowUp, ArrowDown, Loader2, Camera } from "lucide-react";
+import { Search, ChevronDown, CheckIcon, ArrowUp, ArrowDown, Loader2, Camera, Settings, X, Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { IncrementButton } from "@/components/ui/increment-button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { searchProducts, transformProductForDisplay, getShippingCost, getProductDetails, type AliExpressProduct } from "@/lib/aliexpress-api";
 import { addToImportList, isInImportList, type ImportListItem } from "@/lib/import-list-storage";
@@ -39,6 +39,7 @@ export default function FindProductsPage() {
   const [sortBy, setSortBy] = useState("Orders");
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isManageSuppliersOpen, setIsManageSuppliersOpen] = useState(false);
 
   // Set mounted state after hydration to avoid hydration mismatch with portals
   useEffect(() => {
@@ -932,16 +933,62 @@ export default function FindProductsPage() {
     console.log(`Successfully imported product: ${product.title.substring(0, 50)}...`);
   };
 
+  const vendorLogos = {
+    aliexpress: '/aliexpressFindProducts.png',
+    temu: '/temuFindProducts.jfif',
+    alibaba: '/alibabaFindProducts.jfif',
+    banggood: '/banggoodFindProducts.png',
+  };
+
   const renderSearchBar = (vendor: string, logoSrc: string) => (
-    <div className="flex items-center gap-2">
-      {/* Vendor Logo */}
-      <div className="flex-shrink-0">
+    <div className="flex items-center gap-1.5 md:gap-2">
+      {/* Mobile: Vendor Logo Selector Dropdown */}
+      <div className="md:hidden flex-shrink-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-9 px-2 gap-1">
+              <Image
+                src={logoSrc}
+                alt={`${vendor} logo`}
+                width={70}
+                height={24}
+                className="h-5 w-auto object-contain"
+                priority
+                unoptimized
+              />
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-44">
+            <DropdownMenuItem onClick={() => setActiveTab("aliexpress")} className={activeTab === "aliexpress" ? "bg-muted" : ""}>
+              <Image src={vendorLogos.aliexpress} alt="AliExpress" width={80} height={24} className="h-5 w-auto object-contain" unoptimized />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setActiveTab("temu")} className={activeTab === "temu" ? "bg-muted" : ""}>
+              <Image src={vendorLogos.temu} alt="Temu" width={80} height={24} className="h-5 w-auto object-contain" unoptimized />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setActiveTab("alibaba")} className={activeTab === "alibaba" ? "bg-muted" : ""}>
+              <Image src={vendorLogos.alibaba} alt="Alibaba" width={80} height={24} className="h-5 w-auto object-contain" unoptimized />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setActiveTab("banggood")} className={activeTab === "banggood" ? "bg-muted" : ""}>
+              <Image src={vendorLogos.banggood} alt="Banggood" width={80} height={24} className="h-5 w-auto object-contain" unoptimized />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setIsManageSuppliersOpen(true)} className="gap-2">
+              <Settings className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">Manage Suppliers</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Desktop: Static Vendor Logo */}
+      <div className="hidden md:flex flex-shrink-0">
         <Image
           src={logoSrc}
           alt={`${vendor} logo`}
           width={80}
           height={28}
-          className="h-5 md:h-7 w-auto object-contain"
+          className="h-7 w-auto object-contain"
           priority
           unoptimized
         />
@@ -949,13 +996,13 @@ export default function FindProductsPage() {
 
       {/* Search Input - ShadCN */}
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           ref={searchInputRef}
           type="search"
-          placeholder="Search products..."
+          placeholder="Search..."
           defaultValue={searchQuery}
-          className="h-10 pl-9 pr-10 rounded-lg"
+          className="h-9 md:h-10 pl-8 md:pl-9 pr-9 md:pr-10 rounded-lg text-sm"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -970,9 +1017,9 @@ export default function FindProductsPage() {
             variant="ghost"
             size="icon"
             onClick={handleCameraClick}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+            className="absolute right-0.5 md:right-1 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground size-[22px]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground md:size-[22px]">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
               <circle cx="12" cy="13" r="3"/>
             </svg>
@@ -991,8 +1038,8 @@ export default function FindProductsPage() {
         />
       )}
 
-      {/* Search Button */}
-      <Button onClick={handleSearch} size="icon" className="h-10 w-10 flex-shrink-0">
+      {/* Search Button - smaller on mobile */}
+      <Button onClick={handleSearch} size="icon" className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
         <Search className="h-4 w-4" />
       </Button>
     </div>
@@ -1001,92 +1048,90 @@ export default function FindProductsPage() {
   // Gray bar content component (shared between in-flow and fixed versions)
   const GrayBarContent = () => {
     const currentProducts = getCurrentProducts();
+    const hasSelection = selectedProductIds.length > 0;
+
     return (
-      <div className="flex items-center gap-2 w-full p-1.5 md:p-2 rounded-xl bg-card border">
-          {/* Left - Select & Import */}
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={selectedProductIds.length === currentProducts.length && currentProducts.length > 0}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setIsChecked(true);
-                  setSelectedProducts(currentProducts.length);
-                  setSelectedProductIds(currentProducts.map(p => p.id));
-                } else {
-                  setIsChecked(false);
-                  setSelectedProducts(0);
-                  setSelectedProductIds([]);
-                }
-              }}
-              className="h-4 w-4"
-            />
+      <div className="flex items-center gap-1.5 md:gap-2 w-full p-1.5 md:p-2 rounded-xl bg-card border">
+        {/* Left: Checkbox + Import button (when nothing selected) OR Checkbox + count (when selected) */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <Checkbox
+            checked={selectedProductIds.length === currentProducts.length && currentProducts.length > 0}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                setIsChecked(true);
+                setSelectedProducts(currentProducts.length);
+                setSelectedProductIds(currentProducts.map(p => p.id));
+              } else {
+                setIsChecked(false);
+                setSelectedProducts(0);
+                setSelectedProductIds([]);
+              }
+            }}
+            className="h-4 w-4"
+          />
+          {hasSelection ? (
+            <span className="text-xs font-medium text-primary whitespace-nowrap">
+              {selectedProductIds.length}
+            </span>
+          ) : (
             <Button
-              variant={selectedProductIds.length > 0 ? "default" : "outline"}
               size="sm"
-              onClick={handleImportProducts}
-              disabled={selectedProductIds.length === 0}
-              className="h-8 px-3 text-xs font-medium gap-1.5"
+              disabled
+              className="h-7 px-2 md:px-3 text-xs font-medium gap-1 bg-muted text-muted-foreground hover:bg-muted"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
+              <Plus className="h-3 w-3" />
               <span className="hidden sm:inline">Import</span>
-              {selectedProductIds.length > 0 && (
-                <span className="px-1.5 rounded-md bg-primary-foreground/20 text-[10px] font-bold leading-none">
-                  {selectedProductIds.length}
-                </span>
-              )}
             </Button>
-          </div>
+          )}
+        </div>
 
-          {/* Center - Divider */}
-          <div className="hidden md:block h-6 w-px bg-border"></div>
+        {/* Divider */}
+        <div className="h-5 w-px bg-border flex-shrink-0"></div>
 
-          {/* Shipping Filters */}
-          <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide">
-            <Select value={shipFromCountry} onValueChange={setShipFromCountry}>
-              <SelectTrigger size="sm" className="h-8 w-auto min-w-0 px-2.5 py-0 text-xs border bg-background rounded-lg gap-1">
-                <span className="text-muted-foreground">From</span>
-                <span className="font-medium">{shipFromCountry === 'ALL' ? 'ALL' : shipFromCountry.slice(0, 2).toUpperCase()}</span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Countries</SelectItem>
-                <SelectItem value="China">China</SelectItem>
-                <SelectItem value="United States">United States</SelectItem>
-                <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                <SelectItem value="France">France</SelectItem>
-                <SelectItem value="Germany">Germany</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Center: Filters */}
+        <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide min-w-0">
+          <Select value={shipFromCountry} onValueChange={setShipFromCountry}>
+            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-0.5">
+              <span className="text-muted-foreground text-[10px]">From</span>
+              <span className="font-medium">{shipFromCountry === 'ALL' ? 'ALL' : shipFromCountry.slice(0, 2).toUpperCase()}</span>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Countries</SelectItem>
+              <SelectItem value="China">China</SelectItem>
+              <SelectItem value="United States">United States</SelectItem>
+              <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+              <SelectItem value="France">France</SelectItem>
+              <SelectItem value="Germany">Germany</SelectItem>
+            </SelectContent>
+          </Select>
 
-            <Select value={shipToCountry} onValueChange={setShipToCountry}>
-              <SelectTrigger size="sm" className="h-8 w-auto min-w-0 px-2.5 py-0 text-xs border bg-background rounded-lg gap-1">
-                <span className="text-muted-foreground">To</span>
-                <span className="font-medium">{shipToCountry.slice(0, 2).toUpperCase()}</span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="United States">United States</SelectItem>
-                <SelectItem value="Canada">Canada</SelectItem>
-                <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                <SelectItem value="Australia">Australia</SelectItem>
-                <SelectItem value="Germany">Germany</SelectItem>
-                <SelectItem value="France">France</SelectItem>
-                <SelectItem value="Japan">Japan</SelectItem>
-                <SelectItem value="Brazil">Brazil</SelectItem>
-                <SelectItem value="Mexico">Mexico</SelectItem>
-                <SelectItem value="India">India</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={shipToCountry} onValueChange={setShipToCountry}>
+            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-0.5">
+              <span className="text-muted-foreground text-[10px]">To</span>
+              <span className="font-medium">{shipToCountry.slice(0, 2).toUpperCase()}</span>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="United States">United States</SelectItem>
+              <SelectItem value="Canada">Canada</SelectItem>
+              <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+              <SelectItem value="Australia">Australia</SelectItem>
+              <SelectItem value="Germany">Germany</SelectItem>
+              <SelectItem value="France">France</SelectItem>
+              <SelectItem value="Japan">Japan</SelectItem>
+              <SelectItem value="Brazil">Brazil</SelectItem>
+              <SelectItem value="Mexico">Mexico</SelectItem>
+              <SelectItem value="India">India</SelectItem>
+            </SelectContent>
+          </Select>
 
-          {/* Right - Filter */}
+          {/* Filter Sheet Button */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 px-2.5 gap-1.5">
-                <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg">
+              <Button variant="outline" size="sm" className="h-7 px-1.5 md:px-2 gap-1">
+                <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" xmlns="http://www.w3.org/2000/svg">
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                 </svg>
-                <span className="hidden sm:inline text-xs">Filter</span>
+                <span className="hidden sm:inline text-xs">More</span>
               </Button>
             </SheetTrigger>
             <SheetContent className="w-full sm:w-[400px] sm:max-w-[400px] px-4 py-4">
@@ -1183,6 +1228,41 @@ export default function FindProductsPage() {
               </Accordion>
             </SheetContent>
           </Sheet>
+        </div>
+
+        {/* Right: Import Button (transforms based on selection) */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {hasSelection && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsChecked(false);
+                setSelectedProducts(0);
+                setSelectedProductIds([]);
+              }}
+              className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          <Button
+            size="sm"
+            onClick={handleImportProducts}
+            disabled={!hasSelection}
+            className={`h-7 px-2 md:px-3 text-xs font-medium gap-1 transition-all ${
+              hasSelection
+                ? 'bg-primary hover:bg-primary/90'
+                : 'bg-muted text-muted-foreground hover:bg-muted'
+            }`}
+          >
+            <Plus className="h-3 w-3" />
+            <span className="hidden sm:inline">Import</span>
+            {hasSelection && (
+              <span className="text-[10px] font-bold">{selectedProductIds.length}</span>
+            )}
+          </Button>
+        </div>
       </div>
     );
   };
@@ -1190,7 +1270,7 @@ export default function FindProductsPage() {
   // Gray bar - in document flow, sticks when scrolled
   const renderGrayBar = () => {
     return (
-      <div className="sticky top-[178px] md:top-[280px] z-20 bg-background pb-[10px]">
+      <div className="sticky top-[154px] md:top-[280px] z-20 bg-background pb-[10px]">
         <GrayBarContent />
       </div>
     );
@@ -1504,7 +1584,7 @@ export default function FindProductsPage() {
 
     return (
       <div
-        className="fixed z-40 bg-background left-0 right-0 md:left-[272px] top-[120px] md:top-56 h-[58px] md:h-14 flex items-center"
+        className="fixed z-40 bg-background left-0 right-0 md:left-[272px] top-[108px] md:top-56 h-[46px] md:h-14 flex items-center"
       >
         <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
           {renderSearchBar(vendor, logoSrc)}
@@ -1515,7 +1595,7 @@ export default function FindProductsPage() {
 
   const TabsHeader = () => (
     <div
-      className="fixed z-30 bg-background top-16 md:top-28 left-0 right-0 md:left-[272px] overflow-visible h-[56px] md:h-auto"
+      className="fixed z-30 bg-background hidden md:block md:top-28 left-0 right-0 md:left-[272px] overflow-visible md:h-auto"
     >
       <div className="mx-auto w-full max-w-6xl px-2 md:px-4 py-1 md:py-6">
         <div className="flex items-center h-10 md:h-16">
@@ -1681,6 +1761,48 @@ export default function FindProductsPage() {
           )}
         </div>
       </div>
+
+      {/* Mobile: Manage Suppliers Sheet */}
+      <Sheet open={isManageSuppliersOpen} onOpenChange={setIsManageSuppliersOpen}>
+        <SheetContent side="bottom" className="h-auto max-h-[80vh] rounded-t-xl md:hidden">
+          <SheetHeader className="pb-4">
+            <SheetTitle>Manage Suppliers</SheetTitle>
+            <SheetDescription>
+              Connect to supplier marketplaces
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-2 pb-6">
+            {supplierAuthData.map((supplier) => (
+              <div key={supplier.name} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-muted">
+                    <Image
+                      src={supplier.icon}
+                      alt={`${supplier.name} icon`}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="font-medium">{supplier.name}</span>
+                </div>
+                <Button
+                  variant={supplier.connected ? "default" : "outline"}
+                  size="sm"
+                  className={`h-8 px-4 ${
+                    supplier.connected
+                      ? 'bg-emerald-700 text-white border-emerald-700'
+                      : 'hover:bg-green-500 hover:text-white hover:border-green-500'
+                  }`}
+                  disabled={supplier.connected}
+                >
+                  {supplier.connected ? 'Connected' : 'Connect'}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
