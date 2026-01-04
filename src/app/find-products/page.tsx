@@ -131,7 +131,6 @@ export default function FindProductsPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   const checkboxRef = useRef<HTMLButtonElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // AliExpress API state
   const [aliExpressProducts, setAliExpressProducts] = useState<DisplayProduct[]>([]);
@@ -463,13 +462,9 @@ export default function FindProductsPage() {
   };
 
   const handleSearch = () => {
-    const inputValue = searchInputRef.current?.value || '';
-    console.log("Searching for:", inputValue);
-    if (activeTab === 'aliexpress') {
-      const term = inputValue.trim() || getRandomDefaultTerm();
-      setCurrentSearchTerm(term);
-      setCurrentPage(1);
-    }
+    const term = searchQuery.trim() || getRandomDefaultTerm();
+    setCurrentSearchTerm(term);
+    setCurrentPage(1);
   };
 
 
@@ -998,17 +993,15 @@ export default function FindProductsPage() {
       <div className="relative flex-1">
         <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          ref={searchInputRef}
           type="search"
           placeholder="Search..."
-          defaultValue={searchQuery}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="h-9 md:h-10 pl-8 md:pl-9 pr-9 md:pr-10 rounded-lg text-sm"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              const term = searchInputRef.current?.value.trim() || getRandomDefaultTerm();
-              setCurrentSearchTerm(term);
-              setCurrentPage(1);
+              handleSearch();
             }
           }}
         />
@@ -1051,7 +1044,7 @@ export default function FindProductsPage() {
     const hasSelection = selectedProductIds.length > 0;
 
     return (
-      <div className="flex items-center gap-1.5 md:gap-2 w-full p-1.5 md:p-2 rounded-xl bg-card border">
+      <div className="flex items-center gap-1.5 md:gap-2 w-full p-1.5 md:p-2 md:rounded-xl bg-muted md:bg-card md:border">
         {/* Left: Checkbox + Import button (when nothing selected) OR Checkbox + count (when selected) */}
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <Checkbox
@@ -1091,8 +1084,8 @@ export default function FindProductsPage() {
         {/* Center: Filters */}
         <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide min-w-0">
           <Select value={shipFromCountry} onValueChange={setShipFromCountry}>
-            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-0.5">
-              <span className="text-muted-foreground text-[10px]">From</span>
+            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-1">
+              <span className="text-muted-foreground text-xs">From</span>
               <span className="font-medium">{shipFromCountry === 'ALL' ? 'ALL' : shipFromCountry.slice(0, 2).toUpperCase()}</span>
             </SelectTrigger>
             <SelectContent>
@@ -1106,8 +1099,8 @@ export default function FindProductsPage() {
           </Select>
 
           <Select value={shipToCountry} onValueChange={setShipToCountry}>
-            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-0.5">
-              <span className="text-muted-foreground text-[10px]">To</span>
+            <SelectTrigger size="sm" className="h-7 w-auto min-w-0 px-1.5 md:px-2 py-0 text-xs border bg-background rounded-md gap-1">
+              <span className="text-muted-foreground text-xs">To</span>
               <span className="font-medium">{shipToCountry.slice(0, 2).toUpperCase()}</span>
             </SelectTrigger>
             <SelectContent>
@@ -1270,7 +1263,7 @@ export default function FindProductsPage() {
   // Gray bar - in document flow, sticks when scrolled
   const renderGrayBar = () => {
     return (
-      <div className="sticky top-[154px] md:top-[280px] z-20 bg-background pb-[10px]">
+      <div className="sticky top-[150px] md:top-[280px] z-20 bg-background pb-[10px]">
         <GrayBarContent />
       </div>
     );
@@ -1569,29 +1562,27 @@ export default function FindProductsPage() {
     </div>
   );
 
-  // Memoized search bar header to prevent remounting on every keystroke
-  const searchBarHeaderContent = useMemo(() => {
-    const getVendorData = () => {
-      switch (activeTab) {
-        case 'aliexpress': return { vendor: 'AliExpress', logoSrc: '/aliexpressFindProducts.png' };
-        case 'temu': return { vendor: 'Temu', logoSrc: '/temuFindProducts.jfif' };
-        case 'alibaba': return { vendor: 'Alibaba', logoSrc: '/alibabaFindProducts.jfif' };
-        case 'banggood': return { vendor: 'Banggood', logoSrc: '/banggoodFindProducts.png' };
-        default: return { vendor: 'AliExpress', logoSrc: '/aliexpressFindProducts.png' };
-      }
-    };
-    const { vendor, logoSrc } = getVendorData();
+  // Search bar header - not memoized to ensure ref works properly
+  const getVendorData = () => {
+    switch (activeTab) {
+      case 'aliexpress': return { vendor: 'AliExpress', logoSrc: '/aliexpressFindProducts.png' };
+      case 'temu': return { vendor: 'Temu', logoSrc: '/temuFindProducts.jfif' };
+      case 'alibaba': return { vendor: 'Alibaba', logoSrc: '/alibabaFindProducts.jfif' };
+      case 'banggood': return { vendor: 'Banggood', logoSrc: '/banggoodFindProducts.png' };
+      default: return { vendor: 'AliExpress', logoSrc: '/aliexpressFindProducts.png' };
+    }
+  };
+  const { vendor: currentVendor, logoSrc: currentLogoSrc } = getVendorData();
 
-    return (
-      <div
-        className="fixed z-40 bg-background left-0 right-0 md:left-[272px] top-[108px] md:top-56 h-[46px] md:h-14 flex items-center"
-      >
-        <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
-          {renderSearchBar(vendor, logoSrc)}
-        </div>
+  const searchBarHeaderContent = (
+    <div
+      className="fixed z-40 bg-background left-0 right-0 md:left-[272px] top-[104px] md:top-56 h-[46px] md:h-14 flex items-center"
+    >
+      <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
+        {renderSearchBar(currentVendor, currentLogoSrc)}
       </div>
-    );
-  }, [activeTab]);
+    </div>
+  );
 
   const TabsHeader = () => (
     <div
@@ -1727,7 +1718,7 @@ export default function FindProductsPage() {
     <>
       {isMounted && createPortal(<TabsHeader />, document.body)}
       {isMounted && createPortal(searchBarHeaderContent, document.body)}
-      <div className="h-full w-full pt-0 md:pt-44">
+      <div className="h-full w-full pt-[46px] md:pt-44">
         <div className="mx-auto w-full max-w-6xl px-2 md:px-4">
           {/* Tab Content */}
           {activeTab === "aliexpress" && (

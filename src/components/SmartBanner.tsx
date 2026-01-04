@@ -328,7 +328,7 @@ export function SmartBanner() {
     <>
     {/* Spacer to push content down when banner is visible */}
     <div className="h-10 sm:h-11" />
-    <div className={`fixed top-16 z-40 w-full ${theme.bg}`}>
+    <div className={`fixed top-16 z-50 w-full ${theme.bg}`}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-1.5 sm:gap-4 sm:px-4 sm:py-2">
         {/* Left: Icon + Message (single row) */}
         <div className="flex flex-1 items-center gap-2 overflow-hidden sm:gap-3">
